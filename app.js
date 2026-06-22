@@ -1,5 +1,6 @@
 const workloadSelect = document.querySelector("#workload");
 const gpuTierSelect = document.querySelector("#gpuTier");
+const gpuPlatformSelect = document.querySelector("#gpuPlatform");
 const gpuCountInput = document.querySelector("#gpuCount");
 const siteTypeSelect = document.querySelector("#siteType");
 
@@ -76,14 +77,17 @@ const GPU_OPTIONS = [
     label: "RTX 6000 Ada",
     cpu: "2-socket, 16-32 cores",
     memory: "128GB-256GB",
-    power: {
-      tdp: "300W",
-      connector: "1x 16-pin (12VHPWR / 12V-2x6)",
-      exactness: "official reference"
+    platforms: ["PCIe"],
+    variants: {
+      PCIe: {
+        tdp: "300W",
+        connector: "1x 16-pin (12VHPWR / 12V-2x6)",
+        exactness: "official reference",
+        serverNeed: "PCIe chassis with a 16-pin GPU lead",
+        psu: "2 x 1200W",
+        requiredParts: "16-pin GPU power cable"
+      }
     },
-    platform: "PCIe dual-slot",
-    serverNeed: "Workstation or server chassis with a 16-pin GPU lead",
-    psu: "2 x 1200W",
     fit: "dev/test, light inference",
     note: "워크스테이션 계열이지만 DC 추론에도 자주 사용"
   },
@@ -92,14 +96,17 @@ const GPU_OPTIONS = [
     label: "L4",
     cpu: "2-socket, 16-32 cores",
     memory: "192GB-384GB",
-    power: {
-      tdp: "72W",
-      connector: "slot-powered only",
-      exactness: "official reference"
+    platforms: ["PCIe"],
+    variants: {
+      PCIe: {
+        tdp: "72W",
+        connector: "slot-powered only",
+        exactness: "official reference",
+        serverNeed: "Any free x16 slot; no aux power lead",
+        psu: "2 x 1200W",
+        requiredParts: "No aux power lead"
+      }
     },
-    platform: "PCIe low-profile",
-    serverNeed: "Any free x16 slot; no aux power lead",
-    psu: "2 x 1200W",
     fit: "efficient inference",
     note: "비디오 AI, 저전력 추론"
   },
@@ -108,14 +115,17 @@ const GPU_OPTIONS = [
     label: "L40S",
     cpu: "2-socket, 32-48 cores",
     memory: "256GB-512GB",
-    power: {
-      tdp: "350W",
-      connector: "1x 16-pin",
-      exactness: "official reference"
+    platforms: ["PCIe"],
+    variants: {
+      PCIe: {
+        tdp: "350W",
+        connector: "1x 16-pin",
+        exactness: "official reference",
+        serverNeed: "Partner / NVIDIA-Certified chassis with a 16-pin GPU lead",
+        psu: "2 x 1600W",
+        requiredParts: "16-pin GPU power cable"
+      }
     },
-    platform: "PCIe dual-slot air-cooled or single-slot liquid-cooled",
-    serverNeed: "Partner / NVIDIA-Certified chassis with a 16-pin GPU lead",
-    psu: "2 x 1600W",
     fit: "inference, light tuning",
     note: "현재 데이터센터에서 가장 많이 보는 축"
   },
@@ -124,14 +134,17 @@ const GPU_OPTIONS = [
     label: "A2",
     cpu: "2-socket, 16-24 cores",
     memory: "128GB-256GB",
-    power: {
-      tdp: "70W",
-      connector: "slot-powered only",
-      exactness: "official reference"
+    platforms: ["PCIe"],
+    variants: {
+      PCIe: {
+        tdp: "70W",
+        connector: "slot-powered only",
+        exactness: "official reference",
+        serverNeed: "Any free x16 slot; no aux power lead",
+        psu: "2 x 800W",
+        requiredParts: "No aux power lead"
+      }
     },
-    platform: "PCIe low-profile",
-    serverNeed: "Any free x16 slot; no aux power lead",
-    psu: "2 x 800W",
     fit: "entry inference",
     note: "초경량 엣지/서비스용"
   },
@@ -140,14 +153,17 @@ const GPU_OPTIONS = [
     label: "A10",
     cpu: "2-socket, 16-32 cores",
     memory: "128GB-256GB",
-    power: {
-      tdp: "150W class",
-      connector: "1x 8-pin PCIe (reference add-in card)",
-      exactness: "reference"
+    platforms: ["PCIe"],
+    variants: {
+      PCIe: {
+        tdp: "150W class",
+        connector: "1x 8-pin PCIe (reference add-in card)",
+        exactness: "reference",
+        serverNeed: "Server/workstation with one auxiliary 8-pin GPU lead",
+        psu: "2 x 1200W",
+        requiredParts: "8-pin GPU power cable"
+      }
     },
-    platform: "PCIe dual-slot",
-    serverNeed: "Server/workstation with one auxiliary 8-pin GPU lead",
-    psu: "2 x 1200W",
     fit: "general inference",
     note: "비교적 오래 쓰인 범용 GPU"
   },
@@ -156,14 +172,17 @@ const GPU_OPTIONS = [
     label: "T4",
     cpu: "2-socket, 16-24 cores",
     memory: "128GB-256GB",
-    power: {
-      tdp: "70W",
-      connector: "slot-powered only",
-      exactness: "official reference"
+    platforms: ["PCIe"],
+    variants: {
+      PCIe: {
+        tdp: "70W",
+        connector: "slot-powered only",
+        exactness: "official reference",
+        serverNeed: "Any free x16 slot; no aux power lead",
+        psu: "2 x 800W",
+        requiredParts: "No aux power lead"
+      }
     },
-    platform: "PCIe low-profile",
-    serverNeed: "Any free x16 slot; no aux power lead",
-    psu: "2 x 800W",
     fit: "legacy inference",
     note: "레거시 추론 / 인코딩"
   },
@@ -172,14 +191,17 @@ const GPU_OPTIONS = [
     label: "A30",
     cpu: "2-socket, 24-32 cores",
     memory: "256GB-384GB",
-    power: {
-      tdp: "165W class",
-      connector: "1x 8-pin PCIe (reference add-in card)",
-      exactness: "reference"
+    platforms: ["PCIe"],
+    variants: {
+      PCIe: {
+        tdp: "165W class",
+        connector: "1x 8-pin PCIe (reference add-in card)",
+        exactness: "reference",
+        serverNeed: "Server/workstation with one auxiliary 8-pin GPU lead",
+        psu: "2 x 1200W",
+        requiredParts: "8-pin GPU power cable"
+      }
     },
-    platform: "PCIe dual-slot",
-    serverNeed: "Server/workstation with one auxiliary 8-pin GPU lead",
-    psu: "2 x 1200W",
     fit: "balanced inference",
     note: "메모리 밸런스가 좋음"
   },
@@ -188,62 +210,71 @@ const GPU_OPTIONS = [
     label: "A40",
     cpu: "2-socket, 24-32 cores",
     memory: "256GB-384GB",
-    power: {
-      tdp: "300W",
-      connector: "OEM/server-specific harness",
-      exactness: "SKU-specific"
+    platforms: ["PCIe"],
+    variants: {
+      PCIe: {
+        tdp: "300W",
+        connector: "OEM/server-specific harness",
+        exactness: "SKU-specific",
+        serverNeed: "OEM-qualified platform with the matching GPU harness",
+        psu: "2 x 1200W",
+        requiredParts: "OEM GPU harness"
+      }
     },
-    platform: "PCIe dual-slot, active",
-    serverNeed: "OEM-qualified platform with the matching GPU harness",
-    psu: "2 x 1200W",
     fit: "visual AI, inference",
     note: "비전/그래픽 작업에 자주 쓰임"
   },
   {
-    value: "A100-40",
-    label: "A100 40GB",
+    value: "A100",
+    label: "A100",
     cpu: "2-socket, 48-64 cores",
     memory: "512GB-1TB",
-    power: {
-      tdp: "SKU-specific",
-      connector: "OEM/server-specific harness",
-      exactness: "SKU-specific"
+    platforms: ["PCIe", "SXM"],
+    variants: {
+      PCIe: {
+        tdp: "SKU-specific",
+        connector: "OEM/server-specific harness",
+        exactness: "SKU-specific",
+        serverNeed: "PCIe carrier and exact OEM harness for this A100 SKU",
+        psu: "2 x 2000W",
+        requiredParts: "Exact A100 PCIe harness"
+      },
+      SXM: {
+        tdp: "SKU-specific",
+        connector: "HGX baseboard / SXM",
+        exactness: "platform-specific",
+        serverNeed: "HGX A100 baseboard and matching platform",
+        psu: "HGX power budget",
+        requiredParts: "HGX A100 baseboard"
+      }
     },
-    platform: "PCIe or SXM depending SKU",
-    serverNeed: "NVIDIA-Certified / OEM-qualified platform for the exact A100 SKU",
-    psu: "2 x 2000W",
     fit: "training, high-end inference",
     note: "엔터프라이즈 학습의 기준점"
   },
   {
-    value: "A100-80",
-    label: "A100 80GB",
+    value: "H100",
+    label: "H100",
     cpu: "2-socket, 48-64 cores",
     memory: "512GB-1TB",
-    power: {
-      tdp: "SKU-specific",
-      connector: "OEM/server-specific harness",
-      exactness: "SKU-specific"
+    platforms: ["PCIe", "SXM"],
+    variants: {
+      PCIe: {
+        tdp: "350W",
+        connector: "1x 16-pin",
+        exactness: "official PCIe reference",
+        serverNeed: "PCIe carrier with a 16-pin GPU lead",
+        psu: "2 x 2000W",
+        requiredParts: "16-pin GPU power cable"
+      },
+      SXM: {
+        tdp: "700W class",
+        connector: "HGX baseboard / SXM",
+        exactness: "platform-specific",
+        serverNeed: "HGX H100 baseboard and matched cooling",
+        psu: "HGX power budget",
+        requiredParts: "HGX H100 baseboard"
+      }
     },
-    platform: "PCIe or SXM depending SKU",
-    serverNeed: "NVIDIA-Certified / OEM-qualified platform for the exact A100 SKU",
-    psu: "2 x 2000W",
-    fit: "training",
-    note: "메모리 큰 학습/추론"
-  },
-  {
-    value: "H100-PCIe",
-    label: "H100 PCIe",
-    cpu: "2-socket, 48-64 cores",
-    memory: "512GB-1TB",
-    power: {
-      tdp: "400W",
-      connector: "OEM/server-specific harness",
-      exactness: "SKU-specific"
-    },
-    platform: "PCIe dual-slot air-cooled",
-    serverNeed: "Partner / NVIDIA-Certified system with 1-8 GPUs",
-    psu: "2 x 2000W",
     fit: "heavy training",
     note: "현행 고성능 학습"
   },
@@ -252,14 +283,25 @@ const GPU_OPTIONS = [
     label: "H200",
     cpu: "high-core 2-socket+",
     memory: "1TB-2TB",
-    power: {
-      tdp: "SXM or PCIe SKU-specific",
-      connector: "OEM/server-specific harness",
-      exactness: "SKU-specific"
+    platforms: ["PCIe", "SXM"],
+    variants: {
+      PCIe: {
+        tdp: "SKU-specific",
+        connector: "OEM/server-specific harness",
+        exactness: "SKU-specific",
+        serverNeed: "PCIe carrier for the exact H200 SKU",
+        psu: "2 x 3000W",
+        requiredParts: "Exact H200 PCIe harness"
+      },
+      SXM: {
+        tdp: "SKU-specific",
+        connector: "HGX baseboard / SXM",
+        exactness: "platform-specific",
+        serverNeed: "HGX H200 baseboard and matching platform",
+        psu: "HGX power budget",
+        requiredParts: "HGX H200 baseboard"
+      }
     },
-    platform: "SXM | PCIe depending SKU",
-    serverNeed: "HGX H200 or NVIDIA-Certified platform for the exact SKU",
-    psu: "2 x 3000W",
     fit: "large-scale training",
     note: "큰 메모리 대역폭이 필요한 경우"
   },
@@ -268,14 +310,17 @@ const GPU_OPTIONS = [
     label: "B200 / Blackwell",
     cpu: "high-core 2-socket+",
     memory: "1TB-2TB",
-    power: {
-      tdp: "HGX platform-specific",
-      connector: "HGX baseboard / SXM",
-      exactness: "platform-specific"
+    platforms: ["SXM"],
+    variants: {
+      SXM: {
+        tdp: "HGX platform-specific",
+        connector: "HGX baseboard / SXM",
+        exactness: "platform-specific",
+        serverNeed: "NVIDIA HGX with 8 Blackwell SXMs",
+        psu: "2 x 3000W",
+        requiredParts: "HGX Blackwell baseboard"
+      }
     },
-    platform: "HGX / 8x SXM",
-    serverNeed: "NVIDIA HGX with 8 Blackwell SXMs",
-    psu: "2 x 3000W",
     fit: "next-gen training",
     note: "차세대 랙 전력 예산 필요"
   }
@@ -288,6 +333,7 @@ const VENDORS = [
     badge: "balanced enterprise",
     summary: "범용 AI 인프라와 추론형 서비스에 잘 맞는 2U 기준선.",
     fit: ["L4", "L40S", "A10", "A40"],
+    platforms: ["PCIe"],
     accent: ["#6ee7ff", "#10263b"],
     specs: {
       formFactor: "2U dual-socket",
@@ -302,7 +348,8 @@ const VENDORS = [
     model: "ProLiant DL385 Gen11",
     badge: "AMD GPU-friendly",
     summary: "PCIe 여유와 확장성이 좋아 GPU 수량이 늘어날수록 편함.",
-    fit: ["L40S", "A100-40", "A100-80", "H100-PCIe"],
+    fit: ["L40S", "A100", "H100"],
+    platforms: ["PCIe"],
     accent: ["#8cffc1", "#0d2d23"],
     specs: {
       formFactor: "2U dual-socket",
@@ -318,6 +365,7 @@ const VENDORS = [
     badge: "general-purpose",
     summary: "추론, 혼합, 운영형 AI에서 가장 무난한 기준점.",
     fit: ["RTX6000Ada", "L4", "L40S", "A10"],
+    platforms: ["PCIe"],
     accent: ["#ffb86b", "#33210e"],
     specs: {
       formFactor: "2U dual-socket",
@@ -332,7 +380,8 @@ const VENDORS = [
     model: "PowerEdge XE9680",
     badge: "training flagship",
     summary: "고밀도 GPU 학습과 큰 전력 예산에 맞는 플래그십.",
-    fit: ["A100-80", "H100-PCIe", "H200", "B200"],
+    fit: ["A100", "H100", "H200", "B200"],
+    platforms: ["PCIe", "SXM"],
     accent: ["#ff8bb1", "#331127"],
     specs: {
       formFactor: "4U GPU server",
@@ -348,8 +397,52 @@ function getGpu(value) {
   return GPU_OPTIONS.find((item) => item.value === value) || GPU_OPTIONS[0];
 }
 
-function getDefaultGpuIndex() {
-  return 2;
+const LEGACY_GPU_ALIASES = {
+  "A100-40": { gpuTier: "A100", gpuPlatform: "PCIe" },
+  "A100-80": { gpuTier: "A100", gpuPlatform: "PCIe" },
+  "H100-PCIe": { gpuTier: "H100", gpuPlatform: "PCIe" }
+};
+
+function getGpuVariant(gpu, platform) {
+  return gpu.variants?.[platform] || gpu.variants?.[gpu.platforms?.[0]] || {};
+}
+
+function getDefaultGpuValue(platform) {
+  return platform === "SXM" ? "H100" : "L40S";
+}
+
+function getCompatibleGpuOptions(platform) {
+  return GPU_OPTIONS.filter((item) => item.platforms.includes(platform));
+}
+
+function normalizeGpuSelection(rawGpu, rawPlatform) {
+  if (rawGpu && LEGACY_GPU_ALIASES[rawGpu]) {
+    return {
+      ...LEGACY_GPU_ALIASES[rawGpu],
+      gpuPlatform: rawPlatform || LEGACY_GPU_ALIASES[rawGpu].gpuPlatform
+    };
+  }
+
+  if (!rawGpu) {
+    return {
+      gpuTier: getDefaultGpuValue(rawPlatform || "PCIe"),
+      gpuPlatform: rawPlatform || "PCIe"
+    };
+  }
+
+  if (rawGpu.endsWith("-PCIe") || rawGpu.endsWith("-SXM")) {
+    const suffix = rawGpu.endsWith("-PCIe") ? "PCIe" : "SXM";
+    const family = rawGpu.slice(0, -(suffix.length + 1));
+    return {
+      gpuTier: family,
+      gpuPlatform: suffix || rawPlatform || "PCIe"
+    };
+  }
+
+  return {
+    gpuTier: rawGpu,
+    gpuPlatform: rawPlatform || "PCIe"
+  };
 }
 
 function getSelectedOptions() {
@@ -361,10 +454,15 @@ function getSelectedOptions() {
       return null;
     }
   })();
+  const normalized = normalizeGpuSelection(
+    params.get("gpu") || stored?.gpuTier || "",
+    params.get("platform") || params.get("gpuPlatform") || stored?.gpuPlatform || ""
+  );
 
   return {
     workload: params.get("workload") || stored?.workload || "inference",
-    gpuTier: params.get("gpu") || stored?.gpuTier || GPU_OPTIONS[getDefaultGpuIndex()]?.value || GPU_OPTIONS[0].value,
+    gpuTier: normalized.gpuTier || getDefaultGpuValue(normalized.gpuPlatform),
+    gpuPlatform: normalized.gpuPlatform || "PCIe",
     gpuCount: params.get("count") || stored?.gpuCount || "2",
     siteType: params.get("site") || stored?.siteType || "datacenter"
   };
@@ -380,12 +478,13 @@ function persistState(nextState) {
   const url = new URL(window.location.href);
   url.searchParams.set("workload", nextState.workload);
   url.searchParams.set("gpu", nextState.gpuTier);
+  url.searchParams.set("platform", nextState.gpuPlatform);
   url.searchParams.set("count", String(nextState.gpuCount));
   url.searchParams.set("site", nextState.siteType);
   history.replaceState({}, "", `${url.pathname}?${url.searchParams.toString()}${url.hash}`);
 }
 
-function estimatedLoad(workloadKey, gpu, gpuCount, siteType) {
+function estimatedLoad(workloadKey, gpu, gpuCount, siteType, gpuPlatform) {
   const workloadLoad = {
     inference: [0.7, 1.2],
     "fine-tuning": [1.1, 1.5],
@@ -402,24 +501,26 @@ function estimatedLoad(workloadKey, gpu, gpuCount, siteType) {
     T4: [0.35, 0.6],
     A30: [0.8, 1.1],
     A40: [0.9, 1.2],
-    "A100-40": [1.6, 2.2],
-    "A100-80": [1.8, 2.4],
-    "H100-PCIe": [2.0, 2.6],
-    H200: [2.4, 3.2],
-    B200: [3.0, 4.0]
+    A100: [1.6, 2.4],
+    H100: [2.0, 3.0],
+    H200: [2.4, 3.6],
+    B200: [3.0, 4.2]
   }[gpu.value] || [1.0, 1.2];
 
+  const platformLoadAdj = gpuPlatform === "SXM" ? 0.45 : 0;
   const siteLoadAdj = siteType === "edge" ? -0.05 : siteType === "office" ? 0.1 : 0;
   const low = Math.max(workloadLoad[0], gpuLoad[0]) + Math.max(0, gpuCount - 1) * 0.22 + siteLoadAdj;
-  const high = Math.max(workloadLoad[1], gpuLoad[1]) + Math.max(0, gpuCount - 1) * 0.32 + siteLoadAdj;
+  const high = Math.max(workloadLoad[1], gpuLoad[1]) + Math.max(0, gpuCount - 1) * 0.32 + siteLoadAdj + platformLoadAdj;
   return [Math.max(0.3, low), Math.max(low + 0.1, high)];
 }
 
-function powerBand(loadHigh, gpu) {
-  if (gpu.value === "B200") return "2 x 3000W";
-  if (gpu.value === "H200") return "2 x 3000W";
-  if (gpu.value === "H100-PCIe") return "2 x 2000W";
-  if (gpu.value === "A100-80" || gpu.value === "A100-40") return "2 x 2000W";
+function powerBand(loadHigh, gpu, gpuPlatform) {
+  if (gpu.value === "B200" || (gpu.value === "H200" && gpuPlatform === "SXM")) return "2 x 3000W";
+  if (gpu.value === "H100" && gpuPlatform === "SXM") return "HGX power shelf / 2 x 3000W";
+  if (gpu.value === "H100" && gpuPlatform === "PCIe") return "2 x 2000W";
+  if (gpu.value === "H200" && gpuPlatform === "PCIe") return "2 x 3000W";
+  if (gpu.value === "A100" && gpuPlatform === "SXM") return "HGX power shelf / 2 x 3000W";
+  if (gpu.value === "A100" && gpuPlatform === "PCIe") return "2 x 2000W";
   if (gpu.value === "L40S") return "2 x 1600W";
   if (gpu.value === "L4" || gpu.value === "RTX6000Ada" || gpu.value === "A10" || gpu.value === "A40") return loadHigh <= 1.0 ? "2 x 1200W" : "2 x 1600W";
   if (gpu.value === "A2" || gpu.value === "T4") return "2 x 800W";
@@ -434,7 +535,7 @@ function buildRequestText(state) {
   return `AI 서버 구매 요청서
 
 워크로드: ${state.workload.label}
-GPU: ${state.gpu.label} x${state.gpuCount}
+GPU: ${state.gpu.label} / ${state.gpuPlatform} x${state.gpuCount}
 설치 환경: ${state.siteLabel}
 
 권장 기본값
@@ -446,6 +547,7 @@ GPU: ${state.gpu.label} x${state.gpuCount}
 - 지원: ${state.support}
 - GPU 전력: ${state.gpuPower}
 - GPU 커넥터: ${state.gpuConnector}
+- GPU 필수 부품: ${state.gpuRequiredParts}
 - GPU 전원 기준: ${state.gpuExactness}
 - GPU 서버 요건: ${state.gpuServerNeed}
 - 전력/냉각: ${state.powerText}
@@ -485,13 +587,14 @@ function fallbackSvg(vendor, model, accentA = "#1f3552", accentB = "#0d1726") {
 function makeVendorCard(vendor, state) {
   const card = document.createElement("article");
   card.className = "card vendor-card";
-  const score = vendor.fit.includes(state.gpu.label) ? 2 : vendor.fit.includes(state.gpu.value) ? 3 : 0;
+  const supportsPlatform = vendor.platforms?.includes(state.gpuPlatform) ?? true;
+  const score = (vendor.fit.includes(state.gpu.value) ? 3 : 0) + (supportsPlatform ? 2 : 0);
   const fallback = fallbackSvg(vendor.vendor, vendor.model, vendor.accent[0], vendor.accent[1]);
   const fitReason = vendor.fit.includes(state.gpu.value)
-    ? `현재 선택한 ${state.gpu.label}와 맞습니다.`
-    : vendor.fit.includes(state.gpu.label)
-      ? `${state.gpu.label} 계열을 받을 수 있습니다.`
-      : "현재 선택값과는 직접 매칭이 약합니다.";
+    ? `현재 선택한 ${state.gpu.label} / ${state.gpuPlatform}와 맞습니다.`
+    : supportsPlatform
+      ? `${state.gpuPlatform} 폼팩터는 받을 수 있지만 GPU 세부 모델은 다시 확인하는 편이 좋습니다.`
+      : `${state.gpuPlatform} 폼팩터 기준으로는 직접 매칭이 약합니다.`;
 
   card.innerHTML = `
     <div class="server-art server-art--fallback">
@@ -534,7 +637,7 @@ function makeVendorCard(vendor, state) {
       </div>
       <div class="vendor-meta">
         <span>적합 GPU</span>
-        <strong>${vendor.fit.join(" / ")}</strong>
+        <strong>${vendor.fit.join(" / ")}${vendor.platforms ? ` · ${vendor.platforms.join(" / ")}` : ""}</strong>
       </div>
     </div>
   `;
@@ -546,25 +649,38 @@ function makeVendorCard(vendor, state) {
   return card;
 }
 
-function renderGpuOptions() {
-  gpuTierSelect.innerHTML = GPU_OPTIONS.map(
-    (gpu, index) => `<option value="${gpu.value}"${index === getDefaultGpuIndex() ? " selected" : ""}>${gpu.label}</option>`
-  ).join("");
+function renderGpuOptions(platform, selectedValue) {
+  const compatible = getCompatibleGpuOptions(platform);
+  const fallbackValue = selectedValue && compatible.some((gpu) => gpu.value === selectedValue)
+    ? selectedValue
+    : getDefaultGpuValue(platform);
+
+  gpuTierSelect.innerHTML = compatible
+    .map((gpu) => `<option value="${gpu.value}"${gpu.value === fallbackValue ? " selected" : ""}>${gpu.label}</option>`)
+    .join("");
+
+  gpuTierSelect.value = fallbackValue;
+  return fallbackValue;
 }
 
 function render() {
   const workloadKey = workloadSelect.value;
   const siteType = siteTypeSelect.value;
-  const gpu = getGpu(gpuTierSelect.value);
+  const gpuPlatform = gpuPlatformSelect.value;
+  const gpuValue = renderGpuOptions(gpuPlatform, gpuTierSelect.value);
+  const gpu = getGpu(gpuValue);
+  const gpuVariant = getGpuVariant(gpu, gpuPlatform);
   const gpuCount = Number(gpuCountInput.value);
   const workload = WORKLOADS[workloadKey];
-  const load = estimatedLoad(workloadKey, gpu, gpuCount, siteType);
-  const powerBandText = powerBand(load[1], gpu);
+  const load = estimatedLoad(workloadKey, gpu, gpuCount, siteType, gpuPlatform);
+  const powerBandText = powerBand(load[1], gpu, gpuPlatform);
   const siteLabel = siteType === "datacenter" ? "데이터센터" : siteType === "office" ? "오피스/서버실" : "엣지/분산 설치";
 
   const state = {
     workload,
     gpu,
+    gpuPlatform,
+    gpuVariant,
     gpuCount,
     siteLabel,
     cpu: gpu.cpu,
@@ -573,10 +689,11 @@ function render() {
     network: siteType === "office" ? "10/25GbE x1" : siteType === "edge" ? "10GbE x1" : workload.network,
     os: workload.os,
     support: workload.support,
-    gpuPower: gpu.power.tdp,
-    gpuConnector: gpu.power.connector,
-    gpuExactness: gpu.power.exactness,
-    gpuServerNeed: gpu.serverNeed,
+    gpuPower: gpuVariant.tdp || "SKU-specific",
+    gpuConnector: gpuVariant.connector || "SKU-specific",
+    gpuExactness: gpuVariant.exactness || "SKU-specific",
+    gpuServerNeed: gpuVariant.serverNeed || "Check exact SKU before ordering",
+    gpuRequiredParts: gpuVariant.requiredParts || "Check exact SKU before ordering",
     powerText: `${formatRange(load)}, ${powerBandText}, ${siteType === "office" ? "office cooling margin" : siteType === "edge" ? "edge airflow margin" : workload.cooling}`,
     psuText: `${powerBandText}, 1+1 redundant`
   };
@@ -594,9 +711,10 @@ function render() {
 
   livePreview.textContent = [
     `워크로드: ${state.workload.label}`,
-    `GPU: ${state.gpu.label} x${state.gpuCount}`,
+    `GPU: ${state.gpu.label} / ${state.gpuPlatform} x${state.gpuCount}`,
     `GPU 전력: ${state.gpuPower}`,
     `GPU 커넥터: ${state.gpuConnector}`,
+    `필수 부품: ${state.gpuRequiredParts}`,
     `전원 기준: ${state.gpuExactness}`,
     `서버 요건: ${state.gpuServerNeed}`,
     `전력: ${state.powerText}`,
@@ -610,9 +728,9 @@ function render() {
       vendor,
       index,
       score:
-        (vendor.fit.includes(state.gpu.label) ? 2 : 0) +
         (vendor.fit.includes(state.gpu.value) ? 3 : 0) +
-        (vendor.vendor === "Dell" && state.gpu.value === "H100-PCIe" ? 1 : 0)
+        ((vendor.platforms?.includes(state.gpuPlatform) ?? true) ? 2 : 0) +
+        (vendor.vendor === "Dell" && state.gpu.value === "H100" && state.gpuPlatform === "PCIe" ? 1 : 0)
     }))
     .sort((a, b) => b.score - a.score || a.index - b.index);
 
@@ -630,6 +748,7 @@ function render() {
   persistState({
     workload: workloadKey,
     gpuTier: gpu.value,
+    gpuPlatform,
     gpuCount,
     siteType
   });
@@ -648,15 +767,16 @@ async function copyRequest() {
   }, 1200);
 }
 
-renderGpuOptions();
 const initial = getSelectedOptions();
 workloadSelect.value = initial.workload;
-gpuTierSelect.value = initial.gpuTier;
+gpuPlatformSelect.value = initial.gpuPlatform;
+renderGpuOptions(initial.gpuPlatform, initial.gpuTier);
 gpuCountInput.value = initial.gpuCount;
 siteTypeSelect.value = initial.siteType;
 
 workloadSelect.addEventListener("change", render);
 gpuTierSelect.addEventListener("change", render);
+gpuPlatformSelect.addEventListener("change", render);
 gpuCountInput.addEventListener("input", render);
 siteTypeSelect.addEventListener("change", render);
 copyButton.addEventListener("click", copyRequest);
