@@ -15,6 +15,8 @@ const livePreview = document.querySelector("#livePreview");
 const gpuCountLabel = document.querySelector("#gpuCountLabel");
 const vendorGrid = document.querySelector("#vendorGrid");
 const copyButton = document.querySelector("#copyButton");
+const gpuPowerValue = document.querySelector("#gpuPowerValue");
+const gpuConnectorValue = document.querySelector("#gpuConnectorValue");
 const STORAGE_KEY = "ai-server-request-state";
 
 const WORKLOADS = {
@@ -69,19 +71,214 @@ const WORKLOADS = {
 };
 
 const GPU_OPTIONS = [
-  { value: "RTX6000Ada", label: "RTX 6000 Ada", cpu: "2-socket, 16-32 cores", memory: "128GB-256GB", power: "0.7-0.9kW", psu: "2 x 1200W", fit: "dev/test, light inference", note: "워크스테이션 계열이지만 DC 추론에도 자주 사용" },
-  { value: "L4", label: "L4", cpu: "2-socket, 16-32 cores", memory: "192GB-384GB", power: "0.7-1.0kW", psu: "2 x 1200W", fit: "efficient inference", note: "비디오 AI, 저전력 추론" },
-  { value: "L40S", label: "L40S", cpu: "2-socket, 32-48 cores", memory: "256GB-512GB", power: "1.2-1.4kW", psu: "2 x 1600W", fit: "inference, light tuning", note: "현재 데이터센터에서 가장 많이 보는 축" },
-  { value: "A2", label: "A2", cpu: "2-socket, 16-24 cores", memory: "128GB-256GB", power: "0.4-0.7kW", psu: "2 x 800W", fit: "entry inference", note: "초경량 엣지/서비스용" },
-  { value: "A10", label: "A10", cpu: "2-socket, 16-32 cores", memory: "128GB-256GB", power: "0.6-0.9kW", psu: "2 x 1200W", fit: "general inference", note: "비교적 오래 쓰인 범용 GPU" },
-  { value: "T4", label: "T4", cpu: "2-socket, 16-24 cores", memory: "128GB-256GB", power: "0.35-0.6kW", psu: "2 x 800W", fit: "legacy inference", note: "레거시 추론 / 인코딩" },
-  { value: "A30", label: "A30", cpu: "2-socket, 24-32 cores", memory: "256GB-384GB", power: "0.8-1.1kW", psu: "2 x 1200W", fit: "balanced inference", note: "메모리 밸런스가 좋음" },
-  { value: "A40", label: "A40", cpu: "2-socket, 24-32 cores", memory: "256GB-384GB", power: "0.9-1.2kW", psu: "2 x 1200W", fit: "visual AI, inference", note: "비전/그래픽 작업에 자주 쓰임" },
-  { value: "A100-40", label: "A100 40GB", cpu: "2-socket, 48-64 cores", memory: "512GB-1TB", power: "1.6-2.2kW", psu: "2 x 2000W", fit: "training, high-end inference", note: "엔터프라이즈 학습의 기준점" },
-  { value: "A100-80", label: "A100 80GB", cpu: "2-socket, 48-64 cores", memory: "512GB-1TB", power: "1.8-2.4kW", psu: "2 x 2000W", fit: "training", note: "메모리 큰 학습/추론" },
-  { value: "H100-PCIe", label: "H100 PCIe", cpu: "2-socket, 48-64 cores", memory: "512GB-1TB", power: "2.0-2.6kW", psu: "2 x 2000W", fit: "heavy training", note: "현행 고성능 학습" },
-  { value: "H200", label: "H200", cpu: "high-core 2-socket+", memory: "1TB-2TB", power: "2.4-3.2kW", psu: "2 x 3000W", fit: "large-scale training", note: "큰 메모리 대역폭이 필요한 경우" },
-  { value: "B200", label: "B200", cpu: "high-core 2-socket+", memory: "1TB-2TB", power: "3.0-4.0kW", psu: "2 x 3000W", fit: "next-gen training", note: "차세대 랙 전력 예산 필요" }
+  {
+    value: "RTX6000Ada",
+    label: "RTX 6000 Ada",
+    cpu: "2-socket, 16-32 cores",
+    memory: "128GB-256GB",
+    power: {
+      tdp: "300W",
+      connector: "1x 16-pin (12VHPWR / 12V-2x6)",
+      exactness: "official reference"
+    },
+    platform: "PCIe dual-slot",
+    serverNeed: "Workstation or server chassis with a 16-pin GPU lead",
+    psu: "2 x 1200W",
+    fit: "dev/test, light inference",
+    note: "워크스테이션 계열이지만 DC 추론에도 자주 사용"
+  },
+  {
+    value: "L4",
+    label: "L4",
+    cpu: "2-socket, 16-32 cores",
+    memory: "192GB-384GB",
+    power: {
+      tdp: "72W",
+      connector: "slot-powered only",
+      exactness: "official reference"
+    },
+    platform: "PCIe low-profile",
+    serverNeed: "Any free x16 slot; no aux power lead",
+    psu: "2 x 1200W",
+    fit: "efficient inference",
+    note: "비디오 AI, 저전력 추론"
+  },
+  {
+    value: "L40S",
+    label: "L40S",
+    cpu: "2-socket, 32-48 cores",
+    memory: "256GB-512GB",
+    power: {
+      tdp: "350W",
+      connector: "1x 16-pin",
+      exactness: "official reference"
+    },
+    platform: "PCIe dual-slot air-cooled or single-slot liquid-cooled",
+    serverNeed: "Partner / NVIDIA-Certified chassis with a 16-pin GPU lead",
+    psu: "2 x 1600W",
+    fit: "inference, light tuning",
+    note: "현재 데이터센터에서 가장 많이 보는 축"
+  },
+  {
+    value: "A2",
+    label: "A2",
+    cpu: "2-socket, 16-24 cores",
+    memory: "128GB-256GB",
+    power: {
+      tdp: "70W",
+      connector: "slot-powered only",
+      exactness: "official reference"
+    },
+    platform: "PCIe low-profile",
+    serverNeed: "Any free x16 slot; no aux power lead",
+    psu: "2 x 800W",
+    fit: "entry inference",
+    note: "초경량 엣지/서비스용"
+  },
+  {
+    value: "A10",
+    label: "A10",
+    cpu: "2-socket, 16-32 cores",
+    memory: "128GB-256GB",
+    power: {
+      tdp: "150W class",
+      connector: "1x 8-pin PCIe (reference add-in card)",
+      exactness: "reference"
+    },
+    platform: "PCIe dual-slot",
+    serverNeed: "Server/workstation with one auxiliary 8-pin GPU lead",
+    psu: "2 x 1200W",
+    fit: "general inference",
+    note: "비교적 오래 쓰인 범용 GPU"
+  },
+  {
+    value: "T4",
+    label: "T4",
+    cpu: "2-socket, 16-24 cores",
+    memory: "128GB-256GB",
+    power: {
+      tdp: "70W",
+      connector: "slot-powered only",
+      exactness: "official reference"
+    },
+    platform: "PCIe low-profile",
+    serverNeed: "Any free x16 slot; no aux power lead",
+    psu: "2 x 800W",
+    fit: "legacy inference",
+    note: "레거시 추론 / 인코딩"
+  },
+  {
+    value: "A30",
+    label: "A30",
+    cpu: "2-socket, 24-32 cores",
+    memory: "256GB-384GB",
+    power: {
+      tdp: "165W class",
+      connector: "1x 8-pin PCIe (reference add-in card)",
+      exactness: "reference"
+    },
+    platform: "PCIe dual-slot",
+    serverNeed: "Server/workstation with one auxiliary 8-pin GPU lead",
+    psu: "2 x 1200W",
+    fit: "balanced inference",
+    note: "메모리 밸런스가 좋음"
+  },
+  {
+    value: "A40",
+    label: "A40",
+    cpu: "2-socket, 24-32 cores",
+    memory: "256GB-384GB",
+    power: {
+      tdp: "300W",
+      connector: "OEM/server-specific harness",
+      exactness: "SKU-specific"
+    },
+    platform: "PCIe dual-slot, active",
+    serverNeed: "OEM-qualified platform with the matching GPU harness",
+    psu: "2 x 1200W",
+    fit: "visual AI, inference",
+    note: "비전/그래픽 작업에 자주 쓰임"
+  },
+  {
+    value: "A100-40",
+    label: "A100 40GB",
+    cpu: "2-socket, 48-64 cores",
+    memory: "512GB-1TB",
+    power: {
+      tdp: "SKU-specific",
+      connector: "OEM/server-specific harness",
+      exactness: "SKU-specific"
+    },
+    platform: "PCIe or SXM depending SKU",
+    serverNeed: "NVIDIA-Certified / OEM-qualified platform for the exact A100 SKU",
+    psu: "2 x 2000W",
+    fit: "training, high-end inference",
+    note: "엔터프라이즈 학습의 기준점"
+  },
+  {
+    value: "A100-80",
+    label: "A100 80GB",
+    cpu: "2-socket, 48-64 cores",
+    memory: "512GB-1TB",
+    power: {
+      tdp: "SKU-specific",
+      connector: "OEM/server-specific harness",
+      exactness: "SKU-specific"
+    },
+    platform: "PCIe or SXM depending SKU",
+    serverNeed: "NVIDIA-Certified / OEM-qualified platform for the exact A100 SKU",
+    psu: "2 x 2000W",
+    fit: "training",
+    note: "메모리 큰 학습/추론"
+  },
+  {
+    value: "H100-PCIe",
+    label: "H100 PCIe",
+    cpu: "2-socket, 48-64 cores",
+    memory: "512GB-1TB",
+    power: {
+      tdp: "400W",
+      connector: "OEM/server-specific harness",
+      exactness: "SKU-specific"
+    },
+    platform: "PCIe dual-slot air-cooled",
+    serverNeed: "Partner / NVIDIA-Certified system with 1-8 GPUs",
+    psu: "2 x 2000W",
+    fit: "heavy training",
+    note: "현행 고성능 학습"
+  },
+  {
+    value: "H200",
+    label: "H200",
+    cpu: "high-core 2-socket+",
+    memory: "1TB-2TB",
+    power: {
+      tdp: "SXM or PCIe SKU-specific",
+      connector: "OEM/server-specific harness",
+      exactness: "SKU-specific"
+    },
+    platform: "SXM | PCIe depending SKU",
+    serverNeed: "HGX H200 or NVIDIA-Certified platform for the exact SKU",
+    psu: "2 x 3000W",
+    fit: "large-scale training",
+    note: "큰 메모리 대역폭이 필요한 경우"
+  },
+  {
+    value: "B200",
+    label: "B200 / Blackwell",
+    cpu: "high-core 2-socket+",
+    memory: "1TB-2TB",
+    power: {
+      tdp: "HGX platform-specific",
+      connector: "HGX baseboard / SXM",
+      exactness: "platform-specific"
+    },
+    platform: "HGX / 8x SXM",
+    serverNeed: "NVIDIA HGX with 8 Blackwell SXMs",
+    psu: "2 x 3000W",
+    fit: "next-gen training",
+    note: "차세대 랙 전력 예산 필요"
+  }
 ];
 
 const VENDORS = [
@@ -91,7 +288,14 @@ const VENDORS = [
     badge: "balanced enterprise",
     summary: "범용 AI 인프라와 추론형 서비스에 잘 맞는 2U 기준선.",
     fit: ["L4", "L40S", "A10", "A40"],
-    accent: ["#6ee7ff", "#10263b"]
+    accent: ["#6ee7ff", "#10263b"],
+    specs: {
+      formFactor: "2U dual-socket",
+      pcie: "PCIe Gen5 balanced expansion",
+      gpuClass: "1-4 GPU inference / mixed",
+      power: "Good default when you need balance",
+      serverNeed: "Balanced 2U chassis for mixed CPU, storage, and GPU loads"
+    }
   },
   {
     vendor: "HPE",
@@ -99,7 +303,14 @@ const VENDORS = [
     badge: "AMD GPU-friendly",
     summary: "PCIe 여유와 확장성이 좋아 GPU 수량이 늘어날수록 편함.",
     fit: ["L40S", "A100-40", "A100-80", "H100-PCIe"],
-    accent: ["#8cffc1", "#0d2d23"]
+    accent: ["#8cffc1", "#0d2d23"],
+    specs: {
+      formFactor: "2U dual-socket",
+      pcie: "PCIe Gen5 lane-heavy",
+      gpuClass: "heavier PCIe GPU configs",
+      power: "Best when PCIe lanes and capacity matter",
+      serverNeed: "Better fit when you expect more PCIe cards or denser GPU builds"
+    }
   },
   {
     vendor: "Dell",
@@ -107,7 +318,14 @@ const VENDORS = [
     badge: "general-purpose",
     summary: "추론, 혼합, 운영형 AI에서 가장 무난한 기준점.",
     fit: ["RTX6000Ada", "L4", "L40S", "A10"],
-    accent: ["#ffb86b", "#33210e"]
+    accent: ["#ffb86b", "#33210e"],
+    specs: {
+      formFactor: "2U dual-socket",
+      pcie: "PCIe balanced expansion",
+      gpuClass: "general-purpose inference",
+      power: "Strong default for mixed CPU/GPU workloads",
+      serverNeed: "Works well for 1-4 GPU deployments and day-to-day operations"
+    }
   },
   {
     vendor: "Dell",
@@ -115,7 +333,14 @@ const VENDORS = [
     badge: "training flagship",
     summary: "고밀도 GPU 학습과 큰 전력 예산에 맞는 플래그십.",
     fit: ["A100-80", "H100-PCIe", "H200", "B200"],
-    accent: ["#ff8bb1", "#331127"]
+    accent: ["#ff8bb1", "#331127"],
+    specs: {
+      formFactor: "4U GPU server",
+      pcie: "high-density GPU platform",
+      gpuClass: "dense training / max GPU count",
+      power: "Use when thermal and power budget are high",
+      serverNeed: "Best for dense GPU training where airflow and power budget are generous"
+    }
   }
 ];
 
@@ -219,6 +444,10 @@ GPU: ${state.gpu.label} x${state.gpuCount}
 - 네트워크: ${state.network}
 - OS: ${state.os}
 - 지원: ${state.support}
+- GPU 전력: ${state.gpuPower}
+- GPU 커넥터: ${state.gpuConnector}
+- GPU 전원 기준: ${state.gpuExactness}
+- GPU 서버 요건: ${state.gpuServerNeed}
 - 전력/냉각: ${state.powerText}
 - PSU: ${state.psuText}
 
@@ -281,6 +510,28 @@ function makeVendorCard(vendor, state) {
         <span>추천 이유</span>
         <strong>${fitReason}</strong>
       </div>
+      <div class="vendor-specs">
+        <div class="vendor-spec">
+          <span>폼팩터</span>
+          <strong>${vendor.specs.formFactor}</strong>
+        </div>
+        <div class="vendor-spec">
+          <span>PCIe / 확장</span>
+          <strong>${vendor.specs.pcie}</strong>
+        </div>
+        <div class="vendor-spec">
+          <span>GPU 적합도</span>
+          <strong>${vendor.specs.gpuClass}</strong>
+        </div>
+        <div class="vendor-spec">
+          <span>전원/열</span>
+          <strong>${vendor.specs.power}</strong>
+        </div>
+        <div class="vendor-spec">
+          <span>서버 요건</span>
+          <strong>${vendor.specs.serverNeed}</strong>
+        </div>
+      </div>
       <div class="vendor-meta">
         <span>적합 GPU</span>
         <strong>${vendor.fit.join(" / ")}</strong>
@@ -322,6 +573,10 @@ function render() {
     network: siteType === "office" ? "10/25GbE x1" : siteType === "edge" ? "10GbE x1" : workload.network,
     os: workload.os,
     support: workload.support,
+    gpuPower: gpu.power.tdp,
+    gpuConnector: gpu.power.connector,
+    gpuExactness: gpu.power.exactness,
+    gpuServerNeed: gpu.serverNeed,
     powerText: `${formatRange(load)}, ${powerBandText}, ${siteType === "office" ? "office cooling margin" : siteType === "edge" ? "edge airflow margin" : workload.cooling}`,
     psuText: `${powerBandText}, 1+1 redundant`
   };
@@ -333,11 +588,17 @@ function render() {
   networkValue.textContent = state.network;
   powerValue.textContent = state.powerText;
   psuValue.textContent = state.psuText;
+  gpuPowerValue.textContent = state.gpuPower;
+  gpuConnectorValue.textContent = state.gpuConnector;
   supportValue.textContent = state.support;
 
   livePreview.textContent = [
     `워크로드: ${state.workload.label}`,
     `GPU: ${state.gpu.label} x${state.gpuCount}`,
+    `GPU 전력: ${state.gpuPower}`,
+    `GPU 커넥터: ${state.gpuConnector}`,
+    `전원 기준: ${state.gpuExactness}`,
+    `서버 요건: ${state.gpuServerNeed}`,
     `전력: ${state.powerText}`,
     `냉각: ${siteType === "datacenter" ? "rack-optimized" : siteType === "office" ? "office-safe" : "edge-safe"}`,
     `포커스: ${state.workload.note}`

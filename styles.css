@@ -299,7 +299,7 @@ input[type="range"] {
 
 .summary-bar {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 10px;
   margin-top: 14px;
 }
@@ -398,6 +398,7 @@ input[type="range"] {
 }
 
 .server-art {
+  aspect-ratio: 16 / 9;
   border-radius: 18px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -412,11 +413,14 @@ input[type="range"] {
 .server-art svg {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
 }
 
 .server-art img {
-  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.server-art svg {
   object-fit: cover;
 }
 
@@ -434,6 +438,33 @@ input[type="range"] {
 .vendor-copy h3 {
   margin-top: 6px;
   font-size: 1.15rem;
+}
+
+.vendor-specs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.vendor-spec {
+  padding: 10px 11px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.vendor-spec span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.8rem;
+  margin-bottom: 4px;
+}
+
+.vendor-spec strong {
+  display: block;
+  line-height: 1.45;
+  font-size: 0.92rem;
 }
 
 .vendor-badge,
