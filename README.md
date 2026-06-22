@@ -14,7 +14,7 @@ npm start
 ## GitHub Pages
 
 이 프로젝트는 정적 파일만으로 동작하므로 GitHub Pages로 무료 배포할 수 있습니다.
-레포를 만든 뒤 `index.html`, `app.js`, `styles.css`, `server.js`를 그대로 올리면 됩니다.
+정적 배포에는 `index.html`, `app.js`, `styles.css`만 있으면 됩니다.
 
 ## 포함 기능
 

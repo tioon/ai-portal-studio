@@ -35,6 +35,11 @@ a {
   text-decoration: none;
 }
 
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
 .shell {
   width: min(1180px, calc(100vw - 24px));
   margin: 0 auto;
@@ -118,6 +123,27 @@ h2 {
   line-height: 1.6;
 }
 
+.vendor-reason {
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.vendor-reason span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.8rem;
+  margin-bottom: 5px;
+}
+
+.vendor-reason strong {
+  display: block;
+  line-height: 1.45;
+  font-size: 0.94rem;
+}
+
 .lede {
   max-width: 60ch;
   margin: 14px 0 0;
@@ -154,6 +180,13 @@ h2 {
 
 .button:hover {
   transform: translateY(-1px);
+}
+
+.button:focus-visible,
+select:focus-visible,
+input:focus-visible,
+summary:focus-visible {
+  box-shadow: 0 0 0 3px rgba(110, 231, 255, 0.24);
 }
 
 .button-primary {
@@ -371,6 +404,10 @@ input[type="range"] {
   background: #09111e;
 }
 
+.server-art--fallback {
+  padding: 8px;
+}
+
 .server-art img,
 .server-art svg {
   display: block;
@@ -468,5 +505,19 @@ input[type="range"] {
   .section-head,
   .card-heading {
     flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .button {
+    transition: none;
+  }
+
+  .button:hover {
+    transform: none;
   }
 }

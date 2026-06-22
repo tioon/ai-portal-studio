@@ -15,6 +15,7 @@ const livePreview = document.querySelector("#livePreview");
 const gpuCountLabel = document.querySelector("#gpuCountLabel");
 const vendorGrid = document.querySelector("#vendorGrid");
 const copyButton = document.querySelector("#copyButton");
+const STORAGE_KEY = "ai-server-request-state";
 
 const WORKLOADS = {
   inference: {
@@ -118,13 +119,45 @@ const VENDORS = [
   }
 ];
 
-const VENDOR_IMAGES = {
-  "Dell PowerEdge R760": "https://i.dell.com/is/image/DellContent/content/dam/ss2/product-images/dell-enterprise-products/enterprise-systems/poweredge/r760/media-gallery/server-poweredge-r760-black-gallery-2.psd?fmt=png-alpha&pscan=auto&scl=1&hei=402&wid=1250&qlt=100,1&resMode=sharp2&size=1250,402&chrss=full",
-  "Dell PowerEdge XE9680": "https://i.dell.com/is/image/DellContent/content/dam/ss2/product-images/dell-enterprise-products/enterprise-systems/poweredge/xe9680/media-gallery/server-poweredge-xe9680-black-gallery-2.psd?fmt=pjpg&pscan=auto&scl=1&hei=402&wid=748&qlt=100,1&resMode=sharp2&size=748,402&chrss=full"
-};
-
 function getGpu(value) {
   return GPU_OPTIONS.find((item) => item.value === value) || GPU_OPTIONS[0];
+}
+
+function getDefaultGpuIndex() {
+  return 2;
+}
+
+function getSelectedOptions() {
+  const params = new URLSearchParams(window.location.search);
+  const stored = (() => {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+    } catch {
+      return null;
+    }
+  })();
+
+  return {
+    workload: params.get("workload") || stored?.workload || "inference",
+    gpuTier: params.get("gpu") || stored?.gpuTier || GPU_OPTIONS[getDefaultGpuIndex()]?.value || GPU_OPTIONS[0].value,
+    gpuCount: params.get("count") || stored?.gpuCount || "2",
+    siteType: params.get("site") || stored?.siteType || "datacenter"
+  };
+}
+
+function persistState(nextState) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(nextState));
+  } catch {
+    // Ignore storage failures in private browsing or restricted contexts.
+  }
+
+  const url = new URL(window.location.href);
+  url.searchParams.set("workload", nextState.workload);
+  url.searchParams.set("gpu", nextState.gpuTier);
+  url.searchParams.set("count", String(nextState.gpuCount));
+  url.searchParams.set("site", nextState.siteType);
+  history.replaceState({}, "", `${url.pathname}?${url.searchParams.toString()}${url.hash}`);
 }
 
 function estimatedLoad(workloadKey, gpu, gpuCount, siteType) {
@@ -224,21 +257,16 @@ function makeVendorCard(vendor, state) {
   const card = document.createElement("article");
   card.className = "card vendor-card";
   const score = vendor.fit.includes(state.gpu.label) ? 2 : vendor.fit.includes(state.gpu.value) ? 3 : 0;
-  const imageUrl = VENDOR_IMAGES[`${vendor.vendor} ${vendor.model}`] || null;
   const fallback = fallbackSvg(vendor.vendor, vendor.model, vendor.accent[0], vendor.accent[1]);
+  const fitReason = vendor.fit.includes(state.gpu.value)
+    ? `현재 선택한 ${state.gpu.label}와 맞습니다.`
+    : vendor.fit.includes(state.gpu.label)
+      ? `${state.gpu.label} 계열을 받을 수 있습니다.`
+      : "현재 선택값과는 직접 매칭이 약합니다.";
 
   card.innerHTML = `
-    <div class="server-art">
-      ${
-        imageUrl
-          ? `<img
-              src="${imageUrl}"
-              alt="${vendor.vendor} ${vendor.model} 서버 이미지"
-              loading="lazy"
-              onerror="this.onerror=null;this.src='${fallback}'"
-            />`
-          : `<img src="${fallback}" alt="${vendor.vendor} ${vendor.model} 서버 이미지" loading="lazy" />`
-      }
+    <div class="server-art server-art--fallback">
+      <img src="${fallback}" alt="${vendor.vendor} ${vendor.model} 서버 이미지" loading="lazy" />
     </div>
     <div class="vendor-copy">
       <div class="vendor-top">
@@ -249,6 +277,10 @@ function makeVendorCard(vendor, state) {
         ${score > 0 ? '<span class="best-pill">추천</span>' : ""}
       </div>
       <p>${vendor.summary}</p>
+      <div class="vendor-reason">
+        <span>추천 이유</span>
+        <strong>${fitReason}</strong>
+      </div>
       <div class="vendor-meta">
         <span>적합 GPU</span>
         <strong>${vendor.fit.join(" / ")}</strong>
@@ -265,7 +297,7 @@ function makeVendorCard(vendor, state) {
 
 function renderGpuOptions() {
   gpuTierSelect.innerHTML = GPU_OPTIONS.map(
-    (gpu, index) => `<option value="${gpu.value}"${index === 2 ? " selected" : ""}>${gpu.label}</option>`
+    (gpu, index) => `<option value="${gpu.value}"${index === getDefaultGpuIndex() ? " selected" : ""}>${gpu.label}</option>`
   ).join("");
 }
 
@@ -334,6 +366,12 @@ function render() {
     })
   );
   copyButton.dataset.copy = requestTemplate.textContent;
+  persistState({
+    workload: workloadKey,
+    gpuTier: gpu.value,
+    gpuCount,
+    siteType
+  });
 }
 
 async function copyRequest() {
@@ -350,6 +388,12 @@ async function copyRequest() {
 }
 
 renderGpuOptions();
+const initial = getSelectedOptions();
+workloadSelect.value = initial.workload;
+gpuTierSelect.value = initial.gpuTier;
+gpuCountInput.value = initial.gpuCount;
+siteTypeSelect.value = initial.siteType;
+
 workloadSelect.addEventListener("change", render);
 gpuTierSelect.addEventListener("change", render);
 gpuCountInput.addEventListener("input", render);
