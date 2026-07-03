@@ -5,7 +5,10 @@
     "description": "프로젝트 링크를 모아두는 진입 페이지입니다.",
     "url": "./projects/portal-home/",
     "status": "live",
-    "tags": ["home", "links"]
+    "tags": [
+      "home",
+      "links"
+    ]
   },
   {
     "id": "ai-server-request",
@@ -13,15 +16,24 @@
     "description": "온프레미스 AI 서버 요청서 생성기입니다.",
     "url": "./projects/ai-server-request/",
     "status": "live",
-    "tags": ["server", "gpu", "request"]
+    "tags": [
+      "server",
+      "gpu",
+      "request"
+    ]
   },
   {
     "id": "cka-lab",
-    "name": "CKA Lab Simulator",
-    "description": "쿠버네티스 실전 학습 보드입니다.",
+    "name": "Kubernetes 3D Simulator",
+    "description": "3D로 쿠버네티스 컨트롤 플레인, 워커 노드, Pod, Service, Storage, RBAC 흐름을 시뮬레이션하는 프로젝트입니다.",
     "url": "./projects/cka-lab/",
     "status": "live",
-    "tags": ["cka", "kubernetes", "gpu"]
+    "tags": [
+      "cka",
+      "kubernetes",
+      "3d",
+      "simulator"
+    ]
   },
   {
     "id": "vllm-planner",
@@ -29,6 +41,11 @@
     "description": "실제 용도와 동시 사용자 수로 vLLM 설정을 자동 추천하는 계산기입니다.",
     "url": "./projects/vllm-planner/",
     "status": "live",
-    "tags": ["vllm", "llm", "gpu", "planner"]
+    "tags": [
+      "vllm",
+      "llm",
+      "gpu",
+      "planner"
+    ]
   }
 ]
