@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>vLLM 메모리 사용량 인터랙티브 가이드</title>
+<style>
+  :root{
+    --bg:#0b0f14; --panel:#121821; --panel2:#161e29; --border:#232c38;
+    --text:#e6edf3; --muted:#8b98a5; --accent:#ff7a3d; --accent2:#4dabf7;
+    --good:#3fb950; --warn:#d29922; --bad:#f85149;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Pretendard,Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.6;
+  }
+  header{
+    padding:40px 24px 28px; text-align:center;
+    background:radial-gradient(ellipse at top, #1a2330 0%, var(--bg) 65%);
+    border-bottom:1px solid var(--border);
+  }
+  header h1{margin:0 0 10px; font-size:28px; letter-spacing:-0.5px;}
+  header p{margin:0; color:var(--muted); font-size:14.5px; max-width:720px; margin:0 auto;}
+  main{max-width:1180px; margin:0 auto; padding:32px 20px 80px;}
+  section{margin-bottom:56px;}
+  h2{font-size:20px; margin:0 0 6px; display:flex; align-items:center; gap:8px;}
+  h2 .tag{font-size:11px; background:var(--panel2); border:1px solid var(--border); color:var(--muted); padding:2px 8px; border-radius:20px; font-weight:500;}
+  .sub{color:var(--muted); font-size:13.5px; margin:0 0 20px;}
+
+  .cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px;}
+  .card{background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:16px 18px;}
+  .card .dot{width:10px; height:10px; border-radius:50%; display:inline-block; margin-right:8px;}
+  .card h3{margin:0 0 8px; font-size:14.5px; display:flex; align-items:center;}
+  .card p{margin:0; font-size:12.8px; color:var(--muted);}
+
+  .grid2{display:grid; grid-template-columns:380px 1fr; gap:20px;}
+  @media (max-width:860px){.grid2{grid-template-columns:1fr;}}
+
+  .panel{background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:20px;}
+  .field{margin-bottom:16px;}
+  .field label{display:flex; justify-content:space-between; font-size:12.8px; color:var(--muted); margin-bottom:6px;}
+  .field label span.val{color:var(--accent2); font-weight:600;}
+  select, input[type=range], input[type=number]{
+    width:100%; background:var(--panel2); color:var(--text); border:1px solid var(--border);
+    border-radius:8px; padding:8px 10px; font-size:13px;
+  }
+  input[type=range]{padding:0; accent-color:var(--accent);}
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .checkline{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text); margin-top:4px;}
+  .checkline input{width:auto;}
+  .divider{border-top:1px dashed var(--border); margin:18px 0;}
+  .hint{font-size:11.5px; color:var(--muted); margin-top:4px;}
+  .planner{
+    border:1px solid rgba(77,171,247,0.28);
+    background:linear-gradient(180deg, rgba(77,171,247,0.08), rgba(18,24,33,0.95));
+    border-radius:14px;
+    padding:16px;
+    margin:16px 0 18px;
+  }
+  .planner-head{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    margin-bottom:10px;
+  }
+  .planner-head strong{font-size:14px;}
+  .planner-head span{font-size:12px; color:var(--muted);}
+  .planner-summary{
+    margin-top:10px;
+    padding:10px 12px;
+    border-radius:10px;
+    background:rgba(11,15,20,0.45);
+    border:1px dashed rgba(77,171,247,0.25);
+    color:#d8e4f0;
+    font-size:12.5px;
+    line-height:1.7;
+  }
+  .planner-summary b{color:#8fd0ff;}
+  .planner-actions{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;}
+  .mini-btn{
+    background:var(--panel2); color:var(--text); border:1px solid var(--border);
+    padding:8px 12px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer;
+  }
+  .mini-btn.primary{background:var(--accent2); color:#08131d; border-color:transparent;}
+  .mini-btn:hover{opacity:0.9;}
+
+  .stat-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-top:16px;}
+  .stat{background:var(--panel2); border:1px solid var(--border); border-radius:10px; padding:12px 14px;}
+  .stat .label{font-size:11.5px; color:var(--muted);}
+  .stat .value{font-size:19px; font-weight:700; margin-top:2px;}
+  .stat .value.small{font-size:15px;}
+
+  .barwrap{background:var(--panel2); border:1px solid var(--border); border-radius:10px; height:36px; overflow:hidden; display:flex; margin-top:14px;}
+  .barseg{height:100%; display:flex; align-items:center; justify-content:center; font-size:10.5px; color:#0b0f14; font-weight:700; white-space:nowrap; overflow:hidden;}
+
+  .legend{display:flex; flex-wrap:wrap; gap:14px; margin-top:10px; font-size:12px; color:var(--muted);}
+  .legend span{display:inline-flex; align-items:center; gap:6px;}
+  .legend i{width:10px; height:10px; border-radius:3px; display:inline-block;}
+
+  .banner{border-radius:10px; padding:12px 16px; font-size:13px; margin-top:16px; border:1px solid; display:none;}
+  .banner.show{display:block;}
+  .banner.ok{background:rgba(63,185,80,0.08); border-color:rgba(63,185,80,0.4); color:#7ee2a8;}
+  .banner.warn{background:rgba(210,153,34,0.08); border-color:rgba(210,153,34,0.4); color:#e3b341;}
+  .banner.bad{background:rgba(248,81,73,0.08); border-color:rgba(248,81,73,0.4); color:#ff8c85;}
+
+  table{width:100%; border-collapse:collapse; font-size:13px;}
+  th,td{text-align:left; padding:10px 12px; border-bottom:1px solid var(--border); vertical-align:top;}
+  th{color:var(--muted); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.03em;}
+  td.param{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; color:var(--accent2); white-space:nowrap;}
+  tr:hover td{background:rgba(255,255,255,0.02);}
+  .impact{display:inline-block; padding:1px 8px; border-radius:20px; font-size:11px; font-weight:600;}
+  .impact.up{background:rgba(248,81,73,0.15); color:#ff8c85;}
+  .impact.down{background:rgba(63,185,80,0.15); color:#7ee2a8;}
+  .impact.mix{background:rgba(210,153,34,0.15); color:#e3b341;}
+
+  .chartbox{position:relative; height:280px;}
+  footer{text-align:center; color:var(--muted); font-size:12px; padding:30px 20px 50px; border-top:1px solid var(--border);}
+  footer a{color:var(--accent2);}
+  code{background:var(--panel2); padding:1px 6px; border-radius:5px; font-size:12px; color:var(--accent2);}
+
+  .tabbtn{background:var(--panel2); color:var(--muted); border:1px solid var(--border); border-bottom:none;
+    padding:9px 18px; border-radius:8px 8px 0 0; cursor:pointer; font-size:13px; font-weight:600;}
+  .tabbtn.active{background:#0d1117; color:var(--text); border-color:var(--border);}
+  .tabpane{background:#0d1117; border:1px solid var(--border); border-radius:0 10px 10px 10px; padding:4px;}
+  pre{margin:0; padding:16px; overflow-x:auto; font-size:12.3px; line-height:1.65;}
+  pre code{background:none; padding:0; color:#c9d1d9; font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; white-space:pre;}
+  .btn{background:var(--accent); color:#0b0f14; border:none; padding:9px 18px; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer;}
+  .btn:hover{opacity:0.88;}
+  .btn.secondary{background:var(--panel2); color:var(--text); border:1px solid var(--border);}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🧠 vLLM 메모리 사용량 인터랙티브 가이드</h1>
+  <p>GPU 위에서 vLLM으로 LLM을 서빙할 때, <code>gpu_memory_utilization</code>·<code>max_model_len</code>·<code>tensor_parallel_size</code>·양자화 등 설정값에 따라 <b>모델 가중치 / KV 캐시 / 실행 오버헤드</b>가 어떻게 배분되는지 직접 확인할 수 있고, 이제는 실제 용도와 동시 사용자 수를 넣으면 추천값도 자동으로 채워집니다.</p>
+</header>
+
+<main>
+
+  <section id="overview">
+    <h2>1. GPU 메모리는 어디에 쓰이는가 <span class="tag">개요</span></h2>
+    <p class="sub">vLLM 프로세스가 GPU 한 장에서 점유하는 메모리는 크게 4가지로 나뉩니다.</p>
+    <div class="cards">
+      <div class="card"><h3><span class="dot" style="background:#ff7a3d"></span>모델 가중치</h3><p>파라미터 수 × dtype 바이트 수. Tensor Parallelism(TP)으로 GPU 수만큼 분할되고, 양자화(AWQ/GPTQ/FP8/INT4)로 크게 줄일 수 있습니다.</p></div>
+      <div class="card"><h3><span class="dot" style="background:#4dabf7"></span>KV 캐시</h3><p>PagedAttention이 블록 단위로 관리하는 어텐션 캐시. <code>gpu_memory_utilization</code>이 정한 여유 메모리의 대부분을 차지하며, 동시 처리 가능한 요청 수를 결정합니다.</p></div>
+      <div class="card"><h3><span class="dot" style="background:#d29922"></span>CUDA Graph / 활성화 버퍼</h3><p>추론 속도를 위해 캡처하는 CUDA Graph, 그리고 forward pass 중간 활성화 값. <code>enforce_eager=True</code>로 끄면 줄어들지만 속도가 느려집니다.</p></div>
+      <div class="card"><h3><span class="dot" style="background:#8b98a5"></span>프레임워크 오버헤드</h3><p>PyTorch/CUDA 컨텍스트, NCCL 통신 버퍼(TP 사용 시) 등 vLLM이 직접 제어하지 않는 고정 오버헤드.</p></div>
+    </div>
+  </section>
+
+  <section id="simulator">
+    <h2>2. 메모리 시뮬레이터 <span class="tag">인터랙티브</span></h2>
+    <p class="sub">아래 값을 조절하면 오른쪽 그래프와 통계가 실시간으로 갱신됩니다. 위의 자동 설정 플래너를 쓰면 실제 용도/동시 사용자/응답속도 기준으로 주요 vLLM 값이 자동 반영됩니다. (실제 배포 시에는 vLLM 버전·커널·모델 구조에 따라 오차가 있을 수 있는 근사 추정치입니다.)</p>
+
+    <div class="grid2">
+      <!-- CONTROLS -->
+      <div class="panel">
+        <div class="field">
+          <label>모델 프리셋</label>
+          <select id="modelPreset"></select>
+          <div class="hint" id="modelNote"></div>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label>레이어 수 <span class="val" id="v_layers"></span></label>
+            <input type="number" id="layers" min="1" max="200">
+          </div>
+          <div class="field">
+            <label>파라미터(B) <span class="val" id="v_params"></span></label>
+            <input type="number" id="params" min="0.1" step="0.1">
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label>KV Head 수 <span class="val" id="v_kvheads"></span></label>
+            <input type="number" id="kvheads" min="1" max="128">
+          </div>
+          <div class="field">
+            <label>Head Dim <span class="val" id="v_headdim"></span></label>
+            <input type="number" id="headdim" min="16" max="256">
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="field">
+          <label>GPU 종류 (프리셋 선택 시 VRAM 자동 입력)</label>
+          <select id="gpuPreset"></select>
+        </div>
+        <div class="field">
+          <label>실제 보유 VRAM (GB/장) — 직접 수정 가능 <span class="val" id="v_vram"></span></label>
+          <input type="number" id="vramInput" min="1" max="1000" step="1" value="80">
+          <div class="hint">MIG 분할, 공유 GPU 등 실제 환경에 맞게 자유롭게 값을 바꿀 수 있습니다.</div>
+        </div>
+
+        <div class="row2">
+          <div class="field">
+            <label>tensor_parallel_size <span class="val" id="v_tp"></span></label>
+            <select id="tp">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="4">4</option>
+              <option value="8">8</option>
+              <option value="16">16</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>pipeline_parallel_size <span class="val" id="v_pp"></span></label>
+            <select id="pp">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="4">4</option>
+              <option value="8">8</option>
+              <option value="16">16</option>
+            </select>
+          </div>
+        </div>
+        <div class="hint" id="gpuCountHint" style="margin:-8px 0 14px;"></div>
+
+        <div class="planner">
+          <div class="planner-head">
+            <div>
+              <strong>자동 설정 플래너</strong><br>
+              <span>실제 용도, 동시 사용자 수, 원하는 응답속도를 넣으면 핵심 vLLM 값을 자동으로 다시 잡습니다.</span>
+            </div>
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label>실제 LLM 용도</label>
+              <select id="workloadPreset"></select>
+            </div>
+            <div class="field">
+              <label>실제 동시 사용자 수 <span class="val" id="v_users"></span></label>
+              <input type="number" id="concurrentUsers" min="1" max="1024" step="1" value="16">
+            </div>
+          </div>
+          <div class="field">
+            <label>원하는 응답속도</label>
+            <select id="speedGoal">
+              <option value="latency">지연시간 우선</option>
+              <option value="balanced" selected>균형</option>
+              <option value="throughput">처리량 우선</option>
+            </select>
+          </div>
+          <div class="checkline" style="margin-top:8px;">
+            <input type="checkbox" id="autoApplyPlanner" checked>
+            <label for="autoApplyPlanner" style="margin:0; color:var(--text);">선택값 변경 시 자동으로 현재 설정에 반영</label>
+          </div>
+          <div class="planner-actions">
+            <button type="button" class="mini-btn primary" id="applyPlannerBtn">추천값 한 번에 적용</button>
+            <button type="button" class="mini-btn" id="resetPlannerBtn">플래너 기본값</button>
+          </div>
+          <div id="plannerSummary" class="planner-summary">용도와 사용자 수를 고르면 추천값이 여기에 표시됩니다.</div>
+        </div>
+
+        <div class="field">
+          <label>GPU 간 연결 방식</label>
+          <select id="interconnect">
+            <option value="nvlink">NVLink / NVSwitch (같은 서버, 고속 GPU 직결)</option>
+            <option value="pcie">PCIe (같은 서버, NVLink 없음)</option>
+            <option value="ethernet">이더넷/InfiniBand (여러 서버, 네트워크로 연결)</option>
+          </select>
+        </div>
+        <div id="interconnectBanner" class="banner"></div>
+
+        <div class="field">
+          <label>gpu_memory_utilization <span class="val" id="v_util"></span></label>
+          <input type="range" id="util" min="0.4" max="0.98" step="0.01" value="0.9">
+        </div>
+        <div class="field">
+          <label>max_model_len (토큰) <span class="val" id="v_maxlen"></span></label>
+          <input type="range" id="maxlen" min="512" max="131072" step="512" value="8192">
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label>max_num_seqs <span class="val" id="v_maxseqs"></span></label>
+            <input type="range" id="maxseqs" min="1" max="512" step="1" value="256">
+          </div>
+          <div class="field">
+            <label>max_num_batched_tokens <span class="val" id="v_maxbatch"></span></label>
+            <input type="range" id="maxbatch" min="512" max="32768" step="256" value="4096">
+          </div>
+        </div>
+        <div class="field">
+          <label>block_size <span class="val" id="v_blocksize"></span></label>
+          <select id="blocksize">
+            <option value="8">8</option>
+            <option value="16" selected>16 (기본값)</option>
+            <option value="32">32</option>
+            <option value="64">64</option>
+            <option value="128">128</option>
+          </select>
+          <div class="hint" id="blockHint"></div>
+        </div>
+
+        <div class="row2">
+          <div class="field">
+            <label>가중치 dtype / quantization</label>
+            <select id="wdtype">
+              <option value="2">FP16 / BF16 (2B)</option>
+              <option value="1">FP8 (1B)</option>
+              <option value="1_int8">INT8 (bitsandbytes, 1B)</option>
+              <option value="0.5_awq">AWQ INT4 (0.5B)</option>
+              <option value="0.5_gptq">GPTQ INT4 (0.5B)</option>
+              <option value="0.35">GGUF Q3_K (~0.35B)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>KV 캐시 dtype</label>
+            <select id="kvdtype">
+              <option value="2">모델과 동일 (FP16/BF16)</option>
+              <option value="1">FP8 KV 캐시</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row2">
+          <div class="field">
+            <label>cpu_offload_gb (TP 그룹 전체 기준) <span class="val" id="v_cpuoffload"></span></label>
+            <input type="range" id="cpuoffload" min="0" max="80" step="1" value="0">
+          </div>
+          <div class="field">
+            <label>swap_space (GPU당, CPU RAM) <span class="val" id="v_swap"></span></label>
+            <input type="range" id="swap" min="0" max="64" step="1" value="4">
+          </div>
+        </div>
+        <div class="hint">cpu_offload_gb는 vLLM CLI 플래그 값 그대로 <b>TP 랭크 전체 합산 기준</b>입니다(GPU당 실제 절감량 = 이 값 ÷ TP). swap_space는 GPU당 값이며, 부족할 때 KV 캐시를 CPU로 대피시킬 여유 공간입니다(둘 다 속도 저하 트레이드오프 있음).</div>
+
+        <div class="divider"></div>
+
+        <div class="checkline">
+          <input type="checkbox" id="kvOverrideEnabled">
+          <label for="kvOverrideEnabled" style="margin:0; color:var(--text);">kv_cache_memory_bytes로 수동 지정</label>
+        </div>
+        <div class="field" style="margin-top:8px;">
+          <input type="number" id="kvOverrideGB" min="0" max="1000" step="0.5" value="20" disabled>
+          <div class="hint">체크하면 gpu_memory_utilization 대신 이 값(GB)을 KV 캐시 크기로 직접 사용합니다.</div>
+        </div>
+
+        <div class="checkline">
+          <input type="checkbox" id="enforceEager">
+          <label for="enforceEager" style="margin:0; color:var(--text);">enforce_eager (CUDA Graph 비활성화)</label>
+        </div>
+        <div class="hint">체크 시 CUDA Graph용 메모리는 절약되지만 추론 속도(latency)가 느려집니다.</div>
+      </div>
+
+      <!-- OUTPUT -->
+      <div class="panel">
+        <div class="chartbox" id="chartbox"></div>
+        <div class="barwrap" id="barwrap"></div>
+        <div class="legend" id="legend"></div>
+        <div class="hint" style="margin-top:8px; line-height:1.9;">
+          <div><b style="color:#ff7a3d;">모델 가중치</b>: 파라미터 수 × dtype 바이트 ÷ (TP×PP)로 GPU당 배분된 가중치 크기.</div>
+          <div><b style="color:#4dabf7;">KV 캐시</b>: gpu_memory_utilization으로 확보한 메모리 중 가중치·오버헤드를 뺀 나머지로, 값이 클수록 더 많은 요청을 동시에 처리 가능.</div>
+          <div><b style="color:#d29922;">CUDA Graph/활성화</b>: 추론 속도를 위한 CUDA Graph 캡처 + forward pass 중간 계산값 버퍼(배치 크기에 비례하는 근사치).</div>
+          <div><b style="color:#8b98a5;">프레임워크 오버헤드</b>: PyTorch/CUDA 컨텍스트, NCCL 통신 버퍼 등 고정 비용.</div>
+          <div><b style="color:#5b6472;">미사용(util 밖)</b>: gpu_memory_utilization이 vLLM용으로 확보하지 않고 남겨둔 VRAM(다른 프로세스·안전 마진용).</div>
+        </div>
+
+        <div id="banner" class="banner"></div>
+
+        <div class="stat-grid">
+          <div class="stat"><div class="label">GPU당 모델 가중치</div><div class="value" id="s_weights">-</div></div>
+          <div class="stat"><div class="label">고정 오버헤드(활성화+CUDA Graph+프레임워크)</div><div class="value small" id="s_fixed">-</div></div>
+          <div class="stat"><div class="label">KV 캐시 가용 용량</div><div class="value" id="s_kvpool">-</div></div>
+          <div class="stat"><div class="label">토큰당 KV 캐시</div><div class="value small" id="s_perkvtoken">-</div></div>
+          <div class="stat"><div class="label">캐시 가능 최대 토큰 수</div><div class="value" id="s_maxtokens">-</div></div>
+          <div class="stat"><div class="label">동시 처리 가능 시퀀스(추정)</div><div class="value" id="s_concurrent">-</div></div>
+          <div class="stat"><div class="label">swap_space 포함 시 최대 시퀀스</div><div class="value small" id="s_concurrentSwap">-</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:20px;">
+      <h2 style="font-size:16px;">🖥️ 멀티 GPU 클러스터 뷰 <span class="tag" id="clusterTag"></span></h2>
+      <p class="sub" style="margin-bottom:14px;">tensor_parallel_size × pipeline_parallel_size 만큼의 GPU가 어떻게 메모리를 나눠 갖는지 보여줍니다 (균등 분할 가정).</p>
+      <div class="stat-grid" style="margin-top:0; margin-bottom:16px;">
+        <div class="stat"><div class="label">총 GPU 수</div><div class="value" id="c_gpus">-</div></div>
+        <div class="stat"><div class="label">클러스터 총 VRAM</div><div class="value" id="c_vram">-</div></div>
+        <div class="stat"><div class="label">모델 가중치 총합(전체 GPU)</div><div class="value small" id="c_weights">-</div></div>
+        <div class="stat"><div class="label">KV 캐시 총합(전체 GPU)</div><div class="value small" id="c_kv">-</div></div>
+      </div>
+      <div id="gpuGrid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:10px;"></div>
+    </div>
+  </section>
+
+  <section id="deploy">
+    <h2>3. 배포 명령어 자동 생성 <span class="tag">Deploy</span></h2>
+    <p class="sub">위에서 설정한 값 그대로 vLLM 실행 / Docker / Kubernetes 배포에 쓸 수 있는 명령어와 매니페스트를 생성합니다. vLLM, Docker, Kubernetes 각각 원하는 버전·형식을 골라보세요.</p>
+
+    <div class="panel">
+      <div class="row2" style="grid-template-columns:1.4fr 1fr 0.8fr;">
+        <div class="field">
+          <label>모델 경로 (HuggingFace repo ID)</label>
+          <input type="text" id="hfModelId" value="Qwen/Qwen3-8B">
+        </div>
+        <div class="field">
+          <label>vLLM 버전</label>
+          <select id="vllmVersion">
+            <option value="latest">latest (최신)</option>
+            <option value="v0.11.0">v0.11.0</option>
+            <option value="v0.10.2">v0.10.2</option>
+            <option value="v0.9.2">v0.9.2</option>
+            <option value="v0.8.5">v0.8.5</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>서빙 포트</label>
+          <input type="number" id="servePort" value="8000" min="1" max="65535">
+        </div>
+      </div>
+
+      <div style="display:flex; gap:6px; margin:16px 0 0;">
+        <button type="button" class="tabbtn active" data-tab="cli">🖥️ vLLM CLI</button>
+        <button type="button" class="tabbtn" data-tab="docker">🐳 Docker</button>
+        <button type="button" class="tabbtn" data-tab="k8s">☸️ Kubernetes</button>
+      </div>
+
+      <div id="tab-cli" class="tabpane">
+        <div style="padding:14px 16px 0;" class="hint">로컬/베어메탈 서버에 vLLM을 직접 설치해 실행하는 경우.</div>
+        <pre><code id="cmd-cli"></code></pre>
+      </div>
+
+      <div id="tab-docker" class="tabpane" style="display:none;">
+        <div style="padding:14px 16px 0;">
+          <div class="field" style="max-width:280px;">
+            <label>Docker 배포 형식</label>
+            <select id="dockerFormat">
+              <option value="run">docker run (CLI 한 줄)</option>
+              <option value="compose">docker-compose.yml (Compose v2)</option>
+            </select>
+          </div>
+          <div class="hint" id="dockerNote"></div>
+        </div>
+        <pre><code id="cmd-docker"></code></pre>
+      </div>
+
+      <div id="tab-k8s" class="tabpane" style="display:none;">
+        <div style="padding:14px 16px 0;">
+          <div class="field" style="max-width:340px;">
+            <label>Kubernetes 매니페스트 종류</label>
+            <select id="k8sFormat">
+              <option value="auto">자동 감지 (GPU 배치 기준 권장값)</option>
+              <option value="deployment">Deployment (단일 노드)</option>
+              <option value="lws">LeaderWorkerSet (멀티노드)</option>
+            </select>
+          </div>
+          <div class="hint" id="k8sNote"></div>
+        </div>
+        <pre><code id="cmd-k8s"></code></pre>
+      </div>
+
+      <div style="margin-top:14px; display:flex; gap:8px; align-items:center;">
+        <button type="button" class="btn" id="copyBtn">📋 현재 탭 복사하기</button>
+        <span id="copyStatus" class="hint" style="margin:0;"></span>
+      </div>
+    </div>
+  </section>
+
+  <section id="table">
+    <h2>4. 설정값별 메모리 영향 요약 <span class="tag">레퍼런스</span></h2>
+    <table>
+      <thead><tr><th>설정</th><th>메모리 영향</th><th>설명 및 팁</th></tr></thead>
+      <tbody id="tblBody"></tbody>
+    </table>
+  </section>
+
+  <section id="not-covered">
+    <h2>5. 이 계산기가 다루지 않는 요소 <span class="tag">한계</span></h2>
+    <p class="sub">위 시뮬레이터는 VRAM 사용량을 좌우하는 <b>가장 비중이 큰 설정들</b>을 다루지만, 실제 vLLM 배포에는 아래처럼 추가로 메모리에 영향을 주는 요소들이 있습니다 (수치는 반영되지 않음).</p>
+    <div class="cards">
+      <div class="card"><h3>LoRA 어댑터 (enable_lora, max_loras, max_lora_rank)</h3><p>동시에 로드하는 LoRA 어댑터 수 × rank에 비례해 별도 GPU 메모리 풀이 추가로 필요합니다.</p></div>
+      <div class="card"><h3>스펙큘레이티브 디코딩 (speculative_config)</h3><p>드래프트 모델의 가중치와 자체 KV 캐시가 추가로 GPU에 상주해야 합니다.</p></div>
+      <div class="card"><h3>멀티모달 인코더 (비전/오디오 타워)</h3><p>이미지·비디오·오디오 인코더 가중치와 처리 중 생성되는 피처 캐시가 별도로 메모리를 차지합니다.</p></div>
+      <div class="card"><h3>어휘(vocab) 크기 · 임베딩</h3><p>vocab_size가 매우 큰 모델(예: 15만 토큰 이상)은 embedding/lm_head 테이블 자체가 수백 MB~수 GB를 차지할 수 있습니다.</p></div>
+      <div class="card"><h3>CUDA Graph 캡처 배치 크기 목록</h3><p>compilation_config에서 캡처하는 배치 크기 종류가 많을수록 CUDA Graph 메모리가 이 계산기의 근사치보다 커질 수 있습니다.</p></div>
+      <div class="card"><h3>양자화 그룹 크기 · 캘리브레이션 메타데이터</h3><p>AWQ/GPTQ의 group_size, scale/zero-point 저장 방식에 따라 실제 가중치 메모리가 근사치와 조금씩 달라집니다.</p></div>
+      <div class="card"><h3>NCCL/커스텀 all-reduce 버퍼</h3><p>TP·PP 규모, 통신 백엔드(NCCL vs custom all-reduce)에 따라 통신 버퍼 크기가 달라집니다.</p></div>
+      <div class="card"><h3>MLA/하이브리드 어텐션 압축률</h3><p>DeepSeek·Kimi 계열의 MLA, Qwen3.6의 선형 어텐션처럼 압축된 캐시 구조는 표준 GQA 공식보다 실제 캐시가 더 작을 수 있어 이 계산기 수치는 상한 근사치입니다.</p></div>
+    </div>
+  </section>
+
+  <section id="tips">
+    <h2>6. 실전 팁</h2>
+    <div class="cards">
+      <div class="card"><h3>OOM이 날 때</h3><p><code>gpu_memory_utilization</code>을 낮추거나 <code>max_model_len</code>/<code>max_num_seqs</code>를 줄이세요. TP를 늘려 GPU 여러 장에 가중치를 분산하는 것도 방법입니다.</p></div>
+      <div class="card"><h3>동시 요청이 많을 때 (Preemption 발생)</h3><p><code>gpu_memory_utilization</code>을 올리거나 <code>tensor_parallel_size</code>를 늘려 KV 캐시 풀을 키우세요.</p></div>
+      <div class="card"><h3>속도가 중요할 때</h3><p><code>enforce_eager</code>는 끄고(기본값) CUDA Graph를 활용하세요. 메모리 여유가 있다면 FP8 KV 캐시로 캐시 용량을 2배 늘릴 수 있습니다.</p></div>
+      <div class="card"><h3>긴 컨텍스트가 필요할 때</h3><p><code>max_model_len</code>을 늘리는 대신 GQA(적은 KV head) 모델을 쓰거나 FP8 KV 캐시, 큰 <code>block_size</code>로 오버헤드를 줄이세요.</p></div>
+      <div class="card"><h3>GPU가 여러 장인데 NVLink가 없을 때</h3><p>PCIe/이더넷 환경에서는 <code>tensor_parallel_size</code>를 1로 두고 <code>pipeline_parallel_size</code>로만 분산하세요. PP는 스테이지 경계에서만 통신하므로 대역폭이 낮아도 상대적으로 안전합니다.</p></div>
+      <div class="card"><h3>여러 노드(멀티 서버)로 확장할 때</h3><p>TP는 반드시 노드 내 NVLink 도메인 안에서만 사용하고, 노드 간 확장은 PP로 하세요. 예: 노드당 8장 NVLink + 노드 4개 = TP8 × PP4.</p></div>
+      <div class="card"><h3>양자화를 고를 때</h3><p>AWQ/GPTQ INT4는 메모리는 크게 아끼지만 커널 지원·정확도 손실을 확인하세요. 정확도가 중요하면 FP8(가중치+KV 캐시)부터 시도하는 것이 안전한 절충안입니다.</p></div>
+      <div class="card"><h3>모델이 GPU 1장에 안 들어갈 때</h3><p><code>cpu_offload_gb</code>로 일부 가중치를 CPU RAM에 두거나, TP/PP를 늘려 여러 GPU에 나누세요. cpu_offload는 속도 저하가 크므로 임시방편에 가깝습니다.</p></div>
+      <div class="card"><h3>처리량(throughput) vs 지연시간(latency) 트레이드오프</h3><p><code>max_num_seqs</code>·<code>max_num_batched_tokens</code>를 늘리면 처리량은 오르지만 개별 요청의 지연시간(특히 TTFT)은 늘어날 수 있습니다. 서비스 SLA에 맞게 조정하세요.</p></div>
+      <div class="card"><h3>MoE 모델을 배포할 때</h3><p>총 파라미터(전체 전문가)가 VRAM 용량을 결정하므로, 활성 파라미터만 보고 GPU를 산정하면 안 됩니다. 총 파라미터 기준으로 TP/PP 규모를 계산하세요.</p></div>
+      <div class="card"><h3>메모리를 정확히 알고 싶을 때</h3><p>이 계산기는 근사치입니다. 실제 배포 전에는 <code>--gpu-memory-utilization</code>을 보수적으로(예: 0.85) 설정해 첫 실행 후 <code>nvidia-smi</code>로 실측하고 점진적으로 올리세요.</p></div>
+      <div class="card"><h3>짧은 프롬프트·대량 동시 요청 서비스</h3><p>챗봇처럼 <code>max_model_len</code>이 짧고 요청 수가 많은 경우, <code>block_size</code>를 작게(8) 유지하면 내부 단편화를 줄여 더 많은 시퀀스를 동시에 캐싱할 수 있습니다.</p></div>
+      <div class="card"><h3>긴 문서 요약 등 소수·고정 길이 요청 서비스</h3><p>동시 요청 수는 적고 <code>max_model_len</code>이 매우 긴 경우, <code>block_size</code>를 크게(64~128) 하면 블록 테이블 오버헤드가 줄어 효율이 좋아집니다.</p></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  근사 추정 기반 교육용 계산기입니다. 실제 값은 vLLM 버전, CUDA 커널, 모델 아키텍처에 따라 달라질 수 있으니 배포 전 <code>nvidia-smi</code> 및 vLLM 로그로 검증하세요.<br>
+  참고: <a href="https://docs.vllm.ai/en/stable/configuration/optimization/" target="_blank">vLLM Optimization &amp; Tuning</a> ·
+  <a href="https://docs.vllm.ai/en/stable/configuration/engine_args/" target="_blank">Engine Arguments</a> ·
+  <a href="https://docs.vllm.ai/en/latest/design/paged_attention/" target="_blank">PagedAttention Design</a> ·
+  <a href="https://docs.vllm.ai/en/latest/configuration/conserving_memory/" target="_blank">Conserving Memory</a>
+</footer>
+
+<script>
+// 2026년 기준 vLLM으로 자주 배포되는 최신 모델 스펙 (HuggingFace config.json 기준 근사치)
+const MODEL_PRESETS = [
+  {name:"Qwen3-8B (기본값)", layers:36, kvheads:8,  headdim:128, params:8.2, note:"", hfId:"Qwen/Qwen3-8B"},
+  {name:"Qwen3-14B",         layers:40, kvheads:8,  headdim:128, params:14.8, note:"", hfId:"Qwen/Qwen3-14B"},
+  {name:"Qwen3-32B",         layers:64, kvheads:8,  headdim:128, params:32.8, note:"", hfId:"Qwen/Qwen3-32B"},
+  {name:"Qwen3.5-4B",        layers:32, kvheads:4,  headdim:256, params:4, note:"GQA 16Q/4KV, head_dim 256 구조.", hfId:"Qwen/Qwen3.5-4B"},
+  {name:"Qwen3.6-35B-A3B (MoE, 3B 활성/35B 총)", layers:10, kvheads:2, headdim:256, params:35, note:"하이브리드 선형 어텐션 모델: 전체 40개 레이어 중 KV 캐시가 필요한 full-attention 레이어는 10개뿐이라 이 수치로 계산했습니다(나머지는 상태공간형 선형 어텐션이라 캐시가 거의 필요 없음). 총 파라미터(35B) 기준으로 가중치 메모리를 계산합니다.", hfId:"Qwen/Qwen3.6-35B-A3B"},
+  {name:"Gemma 3 27B",       layers:62, kvheads:16, headdim:128, params:27, note:"", hfId:"google/gemma-3-27b-it"},
+  {name:"Llama 3.1 70B",     layers:80, kvheads:8,  headdim:128, params:70, note:"", hfId:"meta-llama/Llama-3.1-70B-Instruct"},
+  {name:"Llama 4 Scout (MoE, 17B 활성/109B 총)", layers:48, kvheads:8, headdim:128, params:109, note:"MoE 모델: 모든 전문가 가중치가 VRAM에 상주하므로 총 파라미터(109B) 기준으로 계산됩니다. 실제 연산량은 활성 파라미터(17B)만 사용됩니다.", hfId:"meta-llama/Llama-4-Scout-17B-16E-Instruct"},
+  {name:"Kimi K2.6 (MoE, 32B 활성/1T 총)", layers:61, kvheads:1, headdim:512, params:1000, note:"MLA(Multi-head Latent Attention) 구조: 압축된 latent 캐시를 쓰므로 표준 GQA 공식보다 실제 KV 캐시는 더 작을 수 있습니다 (이 계산기 수치는 상한 근사치). 총 파라미터(1T) 기준으로 가중치 메모리를 계산하며, 여러 장/여러 노드 GPU가 필요합니다.", hfId:"moonshotai/Kimi-K2.6"},
+  {name:"GLM-5.2 (MoE, 40B 활성/744B 총, 근사치)", layers:80, kvheads:8, headdim:128, params:744, note:"레이어·헤드 상세 구성이 공개되지 않아 유사 규모 MoE 모델 기준 추정값을 사용했습니다. 총 파라미터(744B)는 공식 수치이며 가중치 메모리 규모 파악에는 유효하지만 KV 캐시 수치는 참고용입니다.", hfId:"zai-org/GLM-5.2"},
+  {name:"직접 입력",          layers:32, kvheads:8,  headdim:128, params:7, note:"", hfId:"your-org/your-model"},
+];
+
+// nvlinkDomain: NVLink/NVSwitch로 직접 묶일 수 있는 최대 GPU 대수 (이 범위를 넘는 TP는 노드 간 통신이 필요해짐)
+const GPU_PRESETS = [
+  {name:"NVIDIA B300 288GB (Blackwell Ultra, 최신)", vram:288, nvlinkDomain:8},
+  {name:"NVIDIA B200 192GB (Blackwell)",             vram:192, nvlinkDomain:8},
+  {name:"NVIDIA GB200 NVL72 (GPU당 192GB)",          vram:192, nvlinkDomain:72},
+  {name:"NVIDIA H200 141GB",                          vram:141, nvlinkDomain:8},
+  {name:"NVIDIA H100 80GB",                           vram:80,  nvlinkDomain:8},
+  {name:"NVIDIA A100 80GB",                           vram:80,  nvlinkDomain:8},
+  {name:"NVIDIA A100 40GB",                           vram:40,  nvlinkDomain:8},
+  {name:"NVIDIA L4 24GB",                             vram:24,  nvlinkDomain:1},
+  {name:"RTX 4090 24GB",                              vram:24,  nvlinkDomain:1},
+  {name:"직접 입력",                                    vram:40,  nvlinkDomain:8},
+];
+
+const TABLE_ROWS = [
+  ["gpu_memory_utilization","<span class='impact mix'>혼합</span>","KV 캐시로 쓸 GPU 메모리 비율(기본 0.92). 올리면 KV 캐시 여유가 늘지만 다른 프로세스와 공유 시 OOM 위험 증가."],
+  ["max_model_len","<span class='impact up'>KV↑</span>","시퀀스당 캐시 길이 상한. 길게 잡을수록 시퀀스 1개가 차지하는 KV 캐시가 커져 동시 처리 가능 요청 수는 줄어듦."],
+  ["max_num_seqs","<span class='impact up'>KV↑</span>","배치에서 동시에 처리할 시퀀스 수 상한. 크게 잡으면 처리량은 늘지만 필요한 KV 캐시 총량도 증가."],
+  ["max_num_batched_tokens","<span class='impact up'>활성화↑</span>","한 스텝에서 처리할 토큰 예산(청크 프리필). 크게 잡으면 처리량은 늘지만 활성화(activation) 버퍼 메모리가 커짐."],
+  ["tensor_parallel_size (TP)","<span class='impact down'>가중치/GPU↓</span>","모델 가중치와 KV head를 GPU 여러 장에 분할. GPU당 가중치·KV 메모리가 줄지만 NCCL 통신 오버헤드가 소폭 증가."],
+  ["pipeline_parallel_size (PP)","<span class='impact down'>가중치/GPU↓</span>","레이어를 단계별로 GPU에 분산. GPU당 가중치와 KV 캐시(레이어 수 비례)가 모두 줄어듦. 통신은 TP보다 적지만 파이프라인 버블로 지연시간 증가 가능."],
+  ["quantization (AWQ/GPTQ/FP8/INT4/GGUF)","<span class='impact down'>가중치↓</span>","가중치를 저정밀도로 저장해 메모리를 1/2~1/6로 절감. 절감된 만큼 KV 캐시나 배치 크기를 늘릴 수 있음."],
+  ["kv_cache_dtype (fp8)","<span class='impact down'>KV/토큰↓</span>","KV 캐시를 FP8로 양자화하면 토큰당 캐시 크기가 절반이 되어 같은 메모리로 2배 더 긴 컨텍스트/더 많은 요청 처리 가능."],
+  ["block_size","<span class='impact mix'>혼합</span>","PagedAttention 블록 크기(기본 16). 크면 블록 테이블 오버헤드는 줄지만 시퀀스 길이가 블록 단위로 올림 처리되어 내부 단편화(fragmentation)는 증가."],
+  ["cpu_offload_gb","<span class='impact down'>GPU 가중치↓</span>","지정한 GB만큼 가중치를 CPU RAM에 두고 필요할 때 전송. GPU 메모리는 아끼지만 레이어 전송 지연으로 속도가 느려짐."],
+  ["swap_space","<span class='impact mix'>CPU 오프로드</span>","GPU 메모리가 부족할 때 KV 캐시를 CPU RAM으로 스왑할 여유 공간(GiB). GPU 메모리 자체는 늘리지 않지만 OOM 대신 지연시간 증가로 대응하고, 유효 캐시 용량을 확장."],
+  ["enforce_eager","<span class='impact down'>오버헤드↓</span>","CUDA Graph 캡처를 생략해 그래프용 메모리를 절약하지만 추론 속도가 느려짐."],
+  ["kv_cache_memory_bytes","<span class='impact mix'>수동 지정</span>","gpu_memory_utilization 대신 KV 캐시 크기를 바이트 단위로 직접 지정해 더 세밀하게 제어."],
+];
+
+const WORKLOAD_PRESETS = [
+  {name:"실시간 챗봇", maxLen:4096,  avgPrompt:192, blockSize:16, util:0.90, baseSeqs:16, baseBatch:2048, kvBytes:2, swap:2, note:"짧은 질문/대화 중심. TTFT와 안정성을 우선합니다."},
+  {name:"RAG / 사내 검색", maxLen:8192,  avgPrompt:384, blockSize:16, util:0.91, baseSeqs:24, baseBatch:4096, kvBytes:2, swap:4, note:"검색된 문맥이 함께 들어오는 중간 길이 요청에 적합합니다."},
+  {name:"코드 어시스턴트", maxLen:16384, avgPrompt:512, blockSize:16, util:0.92, baseSeqs:12, baseBatch:4096, kvBytes:2, swap:4, note:"긴 프롬프트와 비교적 낮은 동시성을 함께 고려합니다."},
+  {name:"긴 문서 요약", maxLen:32768, avgPrompt:1024, blockSize:32, util:0.93, baseSeqs:8,  baseBatch:4096, kvBytes:1, swap:8, note:"긴 컨텍스트가 핵심이라 KV 캐시 절약을 우선합니다."},
+  {name:"대량 배치 생성", maxLen:4096,  avgPrompt:256, blockSize:32, util:0.95, baseSeqs:64, baseBatch:8192, kvBytes:1, swap:8, note:"처리량 우선. 배치를 키우고 FP8 KV 캐시를 적극 활용합니다."},
+  {name:"멀티모달", maxLen:8192, avgPrompt:512, blockSize:16, util:0.90, baseSeqs:8, baseBatch:3072, kvBytes:2, swap:4, note:"비전/오디오 인코더 메모리까지 감안한 보수적인 기본값입니다."},
+];
+
+const SPEED_GOALS = {
+  latency:   {label:"지연시간 우선", seqMul:0.90, batchMul:0.75, lenMul:0.90, utilAdj:-0.03, kvPref:"keep", block:"small", summary:"TTFT와 개별 응답속도를 우선합니다."},
+  balanced:  {label:"균형",         seqMul:1.15, batchMul:1.00, lenMul:1.00, utilAdj:0.00,  kvPref:"smart", block:"keep", summary:"메모리와 속도의 균형을 맞춥니다."},
+  throughput:{label:"처리량 우선",  seqMul:1.60, batchMul:1.35, lenMul:1.05, utilAdj:0.03,  kvPref:"prefer-fp8", block:"large", summary:"동시 처리량과 배치 효율을 우선합니다."},
+};
+
+let state = {};
+
+function el(id){ return document.getElementById(id); }
+
+function populateSelect(sel, items, labelFn){
+  sel.innerHTML = items.map((it,i)=>`<option value="${i}">${labelFn(it)}</option>`).join('');
+}
+
+function fmtGB(x){
+  if (x < 0) return "0.00 GB";
+  return x.toFixed(2) + " GB";
+}
+function fmtNum(x){
+  return Math.max(0, Math.floor(x)).toLocaleString('ko-KR');
+}
+
+// 외부 라이브러리 없이 순수 SVG로 그리는 도넛 차트 (오프라인/네트워크 차단 환경에서도 항상 동작)
+// size: SVG 전체 크기(px), strokeWidth: 도넛 두께, showText: 중앙 텍스트 표시 여부
+function donutSVG(segments, total, size, strokeWidth, showText, title){
+  const cx = 100, cy = 100, r = 80;
+  const circumference = 2 * Math.PI * r;
+  let offsetAcc = 0;
+  let arcs = '';
+  segments.forEach(s=>{
+    const val = Math.max(0, s.value);
+    const frac = total > 0 ? val/total : 0;
+    const dash = frac * circumference;
+    if (dash > 0){
+      arcs += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${s.color}" stroke-width="${strokeWidth}"
+        stroke-dasharray="${dash} ${circumference-dash}" stroke-dashoffset="${-offsetAcc}"><title>${s.label}: ${val.toFixed(2)} GB</title></circle>`;
+    }
+    offsetAcc += dash;
+  });
+  const usedGB = total - (segments.find(s=>s.label.startsWith('미사용'))?.value || 0);
+  const centerText = showText ? `
+    <text x="${cx}" y="${cy-4}" text-anchor="middle" fill="#e6edf3" font-size="16" font-weight="700" font-family="inherit">${usedGB.toFixed(1)} GB</text>
+    <text x="${cx}" y="${cy+14}" text-anchor="middle" fill="#8b98a5" font-size="9" font-family="inherit">/ ${total} GB 사용</text>` :
+    `<text x="${cx}" y="${cy+5}" text-anchor="middle" fill="#e6edf3" font-size="20" font-weight="700" font-family="inherit">${((usedGB/total)*100||0).toFixed(0)}%</text>`;
+  return `<svg viewBox="0 0 200 200" style="width:${size}px; height:${size}px; display:block; margin:0 auto;">
+      ${title ? `<title>${title}</title>` : ''}
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#1c2531" stroke-width="${strokeWidth}"></circle>
+      <g transform="rotate(-90 ${cx} ${cy})">${arcs}</g>
+      ${centerText}
+    </svg>`;
+}
+
+function initChart(){
+  // 최초 렌더는 compute()에서 updateChart 호출 시 채워짐
+  el('chartbox').innerHTML = '';
+}
+
+function updateChart(segments, total){
+  el('chartbox').innerHTML = donutSVG(segments, total, 260, 28, true, null);
+}
+
+function renderBarAndLegend(segments, total, wrapId, legendId){
+  const wrap = el(wrapId || 'barwrap');
+  wrap.innerHTML = '';
+  segments.forEach(s=>{
+    if (s.value <= 0) return;
+    const pct = (s.value/total*100);
+    const div = document.createElement('div');
+    div.className = 'barseg';
+    div.style.width = pct + '%';
+    div.style.background = s.color;
+    div.title = `${s.label}: ${fmtGB(s.value)}`;
+    div.textContent = pct > 7 ? s.label : '';
+    wrap.appendChild(div);
+  });
+  if (legendId !== null){
+    el(legendId || 'legend').innerHTML = segments.map(s=>`<span><i style="background:${s.color}"></i>${s.label}: ${fmtGB(s.value)}</span>`).join('');
+  }
+}
+
+function parseWDtype(v){
+  // "0.5_awq" 같은 형식에서 바이트 수만 추출
+  return parseFloat(v.split('_')[0]);
+}
+
+function clamp(v, min, max){
+  return Math.min(max, Math.max(min, v));
+}
+
+function roundTo(v, step){
+  return Math.round(v / step) * step;
+}
+
+function nextPow2Within(v, allowed){
+  const sorted = allowed.slice().sort((a,b)=>a-b);
+  for (let i = sorted.length - 1; i >= 0; i--){
+    if (sorted[i] <= v) return sorted[i];
+  }
+  return sorted[0];
+}
+
+function getPlannerState(){
+  const workloadIdx = +el('workloadPreset').value;
+  const workload = WORKLOAD_PRESETS[workloadIdx] || WORKLOAD_PRESETS[0];
+  const users = Math.max(1, +el('concurrentUsers').value || 1);
+  const speedKey = el('speedGoal').value;
+  const speed = SPEED_GOALS[speedKey] || SPEED_GOALS.balanced;
+  const model = MODEL_PRESETS[+el('modelPreset').value] || MODEL_PRESETS[0];
+  const totalGpus = Math.max(1, (+el('tp').value || 1) * (+el('pp').value || 1));
+  const gpuPreset = GPU_PRESETS[+el('gpuPreset').value] || GPU_PRESETS[0];
+  const interconnect = el('interconnect').value;
+  return {workload, users, speed, model, totalGpus, gpuPreset, interconnect};
+}
+
+function recommendPlannerSettings(){
+  const {workload, users, speed, model, totalGpus, gpuPreset, interconnect} = getPlannerState();
+  const allowedBlockSizes = [8, 16, 32, 64, 128];
+
+  const maxlen = clamp(roundTo(workload.maxLen * speed.lenMul, 512), 512, 131072);
+  const seqsBase = Math.max(workload.baseSeqs, Math.ceil(users * speed.seqMul));
+  const maxseqs = clamp(roundTo(seqsBase * (users >= 32 ? 1.25 : 1.0), 1), 1, 512);
+
+  const batchBase = Math.max(workload.baseBatch, users * workload.avgPrompt);
+  const maxbatch = clamp(roundTo(batchBase * speed.batchMul, 256), 512, 32768);
+
+  let blockSize = workload.blockSize;
+  if (speed.block === 'small') blockSize = Math.min(blockSize, 16);
+  if (speed.block === 'large') blockSize = Math.max(blockSize, maxlen >= 16384 ? 64 : 32);
+
+  let util = clamp(workload.util + speed.utilAdj + (users >= 64 ? 0.01 : 0), 0.4, 0.98);
+  if (interconnect !== 'nvlink' && totalGpus > 1) util = Math.min(util, 0.92);
+
+  let kvdtype = String(workload.kvBytes);
+  if (speed.kvPref === 'prefer-fp8' || users >= 24 || maxlen >= 16384) kvdtype = '1';
+  if (speed.kvPref === 'keep' && workload.kvBytes === 2 && users <= 8 && maxlen <= 8192) kvdtype = '2';
+
+  let eager = false;
+  let cpuOffloadGB = 0;
+  let swapGB = workload.swap;
+
+  // 모델이 큰데 현재 GPU 구성상 여유가 적으면 최소한의 offload 여유를 자동 제안
+  const wBytes = parseWDtype(el('wdtype').value);
+  const totalWeightGB = (model.params * 1e9 * wBytes) / 1e9;
+  const weightPerGpuGB = totalWeightGB / totalGpus;
+  const fixedEstimateGB = 0.6 + 0.15*(+el('tp').value - 1) + 0.05*(+el('pp').value - 1) + 0.12 + (maxbatch/4096)*0.35 + (maxseqs/512)*0.15;
+  const availableForEverythingGB = +el('vramInput').value * util;
+  if (weightPerGpuGB + fixedEstimateGB > availableForEverythingGB){
+    const shortageGB = weightPerGpuGB + fixedEstimateGB - availableForEverythingGB;
+    cpuOffloadGB = clamp(roundTo(shortageGB * totalGpus, 1), 0, 80);
+  }
+
+  const recommendedGpuNote = interconnect === 'nvlink'
+    ? `NVLink/NVSwitch 도메인(${gpuPreset.nvlinkDomain}장) 안에서 현재 GPU 구성(${totalGpus}장)을 유지합니다.`
+    : `현재 연결 방식(${interconnect === 'pcie' ? 'PCIe' : '이더넷/InfiniBand'})에서는 통신 병목을 줄이기 위해 보수적으로 잡습니다.`;
+
+  return {
+    maxlen,
+    maxseqs,
+    maxbatch,
+    blockSize: nextPow2Within(blockSize, allowedBlockSizes),
+    util: Number(util.toFixed(2)),
+    kvdtype,
+    eager,
+    cpuOffloadGB,
+    swapGB,
+    summary: `${workload.name} · ${users}명 동시 사용 · ${speed.label} 기준으로 자동 추천했습니다. ${recommendedGpuNote}`,
+    detail: `max_model_len=${maxlen.toLocaleString()}, max_num_seqs=${maxseqs}, max_num_batched_tokens=${maxbatch.toLocaleString()}, block_size=${blockSize}, gpu_memory_utilization=${util.toFixed(2)}, kv_cache_dtype=${kvdtype === '1' ? 'FP8' : 'FP16/BF16'}, swap_space=${swapGB}GB`,
+  };
+}
+
+function applyPlannerRecommendations(){
+  const rec = recommendPlannerSettings();
+  el('util').value = rec.util;
+  el('maxlen').value = rec.maxlen;
+  el('maxseqs').value = rec.maxseqs;
+  el('maxbatch').value = rec.maxbatch;
+  el('blocksize').value = String(rec.blockSize);
+  el('kvdtype').value = rec.kvdtype;
+  el('enforceEager').checked = rec.eager;
+  el('cpuoffload').value = rec.cpuOffloadGB;
+  el('swap').value = rec.swapGB;
+  el('plannerSummary').innerHTML = `<b>추천 반영됨:</b> ${rec.summary}<br>${rec.detail}`;
+  compute();
+}
+
+function renderPlannerPreview(){
+  if (!el('plannerSummary')) return;
+  const rec = recommendPlannerSettings();
+  el('v_users').textContent = (+el('concurrentUsers').value || 1) + ' 명';
+  el('plannerSummary').innerHTML = `<b>미리보기:</b> ${rec.summary}<br>${rec.detail}`;
+}
+
+function refreshPlannerPreview(){
+  renderPlannerPreview();
+  if (el('autoApplyPlanner') && el('autoApplyPlanner').checked){
+    applyPlannerRecommendations();
+  }
+}
+
+function renderGpuCluster(segments, vram, tp, pp){
+  const totalGpus = tp * pp;
+  el('c_gpus').textContent = totalGpus + ' 개';
+  el('c_vram').textContent = fmtGB(vram * totalGpus);
+  const weightSeg = segments.find(s=>s.label==='모델 가중치').value;
+  const kvSeg = segments.find(s=>s.label==='KV 캐시').value;
+  el('c_weights').textContent = fmtGB(weightSeg * totalGpus);
+  el('c_kv').textContent = fmtGB(kvSeg * totalGpus);
+  el('clusterTag').textContent = `TP=${tp} × PP=${pp}`;
+
+  const grid = el('gpuGrid');
+  const maxShow = 24; // 도넛 차트를 개별 렌더링할 최대 개수 (성능/가독성 고려)
+  const showCount = Math.min(totalGpus, maxShow);
+  let html = '';
+  for (let i=0; i<showCount; i++){
+    const ppStage = Math.floor(i/tp);
+    const tpRank = i % tp;
+    const title = `GPU ${i} (TP${tpRank}/PP${ppStage}) — ${fmtGB(vram - unusedFromSegments(segments))} 사용 / ${vram} GB`;
+    html += `
+      <div style="background:var(--panel2); border:1px solid var(--border); border-radius:10px; padding:10px; text-align:center;">
+        ${donutSVG(segments, vram, 100, 16, false, title)}
+        <div style="font-size:11px; color:var(--muted); margin-top:4px;">GPU ${i} · <span style="color:var(--accent2);">TP${tpRank}</span>/<span style="color:#e3b341;">PP${ppStage}</span></div>
+      </div>`;
+  }
+  if (totalGpus > maxShow){
+    html += `<div style="display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:12.5px; border:1px dashed var(--border); border-radius:10px; min-height:120px;">+ ${totalGpus-maxShow}개 더<br>(모두 동일 구성)</div>`;
+  }
+  grid.innerHTML = html;
+}
+
+function unusedFromSegments(segments){
+  return segments.find(s=>s.label.startsWith('미사용'))?.value || 0;
+}
+
+// TP/PP × 연결 방식 조합에 따른 통신 병목 근사 진단
+// TP는 매 레이어마다 all-reduce(빈번·큰 트래픽)가 필요해 대역폭에 매우 민감하고,
+// PP는 스테이지 경계에서만 activation을 point-to-point로 전달해 상대적으로 대역폭 요구가 낮음.
+function assessInterconnect(tp, pp, interconnect, nvlinkDomain){
+  const gpuIdxName = {nvlink:'NVLink/NVSwitch', pcie:'PCIe', ethernet:'이더넷/InfiniBand'}[interconnect];
+
+  if (tp === 1 && pp === 1){
+    return {cls:'ok', text:`✅ TP=1, PP=1이라 GPU 간 통신이 필요 없습니다 (단일 GPU 실행).`};
+  }
+
+  if (interconnect === 'nvlink'){
+    if (tp <= nvlinkDomain){
+      return {cls:'ok', text:`✅ TP(${tp})가 NVLink/NVSwitch 도메인(최대 ${nvlinkDomain}장) 이내라 all-reduce 통신이 고대역폭으로 처리됩니다. 병목 위험 낮음.`};
+    }
+    return {cls:'bad', text:`🚫 TP(${tp})가 NVLink 도메인(최대 ${nvlinkDomain}장)을 초과합니다. 일부 TP 랭크가 노드를 넘어가면서 실질적으로 이더넷/InfiniBand 통신이 섞여 심각한 병목이 발생할 수 있습니다. TP를 ${nvlinkDomain} 이하로 낮추고 나머지는 PP로 분산하세요.`};
+  }
+
+  if (interconnect === 'pcie'){
+    if (tp === 1){
+      return {cls:'ok', text:`✅ TP=1이라 PCIe로도 문제 없습니다. PP(${pp})는 스테이지 간 activation만 전송해 PCIe 대역폭(~32~64GB/s)에서도 비교적 안정적입니다.`};
+    }
+    return {cls:'bad', text:`⚠️ PCIe 대역폭(~32~64GB/s)은 NVLink(~900GB/s)의 1/15 수준입니다. TP(${tp})는 매 레이어 all-reduce가 필요해 PCIe에서는 심각한 통신 병목·속도 저하가 예상됩니다. 가능하면 TP=1로 두고 PP로만 분산하는 것을 권장합니다.`};
+  }
+
+  // ethernet
+  if (tp > 1){
+    return {cls:'bad', text:`🚫 TP(${tp})를 이더넷/InfiniBand로 연결된 노드 간에 사용하면 all-reduce 지연시간·대역폭 한계로 매우 심각한 병목이 발생합니다. TP는 반드시 노드 내 NVLink 범위로 제한하고, 노드 간 확장에는 PP(${pp})를 사용하세요.`};
+  }
+  return {cls:'warn', text:`⚠️ TP=1이라 노드 간에도 비교적 안전하지만, PP(${pp}) 스테이지 경계 activation 전송도 이더넷 대역폭·지연시간에 따라 처리량을 다소 낮출 수 있습니다. 고속 InfiniBand(200Gb/s 이상) 사용을 권장합니다.`};
+}
+
+function compute(){
+  const layers = +el('layers').value;
+  const paramsB = +el('params').value;
+  const kvheads = +el('kvheads').value;
+  const headdim = +el('headdim').value;
+
+  const vram = +el('vramInput').value;
+  const tp = +el('tp').value;
+  const pp = +el('pp').value;
+  const totalGpus = tp * pp;
+  const interconnect = el('interconnect').value;
+  const gpuPresetIdx = +el('gpuPreset').value;
+  const nvlinkDomain = (GPU_PRESETS[gpuPresetIdx] && GPU_PRESETS[gpuPresetIdx].nvlinkDomain) || 8;
+  const util = +el('util').value;
+  const maxlen = +el('maxlen').value;
+  const maxseqs = +el('maxseqs').value;
+  const maxbatch = +el('maxbatch').value;
+  const blockSize = +el('blocksize').value;
+  const wBytes = parseWDtype(el('wdtype').value);
+  const kvBytes = parseFloat(el('kvdtype').value);
+  const eager = el('enforceEager').checked;
+  const cpuOffloadGB = +el('cpuoffload').value;
+  const swapGB = +el('swap').value;
+  const kvOverrideOn = el('kvOverrideEnabled').checked;
+  const kvOverrideGB = +el('kvOverrideGB').value;
+
+  el('v_layers').textContent = layers;
+  el('v_params').textContent = paramsB + 'B';
+  el('v_kvheads').textContent = kvheads;
+  el('v_headdim').textContent = headdim;
+  el('v_vram').textContent = vram + ' GB';
+  el('v_tp').textContent = tp;
+  el('v_pp').textContent = pp;
+  el('v_util').textContent = util.toFixed(2);
+  el('v_maxlen').textContent = maxlen.toLocaleString();
+  el('v_maxseqs').textContent = maxseqs;
+  el('v_maxbatch').textContent = maxbatch.toLocaleString();
+  el('v_blocksize').textContent = blockSize;
+  el('v_cpuoffload').textContent = cpuOffloadGB + ' GB';
+  el('v_swap').textContent = swapGB + ' GB';
+  el('v_users').textContent = (+el('concurrentUsers').value || 1) + ' 명';
+  el('gpuCountHint').textContent = `총 사용 GPU 수 = tensor_parallel_size(${tp}) × pipeline_parallel_size(${pp}) = ${totalGpus}개`;
+
+  // 1) 모델 가중치 (GPU당: TP × PP로 균등 분할한다고 가정)
+  // cpu_offload_gb는 vLLM 실제 동작상 "TP 랭크 전체 합산" 값이므로, GPU 1장이 절감하는 양은 이 값 ÷ TP
+  const totalWeightBytes = paramsB * 1e9 * wBytes;
+  let weightPerGpuGB = (totalWeightBytes / totalGpus) / 1e9;
+  const cpuOffloadPerGpuGB = cpuOffloadGB / tp;
+  weightPerGpuGB = Math.max(0, weightPerGpuGB - cpuOffloadPerGpuGB);
+
+  // 2) 고정 오버헤드 (활성화 버퍼 + CUDA Graph + 프레임워크) - 근사치
+  const frameworkOverheadGB = 0.6 + 0.15*(tp-1) + 0.05*(pp-1); // NCCL/파이프라인 통신 버퍼 근사
+  const activationGB = 0.12 + (maxbatch/4096)*0.35 + (maxseqs/512)*0.15; // 청크 프리필/배치 크기에 비례
+  const cudaGraphGB = eager ? 0 : (0.8 + (maxseqs/256)*0.6);
+  const fixedOverheadGB = frameworkOverheadGB + activationGB + cudaGraphGB;
+
+  // 3) KV 캐시 풀 (util 기반 또는 kv_cache_memory_bytes 수동 지정)
+  let kvPoolGB;
+  if (kvOverrideOn){
+    kvPoolGB = Math.max(0, kvOverrideGB);
+  } else {
+    const usableGB = vram * util;
+    kvPoolGB = Math.max(0, usableGB - weightPerGpuGB - fixedOverheadGB);
+  }
+  const totalUsedGB = weightPerGpuGB + fixedOverheadGB + kvPoolGB;
+  const unusedGB = Math.max(0, vram - totalUsedGB);
+  const overCapacity = totalUsedGB > vram;
+
+  // 4) 토큰당 KV 캐시 바이트: 2 × (layers/pp) × (kvheads/tp) × headdim × kvBytes
+  const layersPerGpu = Math.max(1, layers/pp);
+  const kvHeadsPerGpu = Math.max(1, kvheads/tp);
+  const bytesPerToken = 2 * layersPerGpu * kvHeadsPerGpu * headdim * kvBytes;
+  const kvPoolBytes = kvPoolGB * 1e9;
+  const maxTokens = bytesPerToken > 0 ? kvPoolBytes / bytesPerToken : 0;
+
+  // block_size 단위로 올림 처리되는 PagedAttention 특성 반영
+  const effectiveLen = Math.ceil(maxlen / blockSize) * blockSize;
+  el('blockHint').textContent = `max_model_len(${maxlen.toLocaleString()})이 블록 단위로 올림되어 시퀀스당 실제로는 ${effectiveLen.toLocaleString()} 토큰만큼 캐시를 예약합니다.`;
+
+  const concurrentByLen = effectiveLen > 0 ? Math.floor(maxTokens / effectiveLen) : 0;
+  const concurrent = Math.max(0, Math.min(concurrentByLen, maxseqs));
+
+  // swap_space 포함 시 유효 최대 시퀀스
+  const swapTokens = bytesPerToken > 0 ? (swapGB*1e9) / bytesPerToken : 0;
+  const concurrentWithSwap = Math.max(0, Math.min(Math.floor((maxTokens+swapTokens)/effectiveLen || 0), maxseqs));
+
+  // status banner
+  let bannerClass = 'ok', bannerText = `✅ 설정이 GPU ${vram}GB × ${totalGpus}장(TP${tp}×PP${pp}) 안에서 안정적으로 동작할 것으로 추정됩니다.`;
+  if (overCapacity){
+    bannerClass = 'bad';
+    bannerText = `🚫 GPU당 필요한 메모리(가중치+오버헤드+KV = ${fmtGB(totalUsedGB)})가 실제 VRAM(${fmtGB(vram)})을 초과합니다 → OOM 위험. tensor_parallel_size/pipeline_parallel_size를 늘리거나 양자화, cpu_offload_gb, kv 수동 지정값을 조정하세요.`;
+  } else if (concurrent < 1){
+    bannerClass = 'warn';
+    bannerText = `⚠️ KV 캐시 여유(${fmtGB(kvPoolGB)})가 max_model_len(${maxlen.toLocaleString()} 토큰) 1개 시퀀스도 담기 부족합니다. max_model_len을 줄이거나 메모리 설정을 조정하세요.`;
+  } else if (concurrent < maxseqs){
+    bannerClass = 'warn';
+    bannerText = `⚠️ 설정한 max_num_seqs(${maxseqs}) 중 실제로는 약 ${concurrent}개 시퀀스만 동시에 max_model_len 길이로 캐싱 가능합니다. swap_space를 늘리면 최대 ${concurrentWithSwap}개까지 확장됩니다(지연시간 증가).`;
+  }
+  const banner = el('banner');
+  banner.className = 'banner show ' + bannerClass;
+  banner.textContent = bannerText;
+
+  // GPU 간 통신 병목 진단
+  const interDiag = assessInterconnect(tp, pp, interconnect, nvlinkDomain);
+  const interBanner = el('interconnectBanner');
+  interBanner.className = 'banner show ' + interDiag.cls;
+  interBanner.textContent = interDiag.text;
+
+  // update chart (1개 GPU 기준)
+  const segments = [
+    {label:'모델 가중치', value: weightPerGpuGB, color:'#ff7a3d'},
+    {label:'KV 캐시', value: kvPoolGB, color:'#4dabf7'},
+    {label:'CUDA Graph/활성화', value: cudaGraphGB+activationGB, color:'#d29922'},
+    {label:'프레임워크 오버헤드', value: frameworkOverheadGB, color:'#8b98a5'},
+    {label:'미사용(util 밖)', value: unusedGB, color:'#232c38'},
+  ];
+  updateChart(segments, vram);
+  renderBarAndLegend(segments, vram, 'barwrap', 'legend');
+  renderGpuCluster(segments, vram, tp, pp);
+
+  // stats
+  el('s_weights').textContent = fmtGB(weightPerGpuGB);
+  el('s_fixed').textContent = fmtGB(fixedOverheadGB);
+  el('s_kvpool').textContent = fmtGB(kvPoolGB);
+  el('s_perkvtoken').textContent = (bytesPerToken/1024).toFixed(1) + ' KB';
+  el('s_maxtokens').textContent = fmtNum(maxTokens) + ' 토큰';
+  el('s_concurrent').textContent = fmtNum(concurrent) + ' 개';
+  el('s_concurrentSwap').textContent = fmtNum(concurrentWithSwap) + ' 개 (swap ' + swapGB + 'GB 포함)';
+
+  // 배포 명령어도 함께 갱신
+  if (el('hfModelId')){
+    lastDeployCfg = {tp, pp, totalGpus, vram, nvlinkDomain, util, maxlen, maxseqs, maxbatch,
+      blockSize, wdtypeRaw: el('wdtype').value, kvdtypeRaw: el('kvdtype').value, eager, cpuOffloadGB, swapGB,
+      kvOverrideOn, kvOverrideGB};
+    updateDeployCommands(lastDeployCfg);
+  }
+}
+
+let lastDeployCfg = null;
+function refreshDeployOnly(){
+  if (lastDeployCfg) updateDeployCommands(lastDeployCfg);
+}
+
+// ---------- 배포 명령어(vLLM CLI / Docker / Kubernetes) 자동 생성 ----------
+
+function quantFlags(wdtypeRaw){
+  switch (wdtypeRaw){
+    case '1':       return {dtype:null, quant:'fp8'};
+    case '1_int8':  return {dtype:null, quant:'bitsandbytes'};
+    case '0.5_awq': return {dtype:null, quant:'awq'};
+    case '0.5_gptq':return {dtype:null, quant:'gptq'};
+    case '0.35':    return {dtype:null, quant:'gguf'};
+    default:        return {dtype:'bfloat16', quant:null}; // FP16/BF16
+  }
+}
+
+function buildEngineArgFlags(cfg){
+  const {dtype, quant} = quantFlags(cfg.wdtypeRaw);
+  const flags = [];
+  flags.push(['--tensor-parallel-size', cfg.tp]);
+  if (cfg.pp > 1) flags.push(['--pipeline-parallel-size', cfg.pp]);
+  flags.push(['--gpu-memory-utilization', cfg.util]);
+  flags.push(['--max-model-len', cfg.maxlen]);
+  flags.push(['--max-num-seqs', cfg.maxseqs]);
+  flags.push(['--max-num-batched-tokens', cfg.maxbatch]);
+  flags.push(['--block-size', cfg.blockSize]);
+  if (dtype) flags.push(['--dtype', dtype]);
+  if (quant) flags.push(['--quantization', quant]);
+  if (cfg.kvdtypeRaw === '1') flags.push(['--kv-cache-dtype', 'fp8']);
+  if (cfg.cpuOffloadGB > 0) flags.push(['--cpu-offload-gb', cfg.cpuOffloadGB]);
+  if (cfg.swapGB > 0) flags.push(['--swap-space', cfg.swapGB]);
+  if (cfg.kvOverrideOn) flags.push(['--kv-cache-memory-bytes', Math.round(cfg.kvOverrideGB * 1e9)]);
+  if (cfg.eager) flags.push(['--enforce-eager', null]);
+  return flags;
+}
+
+function slugify(id){
+  return ('vllm-' + id).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 50);
+}
+
+// meta-llama, google/gemma 등 라이선스 동의가 필요한 "게이트(gated)" 저장소는 HF 토큰 없이는 다운로드가 막힘
+function isGatedModel(modelId){
+  return /^(meta-llama|google\/gemma)/i.test(modelId);
+}
+
+function buildCliCommand(cfg){
+  const model = el('hfModelId').value.trim() || 'Qwen/Qwen3-8B';
+  const version = el('vllmVersion').value;
+  const port = +el('servePort').value || 8000;
+  const flags = buildEngineArgFlags(cfg);
+  const pipLine = version === 'latest' ? 'pip install -U vllm' : `pip install -U vllm==${version.replace(/^v/, '')}`;
+
+  let lines = [];
+  const multiNode = cfg.totalGpus > cfg.nvlinkDomain;
+  if (multiNode){
+    lines.push(`# ⚠️ 총 GPU 수(${cfg.totalGpus})가 선택한 GPU의 NVLink 도메인(최대 ${cfg.nvlinkDomain}장)을 초과합니다 → 여러 노드(서버) 필요`);
+    lines.push(`# 각 노드에 vLLM/Ray를 설치한 뒤, 헤드 노드에서 먼저 Ray 클러스터를 띄웁니다.`);
+    lines.push(`# [헤드 노드] ray start --head --port=6379`);
+    lines.push(`# [워커 노드] ray start --address=<헤드-노드-IP>:6379`);
+    lines.push('');
+  }
+  if (isGatedModel(model)){
+    lines.push(`# ⚠️ ${model}은(는) HuggingFace 라이선스 동의가 필요한 게이트(gated) 모델입니다.`);
+    lines.push(`# https://huggingface.co/${model} 에서 라이선스 동의 후 토큰 발급 필요`);
+    lines.push(`export HF_TOKEN=<여기에_본인의_HuggingFace_토큰>`);
+    lines.push('');
+  }
+  lines.push(`# 1) vLLM 설치 (버전: ${version})`);
+  lines.push(pipLine);
+  lines.push('');
+  lines.push(`# 2) 서버 실행`);
+  let cmd = [`vllm serve ${model} \\`];
+  flags.forEach(([flag, val], i)=>{
+    const isLast = i === flags.length - 1;
+    const part = val === null ? flag : `${flag} ${val}`;
+    cmd.push(`  ${part} \\`);
+  });
+  cmd.push(`  --port ${port}`);
+  lines = lines.concat(cmd);
+  return lines.join('\n');
+}
+
+function buildDockerCommand(cfg){
+  const model = el('hfModelId').value.trim() || 'Qwen/Qwen3-8B';
+  const version = el('vllmVersion').value;
+  const port = +el('servePort').value || 8000;
+  const format = el('dockerFormat').value;
+  const flags = buildEngineArgFlags(cfg);
+  const multiNode = cfg.totalGpus > cfg.nvlinkDomain;
+
+  const gated = isGatedModel(model);
+  const noteEl = el('dockerNote');
+  let note = multiNode
+    ? `⚠️ 이 설정은 GPU ${cfg.totalGpus}장이 필요해 한 서버(노드)에 다 들어가지 않을 수 있습니다. Docker 단일 컨테이너는 한 노드 안에서만 동작하므로, 멀티노드가 필요하면 Kubernetes(LeaderWorkerSet) 탭을 사용하세요.`
+    : `이 설정은 GPU ${cfg.totalGpus}장으로 한 서버 안에서 동작합니다.`;
+  if (gated) note += ` ⚠️ ${model}은(는) 게이트(gated) 모델이라 실행 전 터미널에서 export HF_TOKEN=<토큰> 을 먼저 해두세요.`;
+  noteEl.textContent = note;
+
+  if (format === 'run'){
+    let cmd = [
+      `docker run --runtime nvidia --gpus all \\`,
+      `  --shm-size=16g \\`,
+    ];
+    if (gated) cmd.push(`  -e HF_TOKEN=$HF_TOKEN \\`);
+    cmd.push(
+      `  -v ~/.cache/huggingface:/root/.cache/huggingface \\`,
+      `  -p ${port}:${port} \\`,
+      `  vllm/vllm-openai:${version} \\`,
+      `  --model ${model} \\`,
+    );
+    flags.forEach(([flag, val])=>{
+      cmd.push(`  ${val === null ? flag : `${flag} ${val}`} \\`);
+    });
+    cmd.push(`  --port ${port}`);
+    return cmd.join('\n');
+  }
+
+  // docker-compose.yml
+  const cmdArgsYaml = [`"--model", "${model}",`]
+    .concat(flags.map(([flag, val])=> val === null ? `"${flag}",` : `"${flag}", "${val}",`))
+    .concat([`"--port", "${port}"`]);
+  const lines = [
+    `services:`,
+    `  vllm:`,
+    `    image: vllm/vllm-openai:${version}`,
+    `    runtime: nvidia`,
+    `    shm_size: '16gb'`,
+    `    ports:`,
+    `      - "${port}:${port}"`,
+  ];
+  if (gated) lines.push(`    environment:`, `      - HF_TOKEN=\${HF_TOKEN}  # export HF_TOKEN=<토큰> 후 실행`);
+  lines.push(
+    `    volumes:`,
+    `      - ~/.cache/huggingface:/root/.cache/huggingface`,
+    `    deploy:`,
+    `      resources:`,
+    `        reservations:`,
+    `          devices:`,
+    `            - driver: nvidia`,
+    `              count: ${cfg.totalGpus}`,
+    `              capabilities: ["gpu"]`,
+    `    command: [`,
+    ...cmdArgsYaml.map(l=>`      ${l}`),
+    `    ]`,
+  );
+  return lines.join('\n');
+}
+
+function buildK8sManifest(cfg){
+  const model = el('hfModelId').value.trim() || 'Qwen/Qwen3-8B';
+  const version = el('vllmVersion').value;
+  const port = +el('servePort').value || 8000;
+  const format = el('k8sFormat').value;
+  const flags = buildEngineArgFlags(cfg);
+  const name = slugify(model);
+  const multiNodeNeeded = cfg.totalGpus > cfg.nvlinkDomain;
+  const useLws = format === 'lws' || (format === 'auto' && multiNodeNeeded);
+
+  const gated = isGatedModel(model);
+  const noteEl = el('k8sNote');
+  let note = useLws
+    ? `멀티노드 배포: 노드당 GPU ${cfg.tp}장(TP) × 노드 ${cfg.pp}대(PP) = 총 ${cfg.totalGpus}장. LeaderWorkerSet 컨트롤러(lws.sigs.k8s.io)가 클러스터에 설치되어 있어야 합니다.`
+    : `단일 노드 배포: GPU ${cfg.totalGpus}장이 한 노드/Pod 안에서 동작합니다.`;
+  if (gated) note += ` ⚠️ 게이트 모델이라 kubectl create secret generic hf-token --from-literal=token=<토큰> 을 먼저 만들어야 합니다.`;
+  noteEl.textContent = note;
+
+  const argsList = [`"--model"`, `"${model}"`]
+    .concat(flags.flatMap(([flag, val])=> val === null ? [`"${flag}"`] : [`"${flag}"`, `"${val}"`]))
+    .concat([`"--port"`, `"${port}"`]);
+
+  if (!useLws){
+    const lines = [
+      `apiVersion: apps/v1`,
+      `kind: Deployment`,
+      `metadata:`,
+      `  name: ${name}`,
+      `spec:`,
+      `  replicas: 1`,
+      `  selector:`,
+      `    matchLabels: { app: ${name} }`,
+      `  template:`,
+      `    metadata:`,
+      `      labels: { app: ${name} }`,
+      `    spec:`,
+      `      containers:`,
+      `        - name: vllm`,
+      `          image: vllm/vllm-openai:${version}`,
+      `          args: [${argsList.join(', ')}]`,
+    ];
+    if (gated){
+      lines.push(
+        `          env:`,
+        `            - name: HF_TOKEN`,
+        `              valueFrom:`,
+        `                secretKeyRef: { name: hf-token, key: token }`,
+      );
+    }
+    lines.push(
+      `          ports:`,
+      `            - containerPort: ${port}`,
+      `          readinessProbe:`,
+      `            httpGet: { path: /health, port: ${port} }`,
+      `            initialDelaySeconds: 60`,
+      `            periodSeconds: 10`,
+      `          livenessProbe:`,
+      `            httpGet: { path: /health, port: ${port} }`,
+      `            initialDelaySeconds: 120`,
+      `            periodSeconds: 20`,
+      `          resources:`,
+      `            limits:`,
+      `              nvidia.com/gpu: "${cfg.totalGpus}"`,
+      `          volumeMounts:`,
+      `            - name: hf-cache`,
+      `              mountPath: /root/.cache/huggingface`,
+      `      volumes:`,
+      `        - name: hf-cache`,
+      `          emptyDir: {}`,
+      `---`,
+      `apiVersion: v1`,
+      `kind: Service`,
+      `metadata:`,
+      `  name: ${name}`,
+      `spec:`,
+      `  selector: { app: ${name} }`,
+      `  ports:`,
+      `    - port: ${port}`,
+      `      targetPort: ${port}`,
+    );
+    return lines.join('\n');
+  }
+
+  // LeaderWorkerSet (멀티노드): tensor_parallel_size = 노드당 GPU 수, pipeline_parallel_size = 노드 수(size)
+  const serveArgs = [`--tensor-parallel-size ${cfg.tp}`, `--pipeline-parallel-size ${cfg.pp}`]
+    .concat(flags.filter(([f])=> f!=='--tensor-parallel-size' && f!=='--pipeline-parallel-size')
+      .map(([flag,val])=> val===null? flag : `${flag} ${val}`))
+    .concat([`--port ${port}`]);
+
+  return [
+    `# 사전 준비: kubectl apply --server-side -f https://github.com/kubernetes-sigs/lws/releases/latest/download/manifests.yaml`,
+    `apiVersion: leaderworkerset.x-k8s.io/v1`,
+    `kind: LeaderWorkerSet`,
+    `metadata:`,
+    `  name: ${name}`,
+    `spec:`,
+    `  replicas: 1`,
+    `  leaderWorkerTemplate:`,
+    `    size: ${cfg.pp}   # = pipeline_parallel_size (노드 수)`,
+    `    restartPolicy: RecreateGroupOnPodRestart`,
+    `    leaderTemplate:`,
+    `      metadata:`,
+    `        labels: { role: leader }`,
+    `      spec:`,
+    `        containers:`,
+    `          - name: vllm-leader`,
+    `            image: vllm/vllm-openai:${version}`,
+    `            command: ["/bin/sh", "-c"]`,
+    `            args:`,
+    `              - "ray start --head --port=6379 --block & vllm serve ${model} ${serveArgs.join(' ')}"`,
+    ...(gated ? [
+      `            env:`,
+      `              - name: HF_TOKEN`,
+      `                valueFrom:`,
+      `                  secretKeyRef: { name: hf-token, key: token }`,
+    ] : []),
+    `            ports:`,
+    `              - containerPort: ${port}`,
+    `            resources:`,
+    `              limits:`,
+    `                nvidia.com/gpu: "${cfg.tp}"   # = tensor_parallel_size (노드당 GPU 수)`,
+    `    workerTemplate:`,
+    `      spec:`,
+    `        containers:`,
+    `          - name: vllm-worker`,
+    `            image: vllm/vllm-openai:${version}`,
+    `            command: ["/bin/sh", "-c"]`,
+    `            args:`,
+    `              - "ray start --address=\${LWS_LEADER_ADDRESS}:6379 --block"`,
+    ...(gated ? [
+      `            env:`,
+      `              - name: HF_TOKEN`,
+      `                valueFrom:`,
+      `                  secretKeyRef: { name: hf-token, key: token }`,
+    ] : []),
+    `            resources:`,
+    `              limits:`,
+    `                nvidia.com/gpu: "${cfg.tp}"`,
+    `---`,
+    `apiVersion: v1`,
+    `kind: Service`,
+    `metadata:`,
+    `  name: ${name}`,
+    `spec:`,
+    `  selector: { role: leader }`,
+    `  ports:`,
+    `    - port: ${port}`,
+    `      targetPort: ${port}`,
+  ].join('\n');
+}
+
+function updateDeployCommands(cfg){
+  el('cmd-cli').textContent = buildCliCommand(cfg);
+  el('cmd-docker').textContent = buildDockerCommand(cfg);
+  el('cmd-k8s').textContent = buildK8sManifest(cfg);
+}
+
+function switchTab(tabName){
+  ['cli','docker','k8s'].forEach(t=>{
+    el('tab-'+t).style.display = (t===tabName) ? '' : 'none';
+  });
+  document.querySelectorAll('.tabbtn').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.tab === tabName);
+  });
+}
+
+function currentTabCode(){
+  const activeBtn = document.querySelector('.tabbtn.active');
+  const tab = activeBtn ? activeBtn.dataset.tab : 'cli';
+  return el('cmd-' + tab).textContent;
+}
+
+function applyModelPreset(){
+  const idx = +el('modelPreset').value;
+  const m = MODEL_PRESETS[idx];
+  el('layers').value = m.layers;
+  el('params').value = m.params;
+  el('kvheads').value = m.kvheads;
+  el('headdim').value = m.headdim;
+  el('modelNote').textContent = m.note || '';
+  if (el('hfModelId') && m.hfId) el('hfModelId').value = m.hfId;
+  compute();
+  refreshPlannerPreview();
+}
+
+function applyGpuPreset(){
+  const idx = +el('gpuPreset').value;
+  el('vramInput').value = GPU_PRESETS[idx].vram;
+  compute();
+  refreshPlannerPreview();
+}
+
+function buildTable(){
+  el('tblBody').innerHTML = TABLE_ROWS.map(r=>`<tr><td class="param">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('');
+}
+
+function init(){
+  populateSelect(el('modelPreset'), MODEL_PRESETS, m=>m.name);
+  populateSelect(el('gpuPreset'), GPU_PRESETS, g=>g.name);
+  populateSelect(el('workloadPreset'), WORKLOAD_PRESETS, w=>w.name);
+  const defaultGpuIdx = GPU_PRESETS.findIndex(g=>g.name.includes('H100 80GB'));
+  el('gpuPreset').value = defaultGpuIdx >= 0 ? defaultGpuIdx : 0;
+  el('vramInput').value = GPU_PRESETS[+el('gpuPreset').value].vram;
+
+  buildTable();
+  initChart();
+
+  el('kvOverrideEnabled').addEventListener('change', ()=>{
+    el('kvOverrideGB').disabled = !el('kvOverrideEnabled').checked;
+    compute();
+  });
+
+  el('modelPreset').addEventListener('change', applyModelPreset);
+  el('gpuPreset').addEventListener('change', applyGpuPreset);
+  ['tp','pp','blocksize','wdtype','kvdtype','interconnect'].forEach(id=> el(id).addEventListener('change', ()=>{ compute(); renderPlannerPreview(); }));
+
+  ['vramInput','util','maxlen','maxseqs','maxbatch',
+   'enforceEager','cpuoffload','swap','kvOverrideGB','layers','params','kvheads','headdim']
+    .forEach(id=> el(id).addEventListener('input', ()=>{ compute(); renderPlannerPreview(); }));
+
+  // 배포 명령어 탭 전환
+  document.querySelectorAll('.tabbtn').forEach(btn=>{
+    btn.addEventListener('click', ()=> switchTab(btn.dataset.tab));
+  });
+
+  ['workloadPreset','concurrentUsers','speedGoal'].forEach(id=>{
+    const ev = id === 'concurrentUsers' ? 'input' : 'change';
+    el(id).addEventListener(ev, ()=>{
+      if (el('autoApplyPlanner').checked){
+        applyPlannerRecommendations();
+      }else{
+        renderPlannerPreview();
+      }
+    });
+  });
+  el('autoApplyPlanner').addEventListener('change', refreshPlannerPreview);
+  el('applyPlannerBtn').addEventListener('click', applyPlannerRecommendations);
+  el('resetPlannerBtn').addEventListener('click', ()=>{
+    el('workloadPreset').value = 0;
+    el('concurrentUsers').value = 16;
+    el('speedGoal').value = 'balanced';
+    refreshPlannerPreview();
+  });
+
+  // 배포 명령어에만 영향을 주는 필드 (메모리 계산과는 무관하므로 compute() 전체를 다시 돌리지 않음)
+  el('hfModelId').addEventListener('input', refreshDeployOnly);
+  ['vllmVersion','servePort','dockerFormat','k8sFormat'].forEach(id=>{
+    el(id).addEventListener('input', refreshDeployOnly);
+    el(id).addEventListener('change', refreshDeployOnly);
+  });
+
+  el('copyBtn').addEventListener('click', async ()=>{
+    const text = currentTabCode();
+    const statusEl = el('copyStatus');
+    try{
+      await navigator.clipboard.writeText(text);
+      statusEl.textContent = '✅ 복사됨!';
+    }catch(err){
+      // 클립보드 API를 못 쓰는 환경(예: file:// 로컬 실행)을 위한 대체 방법
+      try{
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        statusEl.textContent = '✅ 복사됨!';
+      }catch(err2){
+        statusEl.textContent = '⚠️ 복사 실패: 직접 드래그해서 복사해주세요.';
+      }
+    }
+    setTimeout(()=> statusEl.textContent = '', 2500);
+  });
+
+  applyModelPreset();
+  refreshPlannerPreview();
+  compute();
+}
+
+window.addEventListener('DOMContentLoaded', init);
+</script>
+
+</body>
+</html>
