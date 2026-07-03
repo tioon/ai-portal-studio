@@ -3,6 +3,18 @@
 여러 개의 AI 웹페이지를 한 레포에서 묶어 배포하는 정적 포털입니다.
 현재 첫 번째 앱은 온프레미스 AI 서버 요청서와 HP / Dell 추천 서버 카드를 보여주는 화면입니다.
 
+## Live Pages
+
+- Hub: `https://tioon.github.io/ai-portal-studio/`
+- Current app: `https://tioon.github.io/ai-portal-studio/#builder`
+- Vendor cards: `https://tioon.github.io/ai-portal-studio/#vendors`
+
+앞으로 추가될 프로젝트도 같은 도메인 아래에서 관리합니다.
+예시:
+
+- `https://tioon.github.io/ai-portal-studio/#<project-id>`
+- `https://tioon.github.io/ai-portal-studio/<project-id>/`
+
 ## 실행
 
 ```bash
@@ -16,6 +28,12 @@ npm start
 
 이 프로젝트는 정적 파일만으로 동작하므로 GitHub Pages로 무료 배포할 수 있습니다.
 허브 페이지에서 여러 프로젝트 링크를 한 번에 보여주고, 각 프로젝트는 같은 도메인의 서브 경로로 추가할 수 있습니다.
+
+현재 Pages 소스:
+
+- Repo: `tioon/ai-portal-studio`
+- Branch: `main`
+- Path: `/`
 
 ## 포함 기능
 
