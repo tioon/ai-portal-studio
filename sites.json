@@ -8,6 +8,14 @@
     "tags": ["current", "gpu", "request"]
   },
   {
+    "id": "vllm-config-planner",
+    "name": "vLLM Config Planner",
+    "description": "LLM 용도, 동시 사용자, 목표 응답 속도를 넣어 vLLM 설정값을 추천하는 별도 페이지입니다.",
+    "url": "./vllm-planner/",
+    "status": "live",
+    "tags": ["llm", "vllm", "planner"]
+  },
+  {
     "id": "future-project-1",
     "name": "Future Project 01",
     "description": "같은 도메인 아래에 추가될 다음 AI 웹페이지용 슬롯입니다.",

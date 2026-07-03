@@ -25,16 +25,14 @@ async function handleRequest(req, res) {
     const pathname = url.pathname === "/" ? "/index.html" : url.pathname;
     const safePath = normalize(pathname).replace(/^(\.\.[/\\])+/, "");
     let filePath = join(root, safePath);
-    try {
-      const fileStat = await stat(filePath);
-      if (fileStat.isDirectory()) {
-        filePath = join(filePath, "index.html");
-      }
-    } catch (error) {
-      if (String(error?.code || "") === "ENOENT" && !extname(filePath)) {
-        filePath = join(filePath, "index.html");
-      } else {
-        throw error;
+    const fileStat = await stat(filePath).catch(() => null);
+    if (fileStat?.isDirectory()) {
+      filePath = join(filePath, "index.html");
+    } else if (!extname(filePath)) {
+      const nestedIndex = join(filePath, "index.html");
+      const nestedStat = await stat(nestedIndex).catch(() => null);
+      if (nestedStat?.isFile()) {
+        filePath = nestedIndex;
       }
     }
     const file = await readFile(filePath);

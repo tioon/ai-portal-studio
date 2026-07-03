@@ -21,6 +21,48 @@ const gpuConnectorValue = document.querySelector("#gpuConnectorValue");
 const gpuExactnessValue = document.querySelector("#gpuExactnessValue");
 const gpuRequiredPartsValue = document.querySelector("#gpuRequiredPartsValue");
 const STORAGE_KEY = "ai-server-request-state";
+const DEFAULT_PROJECTS = [
+  {
+    id: "ai-server-request",
+    name: "AI Server Request",
+    description: "워크로드와 GPU 기준으로 서버 사양, 전력, 냉각, 벤더 요청서를 생성하는 현재 앱.",
+    url: "./#builder",
+    status: "live",
+    tags: ["current", "gpu", "request"]
+  },
+  {
+    id: "vllm-config-planner",
+    name: "vLLM Config Planner",
+    description: "LLM 용도, 동시 사용자, 목표 응답 속도를 넣어 vLLM 설정값을 추천하는 페이지.",
+    url: "./vllm-planner/",
+    status: "live",
+    tags: ["llm", "vllm", "planner"]
+  },
+  {
+    id: "future-project-1",
+    name: "Future Project 01",
+    description: "곧 추가될 다음 AI 웹페이지를 위한 자리입니다.",
+    url: "./",
+    status: "planned",
+    tags: ["planned"]
+  },
+  {
+    id: "future-project-2",
+    name: "Future Project 02",
+    description: "같은 도메인 안에서 계속 쌓아갈 예정인 두 번째 슬롯입니다.",
+    url: "./",
+    status: "planned",
+    tags: ["planned"]
+  },
+  {
+    id: "cka-lab",
+    name: "CKA Lab Simulator",
+    description: "쿠버네티스 구조, 장애 복구, GPU 노드 배치를 한눈에 배우는 CKA 실습 보드입니다.",
+    url: "./cka-lab/",
+    status: "live",
+    tags: ["cka", "kubernetes", "gpu"]
+  }
+];
 
 const WORKLOADS = {
   inference: {
