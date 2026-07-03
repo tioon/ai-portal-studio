@@ -10,21 +10,19 @@ AI Portal Studio is a small collection of interactive tools and simulations.
   - Recommendation tool for sizing vLLM deployments.
 - [AI Server Request](https://tioon.github.io/ai-portal-studio/projects/ai-server-request/)
   - Request generator for on-prem AI server needs.
-- [Kubernetes Network Lab](https://tioon.github.io/ai-portal-studio/projects/cka-lab/)
-  - Kubernetes lab for building clusters, creating resources, and tracing internal traffic flow.
+- [CKA Concept Atlas](https://tioon.github.io/ai-portal-studio/projects/cka-lab/)
+  - Visual concept map for understanding Kubernetes fundamentals, workloads, networking, storage, and security.
 
-## Kubernetes Network Lab
+## CKA Concept Atlas
 
-The CKA Lab project has been rebuilt as a cluster builder and network tracing lab.
+The CKA Lab project has been rebuilt as a concept-first learning atlas.
 
-It visualizes:
+It focuses on:
 
-- Cluster creation and reset
-- Namespace and resource creation
-- Pod scheduling and Service endpoints
-- NetworkPolicy blocking and allowing traffic
-- Ingress to Service routing
-- PVC binding and storage classes
-- kubectl inspection commands
+- Cluster, Namespace, Control Plane, and Node
+- Pod, Deployment, DaemonSet, and StatefulSet
+- Service, Ingress, and NetworkPolicy
+- ConfigMap, Secret, and PVC
+- RBAC, Taint/Toleration, and Probe
 
 The project lives at `projects/cka-lab/` and is deployed as static assets inside the portal.

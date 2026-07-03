@@ -24,15 +24,15 @@
   },
   {
     "id": "cka-lab",
-    "name": "Kubernetes Network Lab",
-    "description": "쿠버네티스 클러스터를 만들고, 리소스를 추가하고, 내부 네트워크 흐름을 추적하는 실험실입니다.",
+    "name": "CKA Concept Atlas",
+    "description": "쿠버네티스 핵심 개념을 그림으로 이해하는 설명형 학습 사이트입니다.",
     "url": "./projects/cka-lab/",
     "status": "live",
     "tags": [
       "cka",
       "kubernetes",
-      "network",
-      "lab"
+      "concept",
+      "atlas"
     ]
   },
   {
