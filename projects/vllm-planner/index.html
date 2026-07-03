@@ -138,6 +138,37 @@
 
 <main>
 
+  <section id="planner-top">
+    <div class="panel">
+      <div class="planner">
+        <div class="planner-head">
+          <div>
+            <strong>자동 설정 플래너</strong><br>
+            <span>실제 용도, 동시 사용자 수, 원하는 응답속도를 넣으면 배포용 핵심 vLLM 값을 바로 다시 잡습니다. 이 값은 아래 메모리 시뮬레이터와 배포 명령어에 함께 반영됩니다.</span>
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label>실제 LLM 용도</label>
+            <select id="workloadPreset"></select>
+          </div>
+          <div class="field">
+            <label>실제 동시 사용자 수 <span class="val" id="v_users"></span></label>
+            <input type="number" id="concurrentUsers" min="1" max="1024" step="1" value="16">
+          </div>
+        </div>
+        <div class="field">
+          <label>원하는 응답속도</label>
+          <select id="speedGoal">
+            <option value="latency">지연시간 우선</option>
+            <option value="balanced" selected>균형</option>
+            <option value="throughput">처리량 우선</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section id="overview">
     <h2>1. GPU 메모리는 어디에 쓰이는가 <span class="tag">개요</span></h2>
     <p class="sub">vLLM 프로세스가 GPU 한 장에서 점유하는 메모리는 크게 4가지로 나뉩니다.</p>
@@ -151,7 +182,7 @@
 
   <section id="simulator">
     <h2>2. 메모리 시뮬레이터 <span class="tag">인터랙티브</span></h2>
-    <p class="sub">아래 값을 조절하면 오른쪽 그래프와 통계가 실시간으로 갱신됩니다. (실제 배포 시에는 vLLM 버전·커널·모델 구조에 따라 오차가 있을 수 있는 근사 추정치입니다.)</p>
+    <p class="sub">아래 값을 조절하면 오른쪽 그래프와 통계가 실시간으로 갱신됩니다. 위 플래너에서 고른 용도/동시 사용자/응답속도에 따라 KV 캐시 도넛도 함께 바뀝니다. (실제 배포 시에는 vLLM 버전·커널·모델 구조에 따라 오차가 있을 수 있는 근사 추정치입니다.)</p>
 
     <div class="grid2">
       <!-- CONTROLS -->
@@ -351,36 +382,9 @@
 
   <section id="deploy">
     <h2>3. 배포 명령어 자동 생성 <span class="tag">Deploy</span></h2>
-    <p class="sub">실제 용도와 사용자 수를 넣으면 아래 배포값과 명령어가 즉시 갱신됩니다. vLLM, Docker, Kubernetes 각각 원하는 버전·형식을 골라보세요.</p>
+    <p class="sub">위 플래너와 메모리 시뮬레이터에서 잡힌 값 그대로 vLLM 실행 / Docker / Kubernetes 배포에 쓸 수 있는 명령어와 매니페스트를 생성합니다. vLLM, Docker, Kubernetes 각각 원하는 버전·형식을 골라보세요.</p>
 
     <div class="panel">
-      <div class="planner">
-        <div class="planner-head">
-          <div>
-            <strong>자동 설정 플래너</strong><br>
-            <span>실제 용도, 동시 사용자 수, 원하는 응답속도를 넣으면 배포용 핵심 vLLM 값을 바로 다시 잡습니다.</span>
-          </div>
-        </div>
-        <div class="row2">
-          <div class="field">
-            <label>실제 LLM 용도</label>
-            <select id="workloadPreset"></select>
-          </div>
-          <div class="field">
-            <label>실제 동시 사용자 수 <span class="val" id="v_users"></span></label>
-            <input type="number" id="concurrentUsers" min="1" max="1024" step="1" value="16">
-          </div>
-        </div>
-        <div class="field">
-          <label>원하는 응답속도</label>
-          <select id="speedGoal">
-            <option value="latency">지연시간 우선</option>
-            <option value="balanced" selected>균형</option>
-            <option value="throughput">처리량 우선</option>
-          </select>
-        </div>
-      </div>
-
       <div class="row2" style="grid-template-columns:1.4fr 1fr 0.8fr;">
         <div class="field">
           <label>모델 경로 (HuggingFace repo ID)</label>
