@@ -65,7 +65,7 @@ for (let port = preferredPort; port < preferredPort + 20; port += 1) {
 
   try {
     await listen(server, port);
-    console.log(`AI Server Portal running at http://localhost:${port}`);
+    console.log(`AI Portal Studio running at http://localhost:${port}`);
     started = true;
     break;
   } catch (error) {

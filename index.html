@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AI Server Portal</title>
+    <title>AI Portal Studio</title>
     <meta
       name="description"
-      content="AI 서버 요청서 자동 생성, HP/Dell 추천 서버 카드, 전력과 냉각을 함께 보여주는 운영용 웹사이트"
+      content="여러 AI 웹페이지를 한곳에서 관리하고 배포하는 포털. 첫 앱은 AI 서버 요청서 생성기입니다."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -20,18 +20,20 @@
     <main class="shell">
       <section class="hero">
         <div class="hero-copy card">
-          <div class="eyebrow">AI Server Request Studio</div>
-          <h1>AI 서버 요청서</h1>
+          <div class="eyebrow">AI Portal Studio</div>
+          <h1>여러 AI 웹페이지를 한 번에 배포</h1>
           <p class="lede">
-            워크로드와 GPU만 고르면 추천 스펙, 전력/냉각, 서버 카드를 바로 보여줍니다.
+            같은 도메인 아래에 여러 AI 프로젝트를 묶고, 상단 허브에서 바로 열어볼 수 있습니다.
+            첫 번째 앱은 지금 보고 있는 AI 서버 요청서입니다.
           </p>
           <div class="hero-actions">
-            <a href="#builder" class="button button-primary">추천 보기</a>
-            <a href="#vendors" class="button button-secondary">서버 카드</a>
+            <a href="#projects" class="button button-primary">프로젝트 허브</a>
+            <a href="#builder" class="button button-secondary">현재 앱 보기</a>
           </div>
           <div class="hero-chips">
-            <span class="chip">현재 선택값 반영</span>
-            <span class="chip">추천 순위 표시</span>
+            <span class="chip">같은 도메인</span>
+            <span class="chip">프로젝트 추가형</span>
+            <span class="chip">정적 배포</span>
           </div>
         </div>
 
@@ -39,11 +41,25 @@
           <div class="card-heading tight">
             <div>
               <h2>Live preview</h2>
-              <p>선택값만 빠르게 봅니다.</p>
+              <p>현재 앱과 다음 프로젝트를 함께 봅니다.</p>
             </div>
           </div>
           <pre id="livePreview" class="terminal"></pre>
         </div>
+      </section>
+
+      <section class="section" id="projects">
+        <div class="section-head compact">
+          <div>
+            <h2>프로젝트 허브</h2>
+            <p>현재 앱과 앞으로 추가될 AI 웹페이지를 한곳에서 여는 출발점입니다.</p>
+          </div>
+          <div class="tag-row">
+            <span class="chip">Same domain</span>
+            <span class="chip">Static</span>
+          </div>
+        </div>
+        <div id="projectGrid" class="project-grid"></div>
       </section>
 
       <section class="builder-section" id="builder">
