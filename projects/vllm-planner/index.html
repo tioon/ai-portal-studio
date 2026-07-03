@@ -351,14 +351,14 @@
 
   <section id="deploy">
     <h2>3. 배포 명령어 자동 생성 <span class="tag">Deploy</span></h2>
-    <p class="sub">위에서 설정한 값 그대로 vLLM 실행 / Docker / Kubernetes 배포에 쓸 수 있는 명령어와 매니페스트를 생성합니다. 여기에 실제 용도와 사용자 수를 넣으면 추천값이 자동으로 바뀌고, 그 값이 아래 명령어에 바로 반영됩니다.</p>
+    <p class="sub">실제 용도와 사용자 수를 넣으면 아래 배포값과 명령어가 즉시 갱신됩니다. vLLM, Docker, Kubernetes 각각 원하는 버전·형식을 골라보세요.</p>
 
     <div class="panel">
       <div class="planner">
         <div class="planner-head">
           <div>
             <strong>자동 설정 플래너</strong><br>
-            <span>실제 용도, 동시 사용자 수, 원하는 응답속도를 넣으면 배포용 핵심 vLLM 값을 자동으로 다시 잡습니다.</span>
+            <span>실제 용도, 동시 사용자 수, 원하는 응답속도를 넣으면 배포용 핵심 vLLM 값을 바로 다시 잡습니다.</span>
           </div>
         </div>
         <div class="row2">
@@ -379,15 +379,6 @@
             <option value="throughput">처리량 우선</option>
           </select>
         </div>
-        <div class="checkline" style="margin-top:8px;">
-          <input type="checkbox" id="autoApplyPlanner" checked>
-          <label for="autoApplyPlanner" style="margin:0; color:var(--text);">선택값 변경 시 자동으로 현재 설정에 반영</label>
-        </div>
-        <div class="planner-actions">
-          <button type="button" class="mini-btn primary" id="applyPlannerBtn">추천값 한 번에 적용</button>
-          <button type="button" class="mini-btn" id="resetPlannerBtn">플래너 기본값</button>
-        </div>
-        <div id="plannerSummary" class="planner-summary">용도와 사용자 수를 고르면 추천값이 여기에 표시됩니다.</div>
       </div>
 
       <div class="row2" style="grid-template-columns:1.4fr 1fr 0.8fr;">
@@ -737,6 +728,7 @@ function recommendPlannerSettings(){
 
 function applyPlannerRecommendations(){
   const rec = recommendPlannerSettings();
+  el('v_users').textContent = (+el('concurrentUsers').value || 1) + ' 명';
   el('util').value = rec.util;
   el('maxlen').value = rec.maxlen;
   el('maxseqs').value = rec.maxseqs;
@@ -746,22 +738,7 @@ function applyPlannerRecommendations(){
   el('enforceEager').checked = rec.eager;
   el('cpuoffload').value = rec.cpuOffloadGB;
   el('swap').value = rec.swapGB;
-  el('plannerSummary').innerHTML = `<b>추천 반영됨:</b> ${rec.summary}<br>${rec.detail}`;
   compute();
-}
-
-function renderPlannerPreview(){
-  if (!el('plannerSummary')) return;
-  const rec = recommendPlannerSettings();
-  el('v_users').textContent = (+el('concurrentUsers').value || 1) + ' 명';
-  el('plannerSummary').innerHTML = `<b>미리보기:</b> ${rec.summary}<br>${rec.detail}`;
-}
-
-function refreshPlannerPreview(){
-  renderPlannerPreview();
-  if (el('autoApplyPlanner') && el('autoApplyPlanner').checked){
-    applyPlannerRecommendations();
-  }
 }
 
 function renderGpuCluster(segments, vram, tp, pp){
@@ -1299,14 +1276,12 @@ function applyModelPreset(){
   el('modelNote').textContent = m.note || '';
   if (el('hfModelId') && m.hfId) el('hfModelId').value = m.hfId;
   compute();
-  refreshPlannerPreview();
 }
 
 function applyGpuPreset(){
   const idx = +el('gpuPreset').value;
   el('vramInput').value = GPU_PRESETS[idx].vram;
   compute();
-  refreshPlannerPreview();
 }
 
 function buildTable(){
@@ -1331,11 +1306,11 @@ function init(){
 
   el('modelPreset').addEventListener('change', applyModelPreset);
   el('gpuPreset').addEventListener('change', applyGpuPreset);
-  ['tp','pp','blocksize','wdtype','kvdtype','interconnect'].forEach(id=> el(id).addEventListener('change', ()=>{ compute(); renderPlannerPreview(); }));
+  ['tp','pp','blocksize','wdtype','kvdtype','interconnect'].forEach(id=> el(id).addEventListener('change', compute));
 
   ['vramInput','util','maxlen','maxseqs','maxbatch',
    'enforceEager','cpuoffload','swap','kvOverrideGB','layers','params','kvheads','headdim']
-    .forEach(id=> el(id).addEventListener('input', ()=>{ compute(); renderPlannerPreview(); }));
+    .forEach(id=> el(id).addEventListener('input', compute));
 
   // 배포 명령어 탭 전환
   document.querySelectorAll('.tabbtn').forEach(btn=>{
@@ -1344,21 +1319,7 @@ function init(){
 
   ['workloadPreset','concurrentUsers','speedGoal'].forEach(id=>{
     const ev = id === 'concurrentUsers' ? 'input' : 'change';
-    el(id).addEventListener(ev, ()=>{
-      if (el('autoApplyPlanner').checked){
-        applyPlannerRecommendations();
-      }else{
-        renderPlannerPreview();
-      }
-    });
-  });
-  el('autoApplyPlanner').addEventListener('change', refreshPlannerPreview);
-  el('applyPlannerBtn').addEventListener('click', applyPlannerRecommendations);
-  el('resetPlannerBtn').addEventListener('click', ()=>{
-    el('workloadPreset').value = 0;
-    el('concurrentUsers').value = 16;
-    el('speedGoal').value = 'balanced';
-    refreshPlannerPreview();
+    el(id).addEventListener(ev, applyPlannerRecommendations);
   });
 
   // 배포 명령어에만 영향을 주는 필드 (메모리 계산과는 무관하므로 compute() 전체를 다시 돌리지 않음)
@@ -1394,7 +1355,10 @@ function init(){
   });
 
   applyModelPreset();
-  refreshPlannerPreview();
+  el('workloadPreset').value = 0;
+  el('concurrentUsers').value = 16;
+  el('speedGoal').value = 'balanced';
+  applyPlannerRecommendations();
   compute();
 }
 
