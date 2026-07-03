@@ -24,15 +24,15 @@
   },
   {
     "id": "cka-lab",
-    "name": "Kubernetes 3D Simulator",
-    "description": "3D로 쿠버네티스 컨트롤 플레인, 워커 노드, Pod, Service, Storage, RBAC 흐름을 시뮬레이션하는 프로젝트입니다.",
+    "name": "Kubernetes Network Lab",
+    "description": "쿠버네티스 클러스터를 만들고, 리소스를 추가하고, 내부 네트워크 흐름을 추적하는 실험실입니다.",
     "url": "./projects/cka-lab/",
     "status": "live",
     "tags": [
       "cka",
       "kubernetes",
-      "3d",
-      "simulator"
+      "network",
+      "lab"
     ]
   },
   {
