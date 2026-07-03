@@ -311,6 +311,29 @@ summary:focus-visible {
   line-height: 1.55;
 }
 
+.project-url-row {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  margin: 10px 0 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.project-url-label {
+  color: var(--muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.project-url {
+  color: var(--text);
+  font-size: 0.92rem;
+  word-break: break-all;
+}
+
 .project-tags {
   display: flex;
   flex-wrap: wrap;
@@ -322,6 +345,14 @@ summary:focus-visible {
   flex: none;
   font-size: 1.2rem;
   color: var(--accent-2);
+}
+
+.project-cta {
+  margin-top: 14px;
+  color: var(--accent);
+  font-size: 0.84rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .builder-card {

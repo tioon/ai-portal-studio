@@ -847,10 +847,15 @@ function makeProjectCard(project) {
           </div>
           <span class="project-arrow">↗</span>
         </div>
+        <div class="project-url-row">
+          <span class="project-url-label">URL</span>
+          <span class="project-url">${project.url}</span>
+        </div>
         <p>${project.description}</p>
         <div class="project-tags">
           ${(project.tags || []).map((tag) => `<span class="chip">${tag}</span>`).join("")}
         </div>
+        <div class="project-cta">클릭해서 열기</div>
       </div>
     </a>
   `;
