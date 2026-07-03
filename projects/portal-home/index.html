@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI Portal Studio Home</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #08111b;
+        --panel: rgba(13, 20, 32, 0.92);
+        --border: rgba(164, 186, 214, 0.16);
+        --text: #eef4ff;
+        --muted: #9dafc4;
+        --accent: #6ee7ff;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; min-height: 100%; background: linear-gradient(180deg, #07101b, #050911); color: var(--text); font-family: Manrope, system-ui, sans-serif; }
+      .wrap { width: min(920px, calc(100vw - 24px)); margin: 0 auto; padding: 40px 0; }
+      .card { background: var(--panel); border: 1px solid var(--border); border-radius: 24px; padding: 24px; }
+      h1 { margin: 0 0 8px; font-family: "Space Grotesk", sans-serif; font-size: clamp(2rem, 4vw, 3.5rem); }
+      p { color: var(--muted); line-height: 1.6; }
+      .links { display: grid; gap: 12px; margin-top: 20px; }
+      a { color: inherit; text-decoration: none; }
+      .link { padding: 16px 18px; border-radius: 18px; border: 1px solid var(--border); background: rgba(255,255,255,0.04); }
+      .link strong { display: block; margin-bottom: 6px; color: var(--accent); }
+      .link span { word-break: break-all; }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <section class="card">
+        <h1>AI Portal Studio</h1>
+        <p>실제 프로젝트 페이지 바로가기</p>
+        <div class="links">
+          <a class="link" href="./">
+            <strong>Portal Home</strong>
+            <span>./</span>
+          </a>
+          <a class="link" href="../ai-server-request/">
+            <strong>AI Server Request</strong>
+            <span>../ai-server-request/</span>
+          </a>
+          <a class="link" href="../cka-lab/">
+            <strong>CKA Lab Simulator</strong>
+            <span>../cka-lab/</span>
+          </a>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
