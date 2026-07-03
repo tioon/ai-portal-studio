@@ -31,14 +31,6 @@ const DEFAULT_PROJECTS = [
     tags: ["current", "gpu", "request"]
   },
   {
-    id: "vllm-config-planner",
-    name: "vLLM Config Planner",
-    description: "LLM 용도, 동시 사용자, 목표 응답 속도를 넣어 vLLM 설정값을 추천하는 페이지.",
-    url: "./vllm-planner/",
-    status: "live",
-    tags: ["llm", "vllm", "planner"]
-  },
-  {
     id: "future-project-1",
     name: "Future Project 01",
     description: "곧 추가될 다음 AI 웹페이지를 위한 자리입니다.",
