@@ -15,47 +15,12 @@ const requestTemplate = document.querySelector("#requestTemplate");
 const livePreview = document.querySelector("#livePreview");
 const gpuCountLabel = document.querySelector("#gpuCountLabel");
 const vendorGrid = document.querySelector("#vendorGrid");
-const projectGrid = document.querySelector("#projectGrid");
 const copyButton = document.querySelector("#copyButton");
 const gpuPowerValue = document.querySelector("#gpuPowerValue");
 const gpuConnectorValue = document.querySelector("#gpuConnectorValue");
 const gpuExactnessValue = document.querySelector("#gpuExactnessValue");
 const gpuRequiredPartsValue = document.querySelector("#gpuRequiredPartsValue");
 const STORAGE_KEY = "ai-server-request-state";
-const DEFAULT_PROJECTS = [
-  {
-    id: "ai-server-request",
-    name: "AI Server Request",
-    description: "워크로드와 GPU 기준으로 서버 사양, 전력, 냉각, 벤더 요청서를 생성하는 현재 앱.",
-    url: "./#builder",
-    status: "live",
-    tags: ["current", "gpu", "request"]
-  },
-  {
-    id: "future-project-1",
-    name: "Future Project 01",
-    description: "곧 추가될 다음 AI 웹페이지를 위한 자리입니다.",
-    url: "./",
-    status: "planned",
-    tags: ["planned"]
-  },
-  {
-    id: "future-project-2",
-    name: "Future Project 02",
-    description: "같은 도메인 안에서 계속 쌓아갈 예정인 두 번째 슬롯입니다.",
-    url: "./",
-    status: "planned",
-    tags: ["planned"]
-  },
-  {
-    id: "cka-lab",
-    name: "CKA Lab Simulator",
-    description: "쿠버네티스 구조, 장애 복구, GPU 노드 배치를 한눈에 배우는 CKA 실습 보드입니다.",
-    url: "./cka-lab/",
-    status: "live",
-    tags: ["cka", "kubernetes", "gpu"]
-  }
-];
 
 const WORKLOADS = {
   inference: {
@@ -807,81 +772,6 @@ function fallbackSvg(vendor, model, accentA = "#1f3552", accentB = "#0d1726") {
   `)}`;
 }
 
-function fallbackProjectSvg(name, accentA = "#22304a", accentB = "#0f1726") {
-  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
-    <svg viewBox="0 0 880 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${name}">
-      <defs>
-        <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
-          <stop offset="0%" stop-color="${accentA}" />
-          <stop offset="100%" stop-color="${accentB}" />
-        </linearGradient>
-      </defs>
-      <rect width="880" height="380" rx="28" fill="#08111b" />
-      <rect x="28" y="28" width="824" height="324" rx="24" fill="url(#g)" opacity="0.96" />
-      <rect x="74" y="80" width="540" height="24" rx="12" fill="rgba(255,255,255,0.14)" />
-      <rect x="74" y="122" width="420" height="24" rx="12" fill="rgba(255,255,255,0.14)" />
-      <rect x="74" y="164" width="620" height="24" rx="12" fill="rgba(255,255,255,0.14)" />
-      <rect x="74" y="228" width="260" height="68" rx="18" fill="rgba(255,255,255,0.12)" />
-      <rect x="354" y="228" width="260" height="68" rx="18" fill="rgba(255,255,255,0.12)" />
-      <text x="74" y="54" font-family="Space Grotesk, sans-serif" font-size="26" font-weight="700" fill="#f5f8ff">${name}</text>
-    </svg>
-  `)}`;
-}
-
-function makeProjectCard(project) {
-  const card = document.createElement("article");
-  card.className = "card project-card";
-  const screenshot = fallbackProjectSvg(project.name);
-  const statusLabel = project.status === "live" ? "LIVE" : project.status === "planned" ? "PLANNED" : "DRAFT";
-
-  card.innerHTML = `
-    <a class="project-link" href="${project.url}" aria-label="${project.name} 열기">
-      <div class="project-art">
-        <img src="${screenshot}" alt="${project.name} preview" loading="lazy" />
-      </div>
-      <div class="project-copy">
-        <div class="project-top">
-          <div>
-            <span class="project-badge">${statusLabel}</span>
-            <h3>${project.name}</h3>
-          </div>
-          <span class="project-arrow">↗</span>
-        </div>
-        <div class="project-url-row">
-          <span class="project-url-label">URL</span>
-          <span class="project-url">${project.url}</span>
-        </div>
-        <p>${project.description}</p>
-        <div class="project-tags">
-          ${(project.tags || []).map((tag) => `<span class="chip">${tag}</span>`).join("")}
-        </div>
-        <div class="project-cta">클릭해서 열기</div>
-      </div>
-    </a>
-  `;
-
-  return card;
-}
-
-async function renderProjects() {
-  let projects = DEFAULT_PROJECTS;
-  try {
-    const response = await fetch("./sites.json", { cache: "no-store" });
-    if (response.ok) {
-      const data = await response.json();
-      if (Array.isArray(data) && data.length > 0) {
-        projects = data;
-      }
-    }
-  } catch {
-    // Fallback to the built-in project list when static data is unavailable.
-  }
-
-  if (projectGrid) {
-    projectGrid.replaceChildren(...projects.map(makeProjectCard));
-  }
-}
-
 function makeVendorCard(vendor, state) {
   const card = document.createElement("article");
   card.className = "card vendor-card";
@@ -1087,5 +977,4 @@ gpuCountInput.addEventListener("input", render);
 siteTypeSelect.addEventListener("change", render);
 copyButton.addEventListener("click", copyRequest);
 
-renderProjects();
 render();
