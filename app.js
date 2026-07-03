@@ -46,6 +46,14 @@ const DEFAULT_PROJECTS = [
     url: "./",
     status: "planned",
     tags: ["planned"]
+  },
+  {
+    id: "cka-lab",
+    name: "CKA Lab Simulator",
+    description: "쿠버네티스 구조, 장애 복구, GPU 노드 배치를 한눈에 배우는 CKA 실습 보드입니다.",
+    url: "./cka-lab/",
+    status: "live",
+    tags: ["cka", "kubernetes", "gpu"]
   }
 ];
 

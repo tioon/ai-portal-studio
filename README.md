@@ -8,6 +8,7 @@
 - Hub: `https://tioon.github.io/ai-portal-studio/`
 - Current app: `https://tioon.github.io/ai-portal-studio/#builder`
 - Vendor cards: `https://tioon.github.io/ai-portal-studio/#vendors`
+- CKA Lab: `https://tioon.github.io/ai-portal-studio/cka-lab/`
 
 앞으로 추가될 프로젝트도 같은 도메인 아래에서 관리합니다.
 예시:

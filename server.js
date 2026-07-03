@@ -1,5 +1,5 @@
 import { createServer } from "node:http";
-import { readFile } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 import { extname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -24,7 +24,19 @@ async function handleRequest(req, res) {
     const url = new URL(req.url || "/", `http://${req.headers.host}`);
     const pathname = url.pathname === "/" ? "/index.html" : url.pathname;
     const safePath = normalize(pathname).replace(/^(\.\.[/\\])+/, "");
-    const filePath = join(root, safePath);
+    let filePath = join(root, safePath);
+    try {
+      const fileStat = await stat(filePath);
+      if (fileStat.isDirectory()) {
+        filePath = join(filePath, "index.html");
+      }
+    } catch (error) {
+      if (String(error?.code || "") === "ENOENT" && !extname(filePath)) {
+        filePath = join(filePath, "index.html");
+      } else {
+        throw error;
+      }
+    }
     const file = await readFile(filePath);
     res.writeHead(200, {
       "Content-Type": mimeTypes[extname(filePath)] || "application/octet-stream",
