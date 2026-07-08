@@ -497,6 +497,10 @@ summary:focus-visible {
   gap: 12px;
 }
 
+.form-grid.compact .full-span {
+  grid-column: 1 / -1;
+}
+
 label {
   display: grid;
   gap: 8px;
@@ -668,6 +672,87 @@ input[type="range"] {
   align-items: start;
 }
 
+.vendor-top-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.vendor-card.is-selected {
+  border-color: rgba(110, 231, 255, 0.45);
+  box-shadow:
+    0 28px 80px rgba(0, 0, 0, 0.38),
+    0 0 0 1px rgba(110, 231, 255, 0.18);
+}
+
+.vendor-card[role="button"] {
+  cursor: pointer;
+}
+
+.selected-server {
+  margin: 0 0 14px;
+  padding: 16px;
+  display: grid;
+  gap: 14px;
+}
+
+.selected-server-empty,
+.selected-server-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: start;
+}
+
+.selected-server-empty p,
+.selected-server-header p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.eyebrow-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.72rem;
+}
+
+.eyebrow-inline::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: 0 0 12px rgba(110, 231, 255, 0.7);
+}
+
+.selected-server-header h3,
+.selected-server-empty h3 {
+  margin-top: 8px;
+  font-size: 1.2rem;
+}
+
+.selected-server-actions {
+  display: grid;
+  gap: 10px;
+  justify-items: end;
+}
+
+.selected-server-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.vendor-check.selected {
+  min-height: 100%;
+}
+
 .vendor-copy h3 {
   margin-top: 6px;
   font-size: 1.15rem;
@@ -762,6 +847,7 @@ input[type="range"] {
   .hero,
   .vendor-grid,
   .vendor-checklist,
+  .selected-server-grid,
   .summary-bar,
   .spec-strip,
   .form-grid.compact {
@@ -771,6 +857,15 @@ input[type="range"] {
   .vendor-meta--split,
   .vendor-card--dense .vendor-specs {
     grid-template-columns: 1fr;
+  }
+
+  .selected-server-empty,
+  .selected-server-header {
+    flex-direction: column;
+  }
+
+  .selected-server-actions {
+    justify-items: start;
   }
 
   h1 {

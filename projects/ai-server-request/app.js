@@ -3,6 +3,7 @@ const gpuTierSelect = document.querySelector("#gpuTier");
 const gpuPlatformSelect = document.querySelector("#gpuPlatform");
 const gpuCountInput = document.querySelector("#gpuCount");
 const siteTypeSelect = document.querySelector("#siteType");
+const serverSelect = document.querySelector("#serverSelect");
 
 const cpuValue = document.querySelector("#cpuValue");
 const memoryValue = document.querySelector("#memoryValue");
@@ -15,6 +16,7 @@ const requestTemplate = document.querySelector("#requestTemplate");
 const livePreview = document.querySelector("#livePreview");
 const gpuCountLabel = document.querySelector("#gpuCountLabel");
 const vendorGrid = document.querySelector("#vendorGrid");
+const selectedServerPanel = document.querySelector("#selectedServerPanel");
 const copyButton = document.querySelector("#copyButton");
 const gpuPowerValue = document.querySelector("#gpuPowerValue");
 const gpuConnectorValue = document.querySelector("#gpuConnectorValue");
@@ -560,6 +562,17 @@ function getGpuVariant(gpu, platform) {
   return gpu.variants?.[platform] || gpu.variants?.[gpu.platforms?.[0]] || {};
 }
 
+function getVendorId(vendor) {
+  return `${vendor.vendor} ${vendor.model}`
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function findVendorById(vendorId) {
+  return VENDORS.find((vendor) => getVendorId(vendor) === vendorId) || null;
+}
+
 function getGpuSlotWidth(gpu, platform) {
   return getGpuVariant(gpu, platform).slotWidth || "check exact SKU";
 }
@@ -716,6 +729,89 @@ function buildVendorChecks(vendor, state) {
 
 function formatOfficialGpuList(vendor) {
   return vendor.fit.join(" / ");
+}
+
+function renderServerOptions(selectedServerId) {
+  const grouped = VENDORS.reduce((acc, vendor) => {
+    const bucket = acc.get(vendor.vendor) || [];
+    bucket.push(vendor);
+    acc.set(vendor.vendor, bucket);
+    return acc;
+  }, new Map());
+
+  const optionGroups = Array.from(grouped.entries())
+    .map(
+      ([vendorName, items]) => `
+        <optgroup label="${vendorName}">
+          ${items
+            .map((vendor) => {
+              const id = getVendorId(vendor);
+              const selected = id === selectedServerId ? " selected" : "";
+              return `<option value="${id}"${selected}>${vendor.model}</option>`;
+            })
+            .join("")}
+        </optgroup>
+      `
+    )
+    .join("");
+
+  serverSelect.innerHTML = `
+    <option value=""${selectedServerId ? "" : " selected"}>추천 순으로 보기</option>
+    ${optionGroups}
+  `;
+}
+
+function renderSelectedVendorPanel(vendor, state) {
+  if (!vendor) {
+    selectedServerPanel.innerHTML = `
+      <div class="selected-server-empty">
+        <div>
+          <span class="eyebrow-inline">선택 서버</span>
+          <h3>특정 서버를 골라서 볼 수 있습니다</h3>
+          <p>아래 추천 카드나 상단 드롭다운에서 HP / Dell 라인업을 선택하면, 그 서버를 고정해서 상세를 볼 수 있습니다.</p>
+        </div>
+        <button type="button" class="button button-secondary small" data-clear-server>추천 순으로 보기</button>
+      </div>
+    `;
+    selectedServerPanel.querySelectorAll("[data-clear-server]").forEach((button) => {
+      button.addEventListener("click", () => selectServer(""));
+    });
+    return;
+  }
+
+  const checks = buildVendorChecks(vendor, state);
+  selectedServerPanel.innerHTML = `
+    <div class="selected-server-header">
+      <div>
+        <span class="eyebrow-inline">선택 서버</span>
+        <h3>${vendor.vendor} ${vendor.model}</h3>
+        <p>${vendor.summary}</p>
+      </div>
+      <div class="selected-server-actions">
+        <span class="best-pill">고정 선택</span>
+        <button type="button" class="button button-secondary small" data-clear-server>선택 해제</button>
+      </div>
+    </div>
+    <div class="selected-server-grid">
+      ${checks
+        .map(
+          (check) => `
+            <div class="vendor-check selected">
+              <div class="vendor-check-head">
+                <span>${check.name}</span>
+                <strong class="check-pill check-pill--${check.tone}">${check.status}</strong>
+              </div>
+              <strong class="vendor-check-value">${check.value}</strong>
+              <p>${check.note}</p>
+            </div>
+          `
+        )
+        .join("")}
+    </div>
+  `;
+  selectedServerPanel.querySelectorAll("[data-clear-server]").forEach((button) => {
+    button.addEventListener("click", () => selectServer(""));
+  });
 }
 
 function getGpuDemandLevel(gpuValue) {
@@ -881,7 +977,8 @@ function getSelectedOptions() {
     gpuTier: normalized.gpuTier || getDefaultGpuValue(normalized.gpuPlatform),
     gpuPlatform: normalized.gpuPlatform || "PCIe",
     gpuCount: params.get("count") || stored?.gpuCount || "2",
-    siteType: params.get("site") || stored?.siteType || "datacenter"
+    siteType: params.get("site") || stored?.siteType || "datacenter",
+    selectedServerId: params.get("server") || stored?.selectedServerId || ""
   };
 }
 
@@ -898,6 +995,11 @@ function persistState(nextState) {
   url.searchParams.set("platform", nextState.gpuPlatform);
   url.searchParams.set("count", String(nextState.gpuCount));
   url.searchParams.set("site", nextState.siteType);
+  if (nextState.selectedServerId) {
+    url.searchParams.set("server", nextState.selectedServerId);
+  } else {
+    url.searchParams.delete("server");
+  }
   history.replaceState({}, "", `${url.pathname}?${url.searchParams.toString()}${url.hash}`);
 }
 
@@ -1008,7 +1110,12 @@ function fallbackSvg(vendor, model, accentA = "#1f3552", accentB = "#0d1726") {
 
 function makeVendorCard(vendor, state) {
   const card = document.createElement("article");
-  card.className = `card vendor-card ${vendor.model === "PowerEdge XE9680" ? "vendor-card--dense" : ""}`;
+  const vendorId = getVendorId(vendor);
+  const isSelected = vendorId === state.selectedServerId;
+  card.className = `card vendor-card ${vendor.model === "PowerEdge XE9680" ? "vendor-card--dense" : ""} ${isSelected ? "is-selected" : ""}`;
+  card.tabIndex = 0;
+  card.setAttribute("role", "button");
+  card.setAttribute("aria-pressed", isSelected ? "true" : "false");
   const supportsPlatform = vendor.platforms?.includes(state.gpuPlatform) ?? true;
   const demandLevel = getGpuDemandLevel(state.gpu.value);
   const capacityLevel = vendor.capacityLevel || 2;
@@ -1032,7 +1139,10 @@ function makeVendorCard(vendor, state) {
           <span class="vendor-badge">${vendor.badge}</span>
           <h3>${vendor.vendor} ${vendor.model}</h3>
         </div>
-        ${score > 0 ? '<span class="best-pill">추천</span>' : ""}
+        <div class="vendor-top-badges">
+          ${isSelected ? '<span class="best-pill">선택됨</span>' : ""}
+          ${score > 0 ? '<span class="best-pill">추천</span>' : ""}
+        </div>
       </div>
       <p>${vendor.summary}</p>
       <div class="vendor-reason">
@@ -1094,6 +1204,17 @@ function makeVendorCard(vendor, state) {
     card.classList.add("is-best");
   }
 
+  card.addEventListener("click", () => {
+    selectServer(vendorId);
+  });
+
+  card.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      selectServer(vendorId);
+    }
+  });
+
   return card;
 }
 
@@ -1111,6 +1232,17 @@ function renderGpuOptions(platform, selectedValue) {
   return fallbackValue;
 }
 
+function selectServer(serverId) {
+  if (!serverId) {
+    serverSelect.value = "";
+    render();
+    return;
+  }
+
+  serverSelect.value = serverId;
+  render();
+}
+
 function render() {
   const workloadKey = workloadSelect.value;
   const siteType = siteTypeSelect.value;
@@ -1124,6 +1256,8 @@ function render() {
   const powerBandText = powerBand(load[1], gpu, gpuPlatform);
   const siteLabel = siteType === "datacenter" ? "데이터센터" : siteType === "office" ? "오피스/서버실" : "엣지/분산 설치";
   const cpuSpec = resolveCpuSpec(gpu, gpuCount, workloadKey);
+  const selectedServerId = serverSelect.value || "";
+  const selectedVendor = selectedServerId ? findVendorById(selectedServerId) : null;
 
   const state = {
     workload,
@@ -1145,7 +1279,8 @@ function render() {
     gpuRequiredParts: gpuVariant.requiredParts || "Check exact SKU before ordering",
     gpuSlotWidth: getGpuSlotWidth(gpu, gpuPlatform),
     powerText: `${formatRange(load)}, ${powerBandText}, ${siteType === "office" ? "office cooling margin" : siteType === "edge" ? "edge airflow margin" : workload.cooling}`,
-    psuText: `${powerBandText}, 1+1 redundant`
+    psuText: `${powerBandText}, 1+1 redundant`,
+    selectedServerId
   };
 
   gpuCountLabel.textContent = String(gpuCount);
@@ -1160,6 +1295,9 @@ function render() {
   gpuExactnessValue.textContent = state.gpuExactness;
   gpuRequiredPartsValue.textContent = state.gpuRequiredParts;
   supportValue.textContent = state.support;
+
+  renderServerOptions(selectedServerId);
+  renderSelectedVendorPanel(selectedVendor, state);
 
   livePreview.textContent = [
     `워크로드: ${state.workload.label}`,
@@ -1187,7 +1325,12 @@ function render() {
         Math.max(0, 4 - Math.abs((vendor.capacityLevel || 2) - getGpuDemandLevel(state.gpu.value))) +
         (vendor.vendor === "Dell" && state.gpu.value === "H100" && state.gpuPlatform === "PCIe" ? 1 : 0)
     }))
-    .sort((a, b) => b.score - a.score || a.index - b.index);
+    .sort((a, b) => {
+      const aSelected = getVendorId(a.vendor) === selectedServerId;
+      const bSelected = getVendorId(b.vendor) === selectedServerId;
+      if (aSelected !== bSelected) return aSelected ? -1 : 1;
+      return b.score - a.score || a.index - b.index;
+    });
 
   const topScore = ranked[0]?.score || 0;
   vendorGrid.replaceChildren(
@@ -1205,7 +1348,8 @@ function render() {
     gpuTier: gpu.value,
     gpuPlatform,
     gpuCount,
-    siteType
+    siteType,
+    selectedServerId
   });
 }
 
@@ -1228,12 +1372,14 @@ gpuPlatformSelect.value = initial.gpuPlatform;
 renderGpuOptions(initial.gpuPlatform, initial.gpuTier);
 gpuCountInput.value = initial.gpuCount;
 siteTypeSelect.value = initial.siteType;
+serverSelect.value = initial.selectedServerId;
 
 workloadSelect.addEventListener("change", render);
 gpuTierSelect.addEventListener("change", render);
 gpuPlatformSelect.addEventListener("change", render);
 gpuCountInput.addEventListener("input", render);
 siteTypeSelect.addEventListener("change", render);
+serverSelect.addEventListener("change", render);
 copyButton.addEventListener("click", copyRequest);
 
 render();
