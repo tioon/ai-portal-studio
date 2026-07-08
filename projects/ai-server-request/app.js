@@ -121,7 +121,8 @@ const GPU_OPTIONS = [
         exactness: "official reference",
         serverNeed: "PCIe chassis with a 16-pin GPU lead",
         psu: "2 x 1200W",
-        requiredParts: "16-pin GPU power cable"
+        requiredParts: "16-pin GPU power cable",
+        slotWidth: "dual-slot"
       }
     },
     fit: "dev/test, light inference",
@@ -140,7 +141,8 @@ const GPU_OPTIONS = [
         exactness: "official reference",
         serverNeed: "Any free x16 slot; no aux power lead",
         psu: "2 x 1200W",
-        requiredParts: "No aux power lead"
+        requiredParts: "No aux power lead",
+        slotWidth: "single-slot"
       }
     },
     fit: "efficient inference",
@@ -159,7 +161,8 @@ const GPU_OPTIONS = [
         exactness: "official reference",
         serverNeed: "Partner / NVIDIA-Certified chassis with a 16-pin GPU lead",
         psu: "2 x 1600W",
-        requiredParts: "16-pin GPU power cable"
+        requiredParts: "16-pin GPU power cable",
+        slotWidth: "dual-slot"
       }
     },
     fit: "inference, light tuning",
@@ -178,7 +181,8 @@ const GPU_OPTIONS = [
         exactness: "official reference",
         serverNeed: "PCIe chassis with a 16-pin GPU lead",
         psu: "2 x 1600W",
-        requiredParts: "16-pin GPU power cable"
+        requiredParts: "16-pin GPU power cable",
+        slotWidth: "dual-slot"
       }
     },
     fit: "graphics, visual AI, inference",
@@ -197,7 +201,8 @@ const GPU_OPTIONS = [
         exactness: "official reference",
         serverNeed: "Any free x16 slot; no aux power lead",
         psu: "2 x 800W",
-        requiredParts: "No aux power lead"
+        requiredParts: "No aux power lead",
+        slotWidth: "single-slot"
       }
     },
     fit: "entry inference",
@@ -216,7 +221,8 @@ const GPU_OPTIONS = [
         exactness: "reference",
         serverNeed: "Server/workstation with one auxiliary 8-pin GPU lead",
         psu: "2 x 1200W",
-        requiredParts: "8-pin GPU power cable"
+        requiredParts: "8-pin GPU power cable",
+        slotWidth: "single-slot"
       }
     },
     fit: "general inference",
@@ -235,7 +241,8 @@ const GPU_OPTIONS = [
         exactness: "official reference",
         serverNeed: "Any free x16 slot; no aux power lead",
         psu: "2 x 800W",
-        requiredParts: "No aux power lead"
+        requiredParts: "No aux power lead",
+        slotWidth: "single-slot"
       }
     },
     fit: "legacy inference",
@@ -254,7 +261,8 @@ const GPU_OPTIONS = [
         exactness: "reference",
         serverNeed: "Server/workstation with one auxiliary 8-pin GPU lead",
         psu: "2 x 1200W",
-        requiredParts: "8-pin GPU power cable"
+        requiredParts: "8-pin GPU power cable",
+        slotWidth: "single-slot"
       }
     },
     fit: "balanced inference",
@@ -273,7 +281,8 @@ const GPU_OPTIONS = [
         exactness: "SKU-specific",
         serverNeed: "OEM-qualified platform with the matching GPU harness",
         psu: "2 x 1200W",
-        requiredParts: "OEM GPU harness"
+        requiredParts: "OEM GPU harness",
+        slotWidth: "dual-slot"
       }
     },
     fit: "visual AI, inference",
@@ -292,7 +301,8 @@ const GPU_OPTIONS = [
         exactness: "SKU-specific",
         serverNeed: "PCIe carrier and exact OEM harness for this A100 SKU",
         psu: "2 x 2000W",
-        requiredParts: "Exact A100 PCIe harness"
+        requiredParts: "Exact A100 PCIe harness",
+        slotWidth: "dual-slot"
       },
       SXM: {
         tdp: "SKU-specific",
@@ -300,7 +310,8 @@ const GPU_OPTIONS = [
         exactness: "platform-specific",
         serverNeed: "HGX A100 baseboard and matching platform",
         psu: "HGX power budget",
-        requiredParts: "HGX A100 baseboard"
+        requiredParts: "HGX A100 baseboard",
+        slotWidth: "sxm"
       }
     },
     fit: "training, high-end inference",
@@ -319,7 +330,8 @@ const GPU_OPTIONS = [
         exactness: "official PCIe reference",
         serverNeed: "PCIe carrier with a 16-pin GPU lead",
         psu: "2 x 2000W",
-        requiredParts: "16-pin GPU power cable"
+        requiredParts: "16-pin GPU power cable",
+        slotWidth: "dual-slot"
       },
       SXM: {
         tdp: "700W class",
@@ -327,7 +339,8 @@ const GPU_OPTIONS = [
         exactness: "platform-specific",
         serverNeed: "HGX H100 baseboard and matched cooling",
         psu: "HGX power budget",
-        requiredParts: "HGX H100 baseboard"
+        requiredParts: "HGX H100 baseboard",
+        slotWidth: "sxm"
       }
     },
     fit: "heavy training",
@@ -346,7 +359,8 @@ const GPU_OPTIONS = [
         exactness: "SKU-specific",
         serverNeed: "PCIe carrier for the exact H200 SKU",
         psu: "2 x 3000W",
-        requiredParts: "Exact H200 PCIe harness"
+        requiredParts: "Exact H200 PCIe harness",
+        slotWidth: "dual-slot"
       },
       SXM: {
         tdp: "SKU-specific",
@@ -354,7 +368,8 @@ const GPU_OPTIONS = [
         exactness: "platform-specific",
         serverNeed: "HGX H200 baseboard and matching platform",
         psu: "HGX power budget",
-        requiredParts: "HGX H200 baseboard"
+        requiredParts: "HGX H200 baseboard",
+        slotWidth: "sxm"
       }
     },
     fit: "large-scale training",
@@ -373,7 +388,8 @@ const GPU_OPTIONS = [
         exactness: "platform-specific",
         serverNeed: "NVIDIA HGX with 8 Blackwell SXMs",
         psu: "2 x 3000W",
-        requiredParts: "HGX Blackwell baseboard"
+        requiredParts: "HGX Blackwell baseboard",
+        slotWidth: "sxm"
       }
     },
     fit: "next-gen training",
@@ -392,7 +408,8 @@ const GPU_OPTIONS = [
         exactness: "platform-specific",
         serverNeed: "HGX Blackwell platform with matching SXM baseboard",
         psu: "2 x 3000W",
-        requiredParts: "HGX Blackwell baseboard"
+        requiredParts: "HGX Blackwell baseboard",
+        slotWidth: "sxm"
       }
     },
     fit: "next-gen training",
@@ -409,6 +426,10 @@ const VENDORS = [
     fit: ["A2", "T4", "L4", "RTX6000Ada"],
     platforms: ["PCIe"],
     capacityLevel: 1,
+    slotCapacity: 2,
+    powerBudget: "2 x 1200W",
+    powerBudgetW: 2400,
+    profileSupport: { lowProfile: true, fullHeight: false },
     accent: ["#5cc9ff", "#0e2136"],
     specs: {
       formFactor: "1U single/dual-socket",
@@ -426,6 +447,10 @@ const VENDORS = [
     fit: ["A2", "T4", "L4", "RTX6000Ada", "A10"],
     platforms: ["PCIe"],
     capacityLevel: 1,
+    slotCapacity: 2,
+    powerBudget: "2 x 1200W",
+    powerBudgetW: 2400,
+    profileSupport: { lowProfile: true, fullHeight: false },
     accent: ["#67f0c7", "#0b2a1d"],
     specs: {
       formFactor: "1U dual-socket",
@@ -443,6 +468,10 @@ const VENDORS = [
     fit: ["L4", "L40", "L40S", "A10", "A40"],
     platforms: ["PCIe"],
     capacityLevel: 2,
+    slotCapacity: 4,
+    powerBudget: "2 x 1600W",
+    powerBudgetW: 3200,
+    profileSupport: { lowProfile: true, fullHeight: true },
     accent: ["#6ee7ff", "#10263b"],
     specs: {
       formFactor: "2U dual-socket",
@@ -460,6 +489,10 @@ const VENDORS = [
     fit: ["L40", "L40S", "A100", "H100"],
     platforms: ["PCIe"],
     capacityLevel: 3,
+    slotCapacity: 4,
+    powerBudget: "2 x 1600W",
+    powerBudgetW: 3200,
+    profileSupport: { lowProfile: true, fullHeight: true },
     accent: ["#8cffc1", "#0d2d23"],
     specs: {
       formFactor: "2U dual-socket",
@@ -477,6 +510,10 @@ const VENDORS = [
     fit: ["RTX6000Ada", "L4", "L40", "L40S", "A10"],
     platforms: ["PCIe"],
     capacityLevel: 2,
+    slotCapacity: 4,
+    powerBudget: "2 x 1600W",
+    powerBudgetW: 3200,
+    profileSupport: { lowProfile: true, fullHeight: true },
     accent: ["#ffb86b", "#33210e"],
     specs: {
       formFactor: "2U dual-socket",
@@ -494,6 +531,10 @@ const VENDORS = [
     fit: ["A100", "H100", "H200", "B200", "B300"],
     platforms: ["PCIe", "SXM"],
     capacityLevel: 4,
+    slotCapacity: 8,
+    powerBudget: "2 x 3000W",
+    powerBudgetW: 6000,
+    profileSupport: { lowProfile: false, fullHeight: true },
     accent: ["#ff8bb1", "#331127"],
     specs: {
       formFactor: "4U GPU server",
@@ -517,6 +558,160 @@ const LEGACY_GPU_ALIASES = {
 
 function getGpuVariant(gpu, platform) {
   return gpu.variants?.[platform] || gpu.variants?.[gpu.platforms?.[0]] || {};
+}
+
+function getGpuSlotWidth(gpu, platform) {
+  return getGpuVariant(gpu, platform).slotWidth || "check exact SKU";
+}
+
+function parseWattage(value) {
+  if (!value || typeof value !== "string") return null;
+  const normalized = value.toLowerCase();
+  const pairedMatch = normalized.match(/(\d+)\s*x\s*([\d.]+)\s*(kw|w)/);
+  if (pairedMatch) {
+    const count = Number(pairedMatch[1]);
+    const numeric = Number(pairedMatch[2]);
+    if (!Number.isNaN(count) && !Number.isNaN(numeric)) {
+      const unit = pairedMatch[3] === "kw" ? numeric * 1000 : numeric;
+      return Math.round(count * unit);
+    }
+  }
+
+  const match = normalized.match(/([\d.]+)\s*(kw|w)/);
+  if (!match) return null;
+  const numeric = Number(match[1]);
+  if (Number.isNaN(numeric)) return null;
+  return match[2] === "kw" ? Math.round(numeric * 1000) : Math.round(numeric);
+}
+
+function buildVendorChecks(vendor, state) {
+  const gpuVariant = state.gpuVariant;
+  const slotWidth = getGpuSlotWidth(state.gpu, state.gpuPlatform);
+  const supportsPlatform = vendor.platforms?.includes(state.gpuPlatform) ?? true;
+  const slotCapacity = vendor.slotCapacity ?? 0;
+  const requiredSlots = state.gpuPlatform === "PCIe" ? state.gpuCount * (slotWidth === "dual-slot" ? 2 : 1) : null;
+  const requiredPower = parseWattage(state.psuText);
+  const vendorPower = vendor.powerBudgetW ?? null;
+  const profileSupport = vendor.profileSupport ?? { lowProfile: false, fullHeight: false };
+
+  const slotCheck =
+    state.gpuPlatform !== "PCIe"
+      ? {
+          label: "확인 필요",
+          tone: "warning",
+          note: "SXM/HGX는 PCIe x16 슬롯 대신 전용 캐리어와 베이스보드를 함께 봐야 합니다."
+        }
+      : !supportsPlatform
+        ? {
+            label: "미지원",
+            tone: "danger",
+            note: "이 서버는 현재 선택한 PCIe GPU와 직접 맞지 않습니다."
+          }
+        : slotCapacity >= requiredSlots
+          ? {
+              label: "가능",
+              tone: "ok",
+              note: `추정 x16 슬롯 ${slotCapacity}개로 현재 선택한 ${state.gpuCount}장 구성을 수용할 수 있습니다.`
+            }
+          : {
+              label: "경계",
+              tone: "warn",
+              note: `추정 x16 슬롯 ${slotCapacity}개보다 필요한 슬롯 ${requiredSlots}개가 더 많습니다.`
+            };
+
+  const formFactorCheck =
+    profileSupport.lowProfile && profileSupport.fullHeight
+      ? {
+          label: "둘 다 가능",
+          tone: "ok",
+          note: "Low Profile과 Full Height를 모두 검토할 수 있는 서버입니다."
+        }
+      : profileSupport.lowProfile
+        ? {
+            label: "Low Profile",
+            tone: "ok",
+            note: "Low Profile 브래킷 위주로 보는 편이 안전합니다."
+          }
+        : profileSupport.fullHeight
+          ? {
+              label: "Full Height",
+              tone: "ok",
+              note: "Full Height GPU 기준으로 보는 편이 맞습니다."
+            }
+          : {
+              label: "확인 필요",
+              tone: "warning",
+              note: "브래킷과 라이저 조합을 최종 SKU 기준으로 확인해야 합니다."
+            };
+
+  const occupancyCheck =
+    slotWidth === "sxm"
+      ? {
+          label: "SXM / HGX",
+          tone: "ok",
+          note: "이 GPU는 PCIe 카드가 아니라 전용 HGX 플랫폼 기준입니다."
+        }
+      : {
+          label: slotWidth === "dual-slot" ? "Dual Slot" : "Single Slot",
+          tone: "ok",
+          note: `GPU 점유 폭은 ${slotWidth === "dual-slot" ? "2슬롯" : "1슬롯"} 기준으로 보면 됩니다.`
+        };
+
+  const powerCheck =
+    state.gpuPlatform !== "PCIe"
+      ? {
+          label: "플랫폼 확인",
+          tone: "warning",
+          note: "SXM/HGX 전원은 보드와 냉각까지 함께 확인해야 합니다."
+        }
+      : requiredPower && vendorPower
+        ? vendorPower >= requiredPower
+          ? {
+              label: "공급 가능",
+              tone: "ok",
+              note: `추정 PSU ${vendor.powerBudget}가 요청 기준 ${state.psuText}보다 큽니다.`
+            }
+          : {
+              label: "부족 가능",
+              tone: "danger",
+              note: `추정 PSU ${vendor.powerBudget}보다 요청 기준 ${state.psuText}가 더 큽니다.`
+            }
+        : {
+            label: "SKU 확인",
+            tone: "warning",
+            note: "정확한 PSU 조합과 GPU SKU 전력은 최종 견적 전에 다시 확인해야 합니다."
+          };
+
+  return [
+    {
+      name: "PCIe x16 슬롯",
+      value: state.gpuPlatform === "PCIe" ? `${slotCapacity || "?"}개 추정 · ${requiredSlots || "?"}개 필요` : "SXM / HGX",
+      status: slotCheck.label,
+      tone: slotCheck.tone,
+      note: slotCheck.note
+    },
+    {
+      name: "폼팩터",
+      value: `${profileSupport.lowProfile ? "Low Profile" : "Low Profile 제한"} / ${profileSupport.fullHeight ? "Full Height" : "Full Height 제한"}`,
+      status: formFactorCheck.label,
+      tone: formFactorCheck.tone,
+      note: formFactorCheck.note
+    },
+    {
+      name: "슬롯 점유",
+      value: occupancyCheck.label,
+      status: occupancyCheck.label,
+      tone: occupancyCheck.tone,
+      note: occupancyCheck.note
+    },
+    {
+      name: "전원",
+      value: state.gpuPlatform === "PCIe" ? `${state.gpuPower} · ${vendor.powerBudget}` : vendor.powerBudget,
+      status: powerCheck.label,
+      tone: powerCheck.tone,
+      note: powerCheck.note
+    }
+  ];
 }
 
 function getGpuDemandLevel(gpuValue) {
@@ -772,6 +967,7 @@ GPU: ${state.gpu.label} / ${state.gpuPlatform} x${state.gpuCount}
 - GPU 필수 부품: ${state.gpuRequiredParts}
 - GPU 전원 기준: ${state.gpuExactness}
 - GPU 서버 요건: ${state.gpuServerNeed}
+- GPU 슬롯 점유: ${state.gpuSlotWidth}
 - 전력/냉각: ${state.powerText}
 - PSU: ${state.psuText}
 
@@ -815,6 +1011,7 @@ function makeVendorCard(vendor, state) {
   const capacityScore = Math.max(0, 4 - Math.abs(capacityLevel - demandLevel));
   const score = (vendor.fit.includes(state.gpu.value) ? 4 : 0) + (supportsPlatform ? 2 : 0) + capacityScore;
   const fallback = fallbackSvg(vendor.vendor, vendor.model, vendor.accent[0], vendor.accent[1]);
+  const checks = buildVendorChecks(vendor, state);
   const fitReason = vendor.fit.includes(state.gpu.value)
     ? `현재 선택한 ${state.gpu.label} / ${state.gpuPlatform}와 맞습니다.`
     : supportsPlatform
@@ -837,6 +1034,22 @@ function makeVendorCard(vendor, state) {
       <div class="vendor-reason">
         <span>추천 이유</span>
         <strong>${fitReason}</strong>
+      </div>
+      <div class="vendor-checklist">
+        ${checks
+          .map(
+            (check) => `
+              <div class="vendor-check">
+                <div class="vendor-check-head">
+                  <span>${check.name}</span>
+                  <strong class="check-pill check-pill--${check.tone}">${check.status}</strong>
+                </div>
+                <strong class="vendor-check-value">${check.value}</strong>
+                <p>${check.note}</p>
+              </div>
+            `
+          )
+          .join("")}
       </div>
       <div class="vendor-specs">
         <div class="vendor-spec">
@@ -920,6 +1133,7 @@ function render() {
     gpuExactness: gpuVariant.exactness || "SKU-specific",
     gpuServerNeed: gpuVariant.serverNeed || "Check exact SKU before ordering",
     gpuRequiredParts: gpuVariant.requiredParts || "Check exact SKU before ordering",
+    gpuSlotWidth: getGpuSlotWidth(gpu, gpuPlatform),
     powerText: `${formatRange(load)}, ${powerBandText}, ${siteType === "office" ? "office cooling margin" : siteType === "edge" ? "edge airflow margin" : workload.cooling}`,
     psuText: `${powerBandText}, 1+1 redundant`
   };
@@ -945,6 +1159,7 @@ function render() {
     `GPU 커넥터: ${state.gpuConnector}`,
     `필수 부품: ${state.gpuRequiredParts}`,
     `전원 기준: ${state.gpuExactness}`,
+    `슬롯 점유: ${state.gpuSlotWidth}`,
     `서버 요건: ${state.gpuServerNeed}`,
     `전력: ${state.powerText}`,
     `냉각: ${siteType === "datacenter" ? "rack-optimized" : siteType === "office" ? "office-safe" : "edge-safe"}`,
