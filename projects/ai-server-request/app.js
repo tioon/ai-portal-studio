@@ -538,10 +538,10 @@ const VENDORS = [
     accent: ["#ff8bb1", "#331127"],
     specs: {
       formFactor: "4U GPU server",
-      pcie: "high-density GPU platform",
-      gpuClass: "dense training / max GPU count",
-      power: "Use when thermal and power budget are high",
-      serverNeed: "Best for dense GPU training where airflow and power budget are generous"
+      pcie: "Dense PCIe / SXM layout",
+      gpuClass: "Dense training / max GPU count",
+      power: "High thermal and power budget",
+      serverNeed: "Best for dense GPU training with generous airflow and rack power"
     }
   }
 ];
@@ -712,6 +712,10 @@ function buildVendorChecks(vendor, state) {
       note: powerCheck.note
     }
   ];
+}
+
+function formatOfficialGpuList(vendor) {
+  return vendor.fit.join(" / ");
 }
 
 function getGpuDemandLevel(gpuValue) {
@@ -1004,7 +1008,7 @@ function fallbackSvg(vendor, model, accentA = "#1f3552", accentB = "#0d1726") {
 
 function makeVendorCard(vendor, state) {
   const card = document.createElement("article");
-  card.className = "card vendor-card";
+  card.className = `card vendor-card ${vendor.model === "PowerEdge XE9680" ? "vendor-card--dense" : ""}`;
   const supportsPlatform = vendor.platforms?.includes(state.gpuPlatform) ?? true;
   const demandLevel = getGpuDemandLevel(state.gpu.value);
   const capacityLevel = vendor.capacityLevel || 2;
@@ -1073,9 +1077,15 @@ function makeVendorCard(vendor, state) {
           <strong>${vendor.specs.serverNeed}</strong>
         </div>
       </div>
-      <div class="vendor-meta">
-        <span>적합 GPU</span>
-        <strong>${vendor.fit.join(" / ")}${vendor.platforms ? ` · ${vendor.platforms.join(" / ")}` : ""}</strong>
+      <div class="vendor-meta vendor-meta--split">
+        <div class="vendor-meta-item">
+          <span>공식 지원 GPU</span>
+          <strong>${formatOfficialGpuList(vendor)}</strong>
+        </div>
+        <div class="vendor-meta-item">
+          <span>지원 플랫폼</span>
+          <strong>${vendor.platforms ? vendor.platforms.join(" / ") : "PCIe"}</strong>
+        </div>
       </div>
     </div>
   `;

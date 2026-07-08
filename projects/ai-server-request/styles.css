@@ -680,6 +680,10 @@ input[type="range"] {
   margin-top: 12px;
 }
 
+.vendor-card--dense .vendor-specs {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .vendor-spec {
   padding: 10px 11px;
   border-radius: 14px;
@@ -730,6 +734,19 @@ input[type="range"] {
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
+.vendor-meta--split {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.vendor-meta-item {
+  padding: 10px 11px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
 .vendor-meta span {
   display: block;
   font-size: 0.8rem;
@@ -748,6 +765,11 @@ input[type="range"] {
   .summary-bar,
   .spec-strip,
   .form-grid.compact {
+    grid-template-columns: 1fr;
+  }
+
+  .vendor-meta--split,
+  .vendor-card--dense .vendor-specs {
     grid-template-columns: 1fr;
   }
 
