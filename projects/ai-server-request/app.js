@@ -422,6 +422,48 @@ const GPU_OPTIONS = [
 const VENDORS = [
   {
     vendor: "HPE",
+    model: "ProLiant DL20 Gen11",
+    badge: "edge entry",
+    summary: "1U 엣지/서비스 서버. 저전력 단일 GPU를 얹는 용도에 맞습니다.",
+    fit: ["A2", "T4", "L4"],
+    platforms: ["PCIe"],
+    capacityLevel: 1,
+    slotCapacity: 1,
+    powerBudget: "2 x 800W",
+    powerBudgetW: 1600,
+    profileSupport: { lowProfile: true, fullHeight: false },
+    accent: ["#7ac8ff", "#0c1f35"],
+    specs: {
+      formFactor: "1U compact server",
+      pcie: "PCIe Gen5 minimal expansion",
+      gpuClass: "low-profile / low-power GPU",
+      power: "Works best with slot-powered or very low-power cards",
+      serverNeed: "Low-profile PCIe GPU and conservative thermal budget"
+    }
+  },
+  {
+    vendor: "HPE",
+    model: "ProLiant DL320 Gen11",
+    badge: "dense 1U",
+    summary: "작은 공간에 여러 요청을 처리하는 경량 1U 라인업입니다.",
+    fit: ["A2", "T4", "L4", "RTX6000Ada"],
+    platforms: ["PCIe"],
+    capacityLevel: 1,
+    slotCapacity: 2,
+    powerBudget: "2 x 1200W",
+    powerBudgetW: 2400,
+    profileSupport: { lowProfile: true, fullHeight: false },
+    accent: ["#61d8ff", "#10233c"],
+    specs: {
+      formFactor: "1U single-socket",
+      pcie: "PCIe Gen5 compact expansion",
+      gpuClass: "entry inference / low-profile GPU",
+      power: "Good for efficient inference nodes",
+      serverNeed: "Low-profile PCIe GPU with modest power and cooling"
+    }
+  },
+  {
+    vendor: "HPE",
     model: "ProLiant DL360 Gen11",
     badge: "compact inference",
     summary: "저전력 GPU와 단일 소켓 구성에 잘 맞는 1U 기준선.",
@@ -439,27 +481,6 @@ const VENDORS = [
       gpuClass: "entry inference / low-profile GPU",
       power: "Best when you want density without oversized chassis",
       serverNeed: "Good fit for low-power or low-profile PCIe GPUs"
-    }
-  },
-  {
-    vendor: "Dell",
-    model: "PowerEdge R660",
-    badge: "efficient rack server",
-    summary: "L4, A2, T4 같은 저전력 GPU에 맞는 효율적인 1U/2U 중간 지점.",
-    fit: ["A2", "T4", "L4", "RTX6000Ada", "A10"],
-    platforms: ["PCIe"],
-    capacityLevel: 1,
-    slotCapacity: 2,
-    powerBudget: "2 x 1200W",
-    powerBudgetW: 2400,
-    profileSupport: { lowProfile: true, fullHeight: false },
-    accent: ["#67f0c7", "#0b2a1d"],
-    specs: {
-      formFactor: "1U dual-socket",
-      pcie: "PCIe Gen5 efficient expansion",
-      gpuClass: "compact inference / service nodes",
-      power: "Better when you do not need a large 2U GPU chassis",
-      serverNeed: "Good for low-to-mid power PCIe GPU deployments"
     }
   },
   {
@@ -505,6 +526,111 @@ const VENDORS = [
     }
   },
   {
+    vendor: "HPE",
+    model: "ProLiant DL560 Gen11",
+    badge: "high capacity",
+    summary: "HPE 쪽에서 더 큰 전력과 확장성을 제공하는 4소켓 계열입니다.",
+    fit: ["L40S", "A100", "H100"],
+    platforms: ["PCIe"],
+    capacityLevel: 3,
+    slotCapacity: 6,
+    powerBudget: "2 x 1600W",
+    powerBudgetW: 3200,
+    profileSupport: { lowProfile: true, fullHeight: true },
+    accent: ["#8fe0ff", "#12304c"],
+    specs: {
+      formFactor: "2U quad-socket",
+      pcie: "PCIe Gen5 high-capacity expansion",
+      gpuClass: "multi-GPU inference / mid training",
+      power: "When CPU and PCIe capacity matter together",
+      serverNeed: "Useful when you need more CPU sockets and GPU expansion"
+    }
+  },
+  {
+    vendor: "HPE",
+    model: "ProLiant DL580 Gen11",
+    badge: "maximum CPU",
+    summary: "HPE 쪽에서 가장 큰 CPU/메모리 축에 가까운 대형 플랫폼입니다.",
+    fit: ["A100", "H100", "H200"],
+    platforms: ["PCIe"],
+    capacityLevel: 4,
+    slotCapacity: 8,
+    powerBudget: "2 x 2000W",
+    powerBudgetW: 4000,
+    profileSupport: { lowProfile: true, fullHeight: true },
+    accent: ["#89a7ff", "#16203c"],
+    specs: {
+      formFactor: "4U quad-socket",
+      pcie: "PCIe Gen5 maximum enterprise expansion",
+      gpuClass: "large CPU + PCIe GPU deployments",
+      power: "Large chassis and strong rack power margin",
+      serverNeed: "Best when CPU sockets, memory, and PCIe GPU space all matter"
+    }
+  },
+  {
+    vendor: "Dell",
+    model: "PowerEdge R660",
+    badge: "efficient rack server",
+    summary: "L4, A2, T4 같은 저전력 GPU에 맞는 효율적인 1U/2U 중간 지점.",
+    fit: ["A2", "T4", "L4", "RTX6000Ada", "A10"],
+    platforms: ["PCIe"],
+    capacityLevel: 1,
+    slotCapacity: 2,
+    powerBudget: "2 x 1200W",
+    powerBudgetW: 2400,
+    profileSupport: { lowProfile: true, fullHeight: false },
+    accent: ["#67f0c7", "#0b2a1d"],
+    specs: {
+      formFactor: "1U dual-socket",
+      pcie: "PCIe Gen5 efficient expansion",
+      gpuClass: "compact inference / service nodes",
+      power: "Better when you do not need a large 2U GPU chassis",
+      serverNeed: "Good for low-to-mid power PCIe GPU deployments"
+    }
+  },
+  {
+    vendor: "Dell",
+    model: "PowerEdge R6615",
+    badge: "AMD inference",
+    summary: "AMD 기반 1U 서버로, 효율적인 단일/소수 GPU 구성에 잘 맞습니다.",
+    fit: ["A2", "T4", "L4", "RTX6000Ada", "A10"],
+    platforms: ["PCIe"],
+    capacityLevel: 1,
+    slotCapacity: 2,
+    powerBudget: "2 x 1200W",
+    powerBudgetW: 2400,
+    profileSupport: { lowProfile: true, fullHeight: false },
+    accent: ["#79ffd7", "#0d3026"],
+    specs: {
+      formFactor: "1U single-socket",
+      pcie: "PCIe Gen5 compact expansion",
+      gpuClass: "compact inference / edge service",
+      power: "Strong choice for efficient GPU service nodes",
+      serverNeed: "Low-profile PCIe GPU with restrained thermal budget"
+    }
+  },
+  {
+    vendor: "Dell",
+    model: "PowerEdge R6625",
+    badge: "AMD balanced",
+    summary: "1U에서 조금 더 여유 있는 확장성을 노릴 때 보는 AMD 축입니다.",
+    fit: ["L4", "RTX6000Ada", "A10", "L40"],
+    platforms: ["PCIe"],
+    capacityLevel: 2,
+    slotCapacity: 3,
+    powerBudget: "2 x 1600W",
+    powerBudgetW: 3200,
+    profileSupport: { lowProfile: true, fullHeight: true },
+    accent: ["#6ce8d0", "#0a2a24"],
+    specs: {
+      formFactor: "1U/2U efficient server",
+      pcie: "PCIe Gen5 balanced expansion",
+      gpuClass: "mixed inference / compact GPU",
+      power: "Better if you want slightly more room than a bare minimum 1U",
+      serverNeed: "Works well for a few PCIe GPUs with moderate power"
+    }
+  },
+  {
     vendor: "Dell",
     model: "PowerEdge R760",
     badge: "general-purpose",
@@ -523,6 +649,111 @@ const VENDORS = [
       gpuClass: "general-purpose inference",
       power: "Strong default for mixed CPU/GPU workloads",
       serverNeed: "Works well for 1-4 GPU deployments and day-to-day operations"
+    }
+  },
+  {
+    vendor: "Dell",
+    model: "PowerEdge R7615",
+    badge: "AMD scale-out",
+    summary: "GPU를 여러 대 붙이는 쪽으로 조금 더 확장성 있게 보는 AMD 2U 라인입니다.",
+    fit: ["L40", "L40S", "A100", "H100"],
+    platforms: ["PCIe"],
+    capacityLevel: 3,
+    slotCapacity: 4,
+    powerBudget: "2 x 1600W",
+    powerBudgetW: 3200,
+    profileSupport: { lowProfile: true, fullHeight: true },
+    accent: ["#f8c08a", "#2f1d10"],
+    specs: {
+      formFactor: "2U single-socket",
+      pcie: "PCIe Gen5 lane-heavy expansion",
+      gpuClass: "heavier PCIe GPU configs",
+      power: "Good when PCIe lanes and memory bandwidth matter",
+      serverNeed: "Useful for GPU-heavy builds with room for expansion"
+    }
+  },
+  {
+    vendor: "Dell",
+    model: "PowerEdge R7625",
+    badge: "AMD heavy-duty",
+    summary: "큰 메모리와 여러 GPU를 함께 볼 때 적합한 AMD 2U 플랫폼입니다.",
+    fit: ["L40S", "A100", "H100", "H200"],
+    platforms: ["PCIe"],
+    capacityLevel: 3,
+    slotCapacity: 6,
+    powerBudget: "2 x 1600W",
+    powerBudgetW: 3200,
+    profileSupport: { lowProfile: true, fullHeight: true },
+    accent: ["#ffce95", "#321f10"],
+    specs: {
+      formFactor: "2U single-socket",
+      pcie: "PCIe Gen5 high-density expansion",
+      gpuClass: "multi-GPU training / mixed",
+      power: "Best when you want a lot of PCIe room in 2U",
+      serverNeed: "Useful for larger GPU builds that still stay on PCIe"
+    }
+  },
+  {
+    vendor: "Dell",
+    model: "PowerEdge R860",
+    badge: "dense compute",
+    summary: "CPU와 메모리 용량을 더 크게 가져가면서 GPU도 보는 대형 4소켓 계열입니다.",
+    fit: ["A100", "H100", "H200"],
+    platforms: ["PCIe"],
+    capacityLevel: 4,
+    slotCapacity: 6,
+    powerBudget: "2 x 2000W",
+    powerBudgetW: 4000,
+    profileSupport: { lowProfile: true, fullHeight: true },
+    accent: ["#ffcf77", "#311d0f"],
+    specs: {
+      formFactor: "4U quad-socket",
+      pcie: "PCIe Gen5 dense expansion",
+      gpuClass: "large CPU + GPU compute",
+      power: "For dense compute with room for large CPUs",
+      serverNeed: "Better when the server must handle heavy CPU and GPU workloads together"
+    }
+  },
+  {
+    vendor: "Dell",
+    model: "PowerEdge R960",
+    badge: "maximum memory",
+    summary: "Dell의 대형 CPU/메모리 축으로, 대규모 AI 지원 환경에 맞습니다.",
+    fit: ["A100", "H100", "H200", "B200", "B300"],
+    platforms: ["PCIe"],
+    capacityLevel: 4,
+    slotCapacity: 8,
+    powerBudget: "2 x 2000W",
+    powerBudgetW: 4000,
+    profileSupport: { lowProfile: true, fullHeight: true },
+    accent: ["#ffd38d", "#36210f"],
+    specs: {
+      formFactor: "4U quad-socket",
+      pcie: "PCIe Gen5 maximum enterprise expansion",
+      gpuClass: "large CPU + PCIe GPU deployments",
+      power: "Strong rack power and airflow requirements",
+      serverNeed: "Best when you want maximum CPU sockets and broad expansion"
+    }
+  },
+  {
+    vendor: "Dell",
+    model: "PowerEdge XE8640",
+    badge: "AI dense",
+    summary: "고밀도 AI 서버. 여러 GPU를 넣는 쪽으로 최적화된 모델입니다.",
+    fit: ["A100", "H100", "H200"],
+    platforms: ["PCIe"],
+    capacityLevel: 4,
+    slotCapacity: 4,
+    powerBudget: "2 x 3000W",
+    powerBudgetW: 6000,
+    profileSupport: { lowProfile: false, fullHeight: true },
+    accent: ["#ff9f9f", "#38151b"],
+    specs: {
+      formFactor: "4U GPU server",
+      pcie: "Dense PCIe GPU layout",
+      gpuClass: "dense training / max GPU count",
+      power: "High thermal and power budget",
+      serverNeed: "Best for dense GPU training where airflow and power budget are generous"
     }
   },
   {
@@ -742,7 +973,7 @@ function renderServerOptions(selectedServerId) {
   const optionGroups = Array.from(grouped.entries())
     .map(
       ([vendorName, items]) => `
-        <optgroup label="${vendorName}">
+        <optgroup label="${vendorName === "HPE" ? "HP / HPE" : vendorName}">
           ${items
             .map((vendor) => {
               const id = getVendorId(vendor);
@@ -768,7 +999,7 @@ function renderSelectedVendorPanel(vendor, state) {
         <div>
           <span class="eyebrow-inline">선택 서버</span>
           <h3>특정 서버를 골라서 볼 수 있습니다</h3>
-          <p>아래 추천 카드나 상단 드롭다운에서 HP / Dell 라인업을 선택하면, 그 서버를 고정해서 상세를 볼 수 있습니다.</p>
+          <p>아래 추천 카드나 상단 드롭다운에서 HP / HPE / Dell 라인업을 선택하면, 그 서버를 고정해서 상세를 볼 수 있습니다.</p>
         </div>
         <button type="button" class="button button-secondary small" data-clear-server>추천 순으로 보기</button>
       </div>
