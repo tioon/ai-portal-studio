@@ -36,6 +36,15 @@
     "hfId": "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B"
   },
   {
+    "name": "Gemma 4 E4B",
+    "layers": 42,
+    "kvheads": 2,
+    "headdim": 256,
+    "params": 8,
+    "note": "Official Gemma 4 family open-weight model.",
+    "hfId": "google/gemma-4-E4B-it"
+  },
+  {
     "name": "GPT-OSS 20B",
     "layers": 24,
     "kvheads": 8,
@@ -54,6 +63,15 @@
     "hfId": "mistralai/Mistral-Small-24B-Base-2501"
   },
   {
+    "name": "Gemma 4 12B",
+    "layers": 48,
+    "kvheads": 8,
+    "headdim": 256,
+    "params": 11.95,
+    "note": "Official Gemma 4 family dense model.",
+    "hfId": "google/gemma-4-12B-it"
+  },
+  {
     "name": "Qwen3.5-27B",
     "layers": 64,
     "kvheads": 4,
@@ -61,6 +79,24 @@
     "params": 27,
     "note": "Linear attention; KV cache estimate is approximate.",
     "hfId": "Qwen/Qwen3.5-27B"
+  },
+  {
+    "name": "Gemma 4 31B",
+    "layers": 60,
+    "kvheads": 16,
+    "headdim": 256,
+    "params": 30.7,
+    "note": "Official Gemma 4 family dense model.",
+    "hfId": "google/gemma-4-31B-it"
+  },
+  {
+    "name": "Llama 4 Scout",
+    "layers": 80,
+    "kvheads": 8,
+    "headdim": 128,
+    "params": 109,
+    "note": "Meta open-weight model, not open-source in the strict sense; MoE total params are used for weight memory.",
+    "hfId": "meta-llama/Llama-4-Scout-17B-16E-Instruct"
   },
   {
     "name": "Qwen3.5-35B-A3B",
