@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Linux Ops Manual</title>
+    <meta
+      name="description"
+      content="Rocky Linux와 Ubuntu 기준으로 자주 쓰는 리눅스 명령어를 상황별로 바로 찾는 운영 치트시트."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero card">
+        <div class="hero-copy">
+          <div class="eyebrow">Linux Ops Manual</div>
+          <h1>Rocky / Ubuntu 운영 명령어를 10초 안에 찾는 치트시트</h1>
+          <p class="lede">
+            서버 개발과 운영 중 자주 쓰는 명령어를 배포판별로 나누고, 옵션과 예시까지
+            함께 정리한 실전형 레퍼런스입니다.
+          </p>
+
+          <div class="hero-actions">
+            <button class="button button-primary" data-scenario="disk">디스크 점검</button>
+            <button class="button button-secondary" data-scenario="service">서비스 재시작</button>
+            <button class="button button-secondary" data-scenario="network">포트 확인</button>
+            <button class="button button-secondary" data-scenario="logs">로그 추적</button>
+          </div>
+
+          <div class="hero-chips">
+            <span class="chip">Rocky Linux</span>
+            <span class="chip">Ubuntu</span>
+            <span class="chip">상황별 검색</span>
+            <span class="chip">복사 버튼</span>
+          </div>
+        </div>
+
+        <div class="hero-panel">
+          <div class="panel-top">
+            <div>
+              <div class="panel-label">Quick search</div>
+              <h2>바로 찾기</h2>
+            </div>
+            <span class="panel-badge">Live</span>
+          </div>
+          <label class="search">
+            <span class="sr-only">명령어 검색</span>
+            <input
+              id="searchInput"
+              type="search"
+              placeholder="예: 디스크 가득참, 포트 확인, 서비스 재시작"
+              autocomplete="off"
+            />
+          </label>
+
+          <div class="distro-tabs" role="tablist" aria-label="배포판 선택">
+            <button class="tab is-active" data-distro="rocky" role="tab" aria-selected="true">
+              Rocky Linux
+            </button>
+            <button class="tab" data-distro="ubuntu" role="tab" aria-selected="false">
+              Ubuntu
+            </button>
+          </div>
+
+          <div class="panel-note">
+            같은 명령어라도 패키지 관리자, 서비스명, 방화벽, 설정 경로가 달라지는 부분을
+            따로 보여줍니다.
+          </div>
+        </div>
+      </section>
+
+      <section class="section card">
+        <div class="section-head">
+          <div>
+            <div class="section-label">Categories</div>
+            <h2>상황별 탐색</h2>
+          </div>
+          <span id="resultCount" class="result-count"></span>
+        </div>
+
+        <div id="categoryRow" class="category-row"></div>
+      </section>
+
+      <section class="section">
+        <div class="section-head compact">
+          <div>
+            <div class="section-label">Commands</div>
+            <h2 id="listTitle">Rocky Linux용 명령어</h2>
+          </div>
+          <button id="clearFilters" class="button button-secondary small">필터 초기화</button>
+        </div>
+        <div id="scenarioGrid" class="scenario-grid"></div>
+        <div id="commandGrid" class="command-grid"></div>
+      </section>
+    </main>
+
+    <template id="commandTemplate">
+      <article class="command-card card">
+        <div class="card-head">
+          <div>
+            <div class="meta-row">
+              <span class="pill pill-category"></span>
+              <span class="pill pill-distro"></span>
+            </div>
+            <h3></h3>
+            <p class="summary"></p>
+          </div>
+          <button class="copy-button" type="button">Copy</button>
+        </div>
+
+        <div class="command-line">
+          <code></code>
+        </div>
+
+        <div class="option-block">
+          <div class="block-head">
+            <strong>자주 쓰는 옵션</strong>
+            <span>실전에서 자주 보는 조합</span>
+          </div>
+          <div class="option-list"></div>
+        </div>
+
+        <div class="example-block">
+          <div class="block-head">
+            <strong>실전 예시</strong>
+            <span>바로 복사해서 쓰는 패턴</span>
+          </div>
+          <div class="example-list"></div>
+        </div>
+
+        <details class="more-block">
+          <summary>Rocky / Ubuntu 차이와 주의점</summary>
+          <div class="more-content">
+            <div class="diff-row"></div>
+            <ul class="warning-list"></ul>
+          </div>
+        </details>
+      </article>
+    </template>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
