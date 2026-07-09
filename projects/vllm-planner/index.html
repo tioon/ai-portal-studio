@@ -183,7 +183,7 @@
 
   <section id="simulator">
     <h2>2. 메모리 시뮬레이터 <span class="tag">인터랙티브</span></h2>
-    <p class="sub">아래 값을 조절하면 오른쪽 그래프와 통계가 실시간으로 갱신됩니다. 위 플래너에서 고른 용도/동시 사용자/응답속도에 따라 KV 캐시 도넛도 함께 바뀝니다. (실제 배포 시에는 vLLM 버전·커널·모델 구조에 따라 오차가 있을 수 있는 근사 추정치입니다.)</p>
+    <p class="sub">아래 값을 조절하면 오른쪽 그래프와 통계가 실시간으로 갱신됩니다. 위 플래너에서 고른 용도/동시 사용자/응답속도에 따라 KV 캐시 도넛도 함께 바뀝니다. 가중치는 프리셋 기본값을 불러오지만 언제든 직접 수정할 수 있습니다.</p>
 
     <div class="grid2">
       <!-- CONTROLS -->
@@ -206,6 +206,11 @@
           <div class="hint" id="modelCount"></div>
           <div class="hint" id="modelNote"></div>
           <div class="hint" id="weightNote"></div>
+        </div>
+        <div class="field">
+          <label>체크포인트 가중치 (GB) <span class="val" id="v_weightgb"></span></label>
+          <input type="number" id="weightGB" min="0" max="1000" step="0.1" value="0">
+          <div class="hint">VRAM 도넛과 호스트 RAM 추정은 이 값을 기준으로 계산합니다. 프리셋은 기본값만 넣어주며, 실제 배포할 체크포인트 크기에 맞게 직접 바꿀 수 있습니다.</div>
         </div>
         <div class="row2">
           <div class="field">
@@ -315,7 +320,7 @@
               <option value="0.5_gptq">GPTQ INT4 (0.5B)</option>
               <option value="0.35">GGUF Q3_K (~0.35B)</option>
             </select>
-            <div class="hint">이 선택은 배포 명령어의 dtype / quantization 플래그에만 반영되고, 가중치 메모리는 실제 체크포인트 파일 크기로 계산합니다.</div>
+            <div class="hint">이 선택은 배포 명령어의 dtype / quantization 플래그에만 반영됩니다. 가중치 메모리는 위 체크포인트 가중치 입력값으로 계산합니다.</div>
           </div>
           <div class="field">
             <label>KV 캐시 dtype</label>
@@ -523,7 +528,7 @@
 </main>
 
 <footer>
-  가중치 메모리는 실제 체크포인트 파일 총합을 기준으로 계산하고, KV 캐시·오버헤드·호스트 RAM은 근사 추정입니다. 실제 값은 vLLM 버전, CUDA 커널, 모델 아키텍처에 따라 달라질 수 있으니 배포 전 <code>nvidia-smi</code> 및 vLLM 로그로 검증하세요.<br>
+  가중치 메모리는 사용자가 입력한 체크포인트 파일 크기를 기준으로 계산하고, 프리셋은 초기값만 제공합니다. KV 캐시·오버헤드·호스트 RAM은 근사 추정입니다. 실제 값은 vLLM 버전, CUDA 커널, 모델 아키텍처에 따라 달라질 수 있으니 배포 전 <code>nvidia-smi</code> 및 vLLM 로그로 검증하세요.<br>
   참고: <a href="https://docs.vllm.ai/en/stable/configuration/optimization/" target="_blank">vLLM Optimization &amp; Tuning</a> ·
   <a href="https://docs.vllm.ai/en/stable/configuration/engine_args/" target="_blank">Engine Arguments</a> ·
   <a href="https://docs.vllm.ai/en/latest/design/paged_attention/" target="_blank">PagedAttention Design</a> ·
@@ -632,7 +637,19 @@ function modelBucket(params){
 
 function modelOptionLabel(m){
   const p = Number.isFinite(m.params) ? (Number.isInteger(m.params) ? String(m.params) : m.params.toFixed(1).replace(/\.0$/, "")) : "?";
-  return `${m.name} · ${p}B · ${fmtWeightGB(m.weightBytes) || "est."}`;
+  return `${m.name} · ${p}B`;
+}
+
+function presetWeightGB(model){
+  if (Number.isFinite(model?.weightBytes) && model.weightBytes > 0) return model.weightBytes / 1e9;
+  if (Number.isFinite(model?.params) && model.params > 0) return Math.max(0.1, model.params * 2);
+  return 0;
+}
+
+function selectedWeightGB(model){
+  const input = +el('weightGB').value;
+  if (Number.isFinite(input) && input > 0) return input;
+  return presetWeightGB(model);
 }
 
 async function loadModelPresets(){
@@ -889,9 +906,7 @@ function recommendPlannerSettings(){
   let swapGB = workload.swap;
 
   // 모델이 큰데 현재 GPU 구성상 여유가 적으면 최소한의 offload 여유를 자동 제안
-  const totalWeightGB = Number.isFinite(model?.weightBytes) && model.weightBytes > 0
-    ? model.weightBytes / 1e9
-    : model.params * parseWDtype(el('wdtype').value);
+  const totalWeightGB = selectedWeightGB(model);
   const weightPerGpuGB = totalWeightGB / totalGpus;
   const fixedEstimateGB = 0.6 + 0.15*(+el('tp').value - 1) + 0.05*(+el('pp').value - 1) + 0.12 + (maxbatch/4096)*0.35 + (maxseqs/512)*0.15;
   const availableForEverythingGB = +el('vramInput').value * util;
@@ -1041,6 +1056,7 @@ function compute(){
   el('v_params').textContent = paramsB + 'B';
   el('v_kvheads').textContent = kvheads;
   el('v_headdim').textContent = headdim;
+  el('v_weightgb').textContent = selectedWeightGB(model).toFixed(2) + ' GB';
   el('v_vram').textContent = vram + ' GB';
   el('v_tp').textContent = tp;
   el('v_pp').textContent = pp;
@@ -1055,10 +1071,7 @@ function compute(){
   el('v_users').textContent = (+el('concurrentUsers').value || 1) + ' 명';
   el('gpuCountHint').textContent = `총 사용 GPU 수 = tensor_parallel_size(${tp}) × pipeline_parallel_size(${pp}) = ${totalGpus}개`;
 
-  const totalWeightBytes = Number.isFinite(model?.weightBytes) && model.weightBytes > 0
-    ? model.weightBytes
-    : paramsB * 1e9 * parseWDtype(el('wdtype').value);
-  const totalWeightGB = totalWeightBytes / 1e9;
+  const totalWeightGB = selectedWeightGB(model);
 
   // 1) 모델 가중치 (GPU당: TP × PP로 균등 분할한다고 가정)
   let weightPerGpuGB = totalWeightGB / totalGpus;
@@ -1509,9 +1522,12 @@ function applyModelPreset(){
   el('kvheads').value = m.kvheads;
   el('headdim').value = m.headdim;
   el('modelNote').textContent = m.note || '';
+  const defaultWeightGB = presetWeightGB(m);
+  el('weightGB').value = defaultWeightGB ? defaultWeightGB.toFixed(2) : '';
+  el('v_weightgb').textContent = defaultWeightGB ? defaultWeightGB.toFixed(2) + ' GB' : '-';
   el('weightNote').textContent = Number.isFinite(m.weightBytes)
-    ? `실제 체크포인트 가중치: ${fmtWeightGB(m.weightBytes)} (${m.hfId})`
-    : '직접 입력 모델은 가중치 크기를 추정합니다.';
+    ? '프리셋 기본 가중치를 넣었습니다. 필요하면 아래 입력값을 직접 수정하세요.'
+    : '직접 입력 모델은 가중치를 직접 넣어야 합니다.';
   if (el('hfModelId') && m.hfId) el('hfModelId').value = m.hfId;
   compute();
 }
@@ -1549,14 +1565,19 @@ async function init(){
 
   ['modelSearch','modelCategory'].forEach(id=>{
     const ev = id === 'modelSearch' ? 'input' : 'change';
-    el(id).addEventListener(ev, ()=>{ renderModelPresetOptions(); applyModelPreset(); });
+    el(id).addEventListener(ev, ()=>{
+      const prev = el('modelPreset').value;
+      renderModelPresetOptions();
+      if (el('modelPreset').value !== prev) applyModelPreset();
+      else compute();
+    });
   });
   el('modelPreset').addEventListener('change', applyModelPreset);
   el('gpuPreset').addEventListener('change', applyGpuPreset);
   ['tp','pp','blocksize','wdtype','kvdtype','interconnect'].forEach(id=> el(id).addEventListener('change', compute));
 
   ['vramInput','util','maxlen','maxseqs','maxbatch',
-   'enforceEager','cpuoffload','swap','hostramInput','kvOverrideGB','layers','params','kvheads','headdim']
+   'enforceEager','cpuoffload','swap','hostramInput','kvOverrideGB','layers','params','kvheads','headdim','weightGB']
     .forEach(id=> el(id).addEventListener('input', compute));
 
   // 배포 명령어 탭 전환
