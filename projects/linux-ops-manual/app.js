@@ -1908,17 +1908,53 @@ function normalizeText(value) {
   return String(value).toLowerCase();
 }
 
+function expandCommand(command) {
+  const parts = command.title
+    .split(" / ")
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  if (parts.length <= 1) {
+    return [
+      {
+        ...command,
+        displayTitle: command.title,
+        familyTitle: null
+      }
+    ];
+  }
+
+  const clauses = command.command
+    .split(/\s*&&\s*/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  return parts.map((part, index) => ({
+    ...command,
+    title: part,
+    displayTitle: part,
+    familyTitle: command.title,
+    command: clauses[index] || command.command,
+    keywords: Array.from(new Set([...(command.keywords || []), part.toLowerCase()]))
+  }));
+}
+
 function getVisibleCommands() {
   const term = normalizeText(state.search).trim();
-  return COMMANDS.filter((command) => {
+  const matched = COMMANDS.filter((command) => {
     const categoryMatch = state.category === "all" || command.category === state.category;
     const variant = command.variants[state.distro];
+    const expandedTitles = command.title
+      .split(" / ")
+      .map((part) => part.trim())
+      .filter(Boolean);
     const haystack = [
       command.title,
       command.summary,
       command.command,
       command.category,
       ...(command.keywords || []),
+      ...expandedTitles,
       variant.diff,
       ...(variant.options || []).map((item) => `${item.flag} ${item.desc}`),
       ...(variant.examples || []).map((item) => `${item.label} ${item.code}`),
@@ -1930,6 +1966,8 @@ function getVisibleCommands() {
     const searchMatch = !term || haystack.includes(term);
     return categoryMatch && searchMatch;
   });
+
+  return matched.flatMap((command) => expandCommand(command));
 }
 
 function groupVisibleCommands(commands) {
@@ -2023,7 +2061,7 @@ function renderCommands() {
       const categoryLabel = categories.find((item) => item.id === command.category)?.label || command.category;
       node.querySelector(".pill-category").textContent = categoryLabel;
       node.querySelector(".pill-distro").textContent = state.distro === "rocky" ? "Rocky Linux" : "Ubuntu";
-      node.querySelector("h3").textContent = command.title;
+      node.querySelector("h3").textContent = command.displayTitle || command.title;
       node.querySelector(".summary").textContent = command.summary;
       node.querySelector(".command-line code").textContent = command.command;
 
