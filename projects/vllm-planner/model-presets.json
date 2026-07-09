@@ -1,50 +1,5 @@
 [
   {
-    "name": "ERNIE-4.5-0.3B",
-    "layers": 18,
-    "kvheads": 2,
-    "headdim": 128,
-    "params": 0.3,
-    "note": "",
-    "hfId": "baidu/ERNIE-4.5-0.3B-PT"
-  },
-  {
-    "name": "ERNIE-4.5-0.3B-Base",
-    "layers": 18,
-    "kvheads": 2,
-    "headdim": 128,
-    "params": 0.3,
-    "note": "",
-    "hfId": "baidu/ERNIE-4.5-0.3B-Base-Paddle"
-  },
-  {
-    "name": "Qwen3.5-0.8B",
-    "layers": 24,
-    "kvheads": 2,
-    "headdim": 256,
-    "params": 0.8,
-    "note": "Linear attention; KV cache estimate is approximate.",
-    "hfId": "Qwen/Qwen3.5-0.8B"
-  },
-  {
-    "name": "Falcon3-1B",
-    "layers": 18,
-    "kvheads": 4,
-    "headdim": 256,
-    "params": 1,
-    "note": "",
-    "hfId": "tiiuae/Falcon3-1B-Instruct"
-  },
-  {
-    "name": "CroissantLLM Base",
-    "layers": 24,
-    "kvheads": 16,
-    "headdim": 128,
-    "params": 1.3,
-    "note": "",
-    "hfId": "croissantllm/CroissantLLMBase"
-  },
-  {
     "name": "DeepSeek-R1 1.5B",
     "layers": 28,
     "kvheads": 32,
@@ -52,69 +7,6 @@
     "params": 1.5,
     "note": "MLA / latent attention; KV cache is an upper-bound approximation.",
     "hfId": "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B"
-  },
-  {
-    "name": "Qwen3-1.7B",
-    "layers": 32,
-    "kvheads": 8,
-    "headdim": 128,
-    "params": 1.7,
-    "note": "",
-    "hfId": "Qwen/Qwen3-1.7B"
-  },
-  {
-    "name": "Qwen3.5-2B",
-    "layers": 24,
-    "kvheads": 2,
-    "headdim": 256,
-    "params": 2,
-    "note": "Linear attention; KV cache estimate is approximate.",
-    "hfId": "Qwen/Qwen3.5-2B"
-  },
-  {
-    "name": "Falcon3-3B",
-    "layers": 28,
-    "kvheads": 6,
-    "headdim": 256,
-    "params": 3,
-    "note": "",
-    "hfId": "tiiuae/Falcon3-3B-Instruct"
-  },
-  {
-    "name": "Llama 3.2 3B",
-    "layers": 26,
-    "kvheads": 6,
-    "headdim": 128,
-    "params": 3,
-    "note": "",
-    "hfId": "meta-llama/Llama-3.2-3B"
-  },
-  {
-    "name": "MaLLaM-3B",
-    "layers": 26,
-    "kvheads": 8,
-    "headdim": 100,
-    "params": 3,
-    "note": "",
-    "hfId": "mesolitica/mallam-3B-4096"
-  },
-  {
-    "name": "Ministral 3 3B",
-    "layers": 26,
-    "kvheads": 8,
-    "headdim": 128,
-    "params": 3,
-    "note": "",
-    "hfId": "mistralai/Ministral-3-3B-Instruct-2512"
-  },
-  {
-    "name": "NVIDIA Nemotron 3 Nano 30B-A3B",
-    "layers": 52,
-    "kvheads": 2,
-    "headdim": 128,
-    "params": 3.5,
-    "note": "MoE model: total parameters are used for weight memory.",
-    "hfId": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-BF16"
   },
   {
     "name": "Qwen3.5-4B",
@@ -126,123 +18,6 @@
     "hfId": "Qwen/Qwen3.5-4B"
   },
   {
-    "name": "Gemma 4 E2B",
-    "layers": 35,
-    "kvheads": 1,
-    "headdim": 256,
-    "params": 5.1,
-    "note": "",
-    "hfId": "collections/google/gemma-4"
-  },
-  {
-    "name": "ChatGLM2-6B",
-    "layers": 28,
-    "kvheads": 2,
-    "headdim": 128,
-    "params": 6,
-    "note": "",
-    "hfId": "THUDM/chatglm2-6b"
-  },
-  {
-    "name": "ChatGLM3-6B",
-    "layers": 28,
-    "kvheads": 2,
-    "headdim": 128,
-    "params": 6,
-    "note": "",
-    "hfId": "THUDM/chatglm3-6b"
-  },
-  {
-    "name": "ChatGLM3-6B-32K",
-    "layers": 28,
-    "kvheads": 2,
-    "headdim": 128,
-    "params": 6,
-    "note": "",
-    "hfId": "THUDM/chatglm3-6b-32k"
-  },
-  {
-    "name": "Falcon3-7B",
-    "layers": 36,
-    "kvheads": 8,
-    "headdim": 256,
-    "params": 7,
-    "note": "",
-    "hfId": "tiiuae/Falcon3-7B-Instruct"
-  },
-  {
-    "name": "SEA-LION-7B",
-    "layers": 32,
-    "kvheads": 32,
-    "headdim": 128,
-    "params": 7.1,
-    "note": "",
-    "hfId": "aisingapore/sea-lion-7b"
-  },
-  {
-    "name": "SEA-LION-7B-Instruct",
-    "layers": 32,
-    "kvheads": 32,
-    "headdim": 128,
-    "params": 7.1,
-    "note": "",
-    "hfId": "aisingapore/sea-lion-7b-instruct"
-  },
-  {
-    "name": "Gemma 4 E4B",
-    "layers": 42,
-    "kvheads": 2,
-    "headdim": 256,
-    "params": 8,
-    "note": "",
-    "hfId": "collections/google/gemma-4"
-  },
-  {
-    "name": "Ministral 3 8B",
-    "layers": 32,
-    "kvheads": 8,
-    "headdim": 128,
-    "params": 8,
-    "note": "",
-    "hfId": "mistralai/Ministral-3-8B-Instruct-2512"
-  },
-  {
-    "name": "GLM-4-9B",
-    "layers": 40,
-    "kvheads": 2,
-    "headdim": 128,
-    "params": 9,
-    "note": "",
-    "hfId": "THUDM/glm-4-9b"
-  },
-  {
-    "name": "GLM-4-9B-Chat",
-    "layers": 40,
-    "kvheads": 2,
-    "headdim": 128,
-    "params": 9,
-    "note": "",
-    "hfId": "THUDM/glm-4-9b-chat-hf"
-  },
-  {
-    "name": "GLM-4-9B-Chat-1M",
-    "layers": 40,
-    "kvheads": 2,
-    "headdim": 128,
-    "params": 9,
-    "note": "",
-    "hfId": "THUDM/glm-4-9b-chat-1m-hf"
-  },
-  {
-    "name": "GLM-4V",
-    "layers": 40,
-    "kvheads": 32,
-    "headdim": 128,
-    "params": 9,
-    "note": "",
-    "hfId": "THUDM/glm-4v-9b"
-  },
-  {
     "name": "Qwen3.5-9B",
     "layers": 32,
     "kvheads": 4,
@@ -252,67 +27,13 @@
     "hfId": "Qwen/Qwen3.5-9B"
   },
   {
-    "name": "Yi-9B",
-    "layers": 44,
-    "kvheads": 4,
-    "headdim": 128,
-    "params": 9,
-    "note": "",
-    "hfId": "01-ai/Yi-9B"
-  },
-  {
-    "name": "Sahabat-AI-Gemma2-9B-Instruct",
-    "layers": 42,
-    "kvheads": 8,
-    "headdim": 256,
-    "params": 9.2,
-    "note": "",
-    "hfId": "Sahabat-AI/gemma2-9b-cpt-sahabatai-v1-instruct"
-  },
-  {
-    "name": "Falcon3-10B",
-    "layers": 40,
-    "kvheads": 10,
-    "headdim": 256,
-    "params": 10,
-    "note": "",
-    "hfId": "tiiuae/Falcon3-10B-Instruct"
-  },
-  {
-    "name": "Gemma 4 12B",
-    "layers": 48,
-    "kvheads": 8,
-    "headdim": 256,
-    "params": 11.95,
-    "note": "",
-    "hfId": "google/gemma-4-12B"
-  },
-  {
-    "name": "Ministral 3 14B",
-    "layers": 40,
-    "kvheads": 8,
-    "headdim": 128,
-    "params": 14,
-    "note": "",
-    "hfId": "mistralai/Ministral-3-14B-Instruct-2512"
-  },
-  {
-    "name": "MiMo V2 Flash",
-    "layers": 48,
-    "kvheads": 8,
-    "headdim": 128,
-    "params": 15,
-    "note": "MoE model: total parameters are used for weight memory.",
-    "hfId": "XiaomiMiMo/MiMo-V2-Flash"
-  },
-  {
-    "name": "ERNIE-4.5-21B-A3B-Base",
+    "name": "DeepSeek-R1 7B",
     "layers": 28,
     "kvheads": 4,
     "headdim": 128,
-    "params": 21,
-    "note": "MoE model: total parameters are used for weight memory.",
-    "hfId": "baidu/ERNIE-4.5-21B-A3B-Base-PT"
+    "params": 7,
+    "note": "Reasoning distill model; Qwen2 base architecture.",
+    "hfId": "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B"
   },
   {
     "name": "GPT-OSS 20B",
@@ -324,15 +45,6 @@
     "hfId": "openai/gpt-oss-20b"
   },
   {
-    "name": "Magistral Small",
-    "layers": 32,
-    "kvheads": 8,
-    "headdim": 128,
-    "params": 24,
-    "note": "",
-    "hfId": "mistralai/Magistral-Small-2506"
-  },
-  {
     "name": "Mistral-Small-2501",
     "layers": 40,
     "kvheads": 6,
@@ -342,15 +54,6 @@
     "hfId": "mistralai/Mistral-Small-24B-Base-2501"
   },
   {
-    "name": "Gemma 4 26B A4B",
-    "layers": 30,
-    "kvheads": 8,
-    "headdim": 256,
-    "params": 25.2,
-    "note": "MoE model: total parameters are used for weight memory.",
-    "hfId": "collections/google/gemma-4"
-  },
-  {
     "name": "Qwen3.5-27B",
     "layers": 64,
     "kvheads": 4,
@@ -358,42 +61,6 @@
     "params": 27,
     "note": "Linear attention; KV cache estimate is approximate.",
     "hfId": "Qwen/Qwen3.5-27B"
-  },
-  {
-    "name": "ERNIE-4.5-VL-28B-A3B",
-    "layers": 28,
-    "kvheads": 4,
-    "headdim": 128,
-    "params": 28,
-    "note": "MoE model: total parameters are used for weight memory.",
-    "hfId": "baidu/ERNIE-4.5-VL-28B-A3B-PT"
-  },
-  {
-    "name": "Gemma 4 31B",
-    "layers": 60,
-    "kvheads": 16,
-    "headdim": 256,
-    "params": 30.7,
-    "note": "",
-    "hfId": "collections/google/gemma-4"
-  },
-  {
-    "name": "OLMo 3.1 32B Think",
-    "layers": 64,
-    "kvheads": 8,
-    "headdim": 128,
-    "params": 32,
-    "note": "",
-    "hfId": "allenai/Olmo-3.1-32B-Think"
-  },
-  {
-    "name": "Sarvam-30B",
-    "layers": 19,
-    "kvheads": 4,
-    "headdim": 64,
-    "params": 32,
-    "note": "MoE model: total parameters are used for weight memory.",
-    "hfId": "sarvamai/sarvam-30b"
   },
   {
     "name": "Qwen3.5-35B-A3B",
@@ -414,40 +81,22 @@
     "hfId": "Qwen/Qwen3.6-35B-A3B"
   },
   {
-    "name": "Falcon-40B",
-    "layers": 60,
-    "kvheads": 1,
-    "headdim": 64,
-    "params": 40,
-    "note": "",
-    "hfId": "tiiuae/falcon-40b"
+    "name": "Qwen3.5-122B-A10B",
+    "layers": 48,
+    "kvheads": 2,
+    "headdim": 256,
+    "params": 122,
+    "note": "MoE model: total parameters are used for weight memory. Linear attention; KV cache estimate is approximate.",
+    "hfId": "Qwen/Qwen3.5-122B-A10B"
   },
   {
-    "name": "Mistral Large 3",
-    "layers": 88,
+    "name": "Llama 3.1 70B",
+    "layers": 80,
     "kvheads": 8,
     "headdim": 128,
-    "params": 41,
-    "note": "MoE model: total parameters are used for weight memory.",
-    "hfId": "mistralai/Mistral-Large-3-675B-Instruct-2512"
-  },
-  {
-    "name": "Kimi Linear 48B A3B Instruct",
-    "layers": 36,
-    "kvheads": 1,
-    "headdim": 72,
-    "params": 48,
-    "note": "MoE model: total parameters are used for weight memory.",
-    "hfId": "moonshotai/Kimi-Linear-48B-A3B-Instruct"
-  },
-  {
-    "name": "DeepSeek-R1 70B",
-    "layers": 80,
-    "kvheads": 112,
-    "headdim": 128,
     "params": 70,
-    "note": "MLA / latent attention; KV cache is an upper-bound approximation.",
-    "hfId": "deepseek-ai/DeepSeek-R1-Distill-Llama-70B"
+    "note": "",
+    "hfId": "meta-llama/Llama-3.1-70B-Instruct"
   },
   {
     "name": "Llama 3.3 70B",
@@ -459,57 +108,30 @@
     "hfId": "meta-llama/Llama-3.3-70B-Instruct"
   },
   {
-    "name": "Hunyuan A13B",
-    "layers": 32,
+    "name": "DeepSeek-R1 70B",
+    "layers": 80,
+    "kvheads": 112,
+    "headdim": 128,
+    "params": 70,
+    "note": "MLA / latent attention; KV cache is an upper-bound approximation.",
+    "hfId": "deepseek-ai/DeepSeek-R1-Distill-Llama-70B"
+  },
+  {
+    "name": "Qwen3-Embedding-0.6B",
+    "layers": 28,
     "kvheads": 8,
     "headdim": 128,
-    "params": 80,
-    "note": "MoE model: total parameters are used for weight memory.",
-    "hfId": "tencent/Hunyuan-A13B-Instruct"
+    "params": 0.6,
+    "note": "Embedding / retrieval model based on Qwen3.",
+    "hfId": "Qwen/Qwen3-Embedding-0.6B"
   },
   {
-    "name": "Qwen3 Next 80B A3B",
-    "layers": 48,
-    "kvheads": 2,
-    "headdim": 256,
-    "params": 80,
-    "note": "MoE model: total parameters are used for weight memory.",
-    "hfId": "Qwen/Qwen3-Next-80B-A3B-Thinking"
-  },
-  {
-    "name": "GLM-4.5-Air",
-    "layers": 46,
-    "kvheads": 8,
-    "headdim": 128,
-    "params": 106,
-    "note": "MoE model: total parameters are used for weight memory.",
-    "hfId": "zai-org/GLM-4.5-Air"
-  },
-  {
-    "name": "GPT-OSS 120B",
+    "name": "Qwen3-Embedding-4B",
     "layers": 36,
     "kvheads": 8,
-    "headdim": 64,
-    "params": 117,
-    "note": "MoE model: total parameters are used for weight memory.",
-    "hfId": "openai/gpt-oss-120b"
-  },
-  {
-    "name": "Qwen3.5-122B-A10B",
-    "layers": 48,
-    "kvheads": 2,
-    "headdim": 256,
-    "params": 122,
-    "note": "MoE model: total parameters are used for weight memory. Linear attention; KV cache estimate is approximate.",
-    "hfId": "Qwen/Qwen3.5-122B-A10B"
-  },
-  {
-    "name": "Step 3.5 Flash",
-    "layers": 45,
-    "kvheads": 8,
     "headdim": 128,
-    "params": 196.81,
-    "note": "MoE model: total parameters are used for weight memory.",
-    "hfId": "stepfun-ai/Step-3.5-Flash"
+    "params": 4,
+    "note": "Embedding / retrieval model based on Qwen3.",
+    "hfId": "Qwen/Qwen3-Embedding-4B"
   }
 ]
