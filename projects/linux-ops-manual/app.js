@@ -58,6 +58,7 @@ const categories = [
   { id: "remote", label: "SSH/원격" },
   { id: "containers", label: "컨테이너" },
   { id: "gpu", label: "GPU/하드웨어" },
+  { id: "security", label: "보안" },
   { id: "troubleshoot", label: "트러블슈팅" }
 ];
 
@@ -1163,6 +1164,467 @@ const COMMANDS = [
           "MIG 관련 변경은 실행 중인 워크로드에 영향을 줄 수 있습니다.",
           "드라이버 버전에 따라 일부 필드나 옵션이 보이지 않을 수 있습니다."
         ]
+      }
+    }
+  },
+  {
+    id: "top-htop",
+    category: "process",
+    title: "top / htop",
+    summary: "실시간 CPU, 메모리, 프로세스 점검의 기본 조합입니다.",
+    command: "top && htop",
+    keywords: ["cpu", "memory", "process", "live", "interactive"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "top -o %MEM", desc: "메모리 순 정렬" },
+          { flag: "top -o %CPU", desc: "CPU 순 정렬" },
+          { flag: "htop F5", desc: "트리 보기" },
+          { flag: "htop F9", desc: "프로세스 종료" }
+        ],
+        examples: [
+          { label: "메모리 높은 프로세스", code: "top -o %MEM" },
+          { label: "트리 형태 보기", code: "htop" }
+        ],
+        diff: "Rocky는 htop이 기본 설치가 아닐 수 있습니다.",
+        warnings: ["배치형 점검은 `ps`와 함께 보는 편이 더 정확할 수 있습니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "top -o %MEM", desc: "메모리 순 정렬" },
+          { flag: "top -o %CPU", desc: "CPU 순 정렬" },
+          { flag: "htop F5", desc: "트리 보기" },
+          { flag: "htop F9", desc: "프로세스 종료" }
+        ],
+        examples: [
+          { label: "메모리 높은 프로세스", code: "top -o %MEM" },
+          { label: "트리 형태 보기", code: "htop" }
+        ],
+        diff: "Ubuntu는 htop 설치가 비교적 간단합니다.",
+        warnings: ["배치형 점검은 `ps`와 함께 보는 편이 더 정확할 수 있습니다."]
+      }
+    }
+  },
+  {
+    id: "proc-control",
+    category: "process",
+    title: "pkill / killall / nice / renice",
+    summary: "이름으로 종료하고 우선순위까지 조정합니다.",
+    command: "pkill nginx && nice -n 10 job && renice 5 -p <pid>",
+    keywords: ["terminate", "priority", "signal", "schedule"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "pkill -f", desc: "커맨드라인 기준 종료" },
+          { flag: "killall", desc: "이름이 같은 프로세스 종료" },
+          { flag: "nice -n", desc: "새 프로세스 우선순위 지정" },
+          { flag: "renice", desc: "실행 중 프로세스 우선순위 변경" }
+        ],
+        examples: [
+          { label: "nginx 종료", code: "pkill -TERM nginx" },
+          { label: "배치 우선순위 낮추기", code: "nice -n 10 backup.sh" }
+        ],
+        diff: "공통입니다.",
+        warnings: ["강제 종료보다 정상 종료를 먼저 시도하세요."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "pkill -f", desc: "커맨드라인 기준 종료" },
+          { flag: "killall", desc: "이름이 같은 프로세스 종료" },
+          { flag: "nice -n", desc: "새 프로세스 우선순위 지정" },
+          { flag: "renice", desc: "실행 중 프로세스 우선순위 변경" }
+        ],
+        examples: [
+          { label: "nginx 종료", code: "pkill -TERM nginx" },
+          { label: "배치 우선순위 낮추기", code: "nice -n 10 backup.sh" }
+        ],
+        diff: "공통입니다.",
+        warnings: ["강제 종료보다 정상 종료를 먼저 시도하세요."]
+      }
+    }
+  },
+  {
+    id: "service-check",
+    category: "services",
+    title: "systemctl 상태 점검",
+    summary: "서비스 활성화, 자동 시작, 상세 상태를 한 번에 확인합니다.",
+    command: "systemctl status nginx && systemctl is-active nginx && systemctl is-enabled nginx",
+    keywords: ["service", "active", "enabled", "restart"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "status", desc: "상세 상태" },
+          { flag: "is-active", desc: "실행 여부" },
+          { flag: "is-enabled", desc: "부팅 자동 시작 여부" },
+          { flag: "daemon-reload", desc: "유닛 변경 후 재로드" }
+        ],
+        examples: [
+          { label: "서비스 점검", code: "systemctl status nginx --no-pager" },
+          { label: "자동 시작 확인", code: "systemctl is-enabled nginx" }
+        ],
+        diff: "서비스명은 httpd, mariadb처럼 패키지명과 다를 수 있습니다.",
+        warnings: ["서비스 수정 후에는 `daemon-reload`를 잊지 마세요."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "status", desc: "상세 상태" },
+          { flag: "is-active", desc: "실행 여부" },
+          { flag: "is-enabled", desc: "부팅 자동 시작 여부" },
+          { flag: "daemon-reload", desc: "유닛 변경 후 재로드" }
+        ],
+        examples: [
+          { label: "서비스 점검", code: "systemctl status nginx --no-pager" },
+          { label: "자동 시작 확인", code: "systemctl is-enabled nginx" }
+        ],
+        diff: "서비스명은 apache2, redis-server처럼 패키지명과 다를 수 있습니다.",
+        warnings: ["서비스 수정 후에는 `daemon-reload`를 잊지 마세요."]
+      }
+    }
+  },
+  {
+    id: "filesystem-tools",
+    category: "filesystem",
+    title: "tree / locate / file / stat",
+    summary: "디렉토리 구조와 파일 메타정보를 빠르게 확인합니다.",
+    command: "tree -L 2 && locate nginx.conf && file item && stat item",
+    keywords: ["tree", "locate", "file type", "metadata", "inode"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "tree -L 2", desc: "구조 확인" },
+          { flag: "locate", desc: "인덱스 기반 빠른 검색" },
+          { flag: "file", desc: "파일 타입 확인" },
+          { flag: "stat", desc: "메타데이터 확인" }
+        ],
+        examples: [
+          { label: "웹 디렉토리 구조", code: "tree -L 2 /var/www" },
+          { label: "파일 타입/메타", code: "file /usr/bin/ssh && stat /usr/bin/ssh" }
+        ],
+        diff: "locate는 updatedb 이후 결과가 더 정확합니다.",
+        warnings: ["큰 디렉토리는 tree가 느릴 수 있습니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "tree -L 2", desc: "구조 확인" },
+          { flag: "locate", desc: "인덱스 기반 빠른 검색" },
+          { flag: "file", desc: "파일 타입 확인" },
+          { flag: "stat", desc: "메타데이터 확인" }
+        ],
+        examples: [
+          { label: "웹 디렉토리 구조", code: "tree -L 2 /var/www" },
+          { label: "파일 타입/메타", code: "file /usr/bin/ssh && stat /usr/bin/ssh" }
+        ],
+        diff: "locate는 updatedb 이후 결과가 더 정확합니다.",
+        warnings: ["큰 디렉토리는 tree가 느릴 수 있습니다."]
+      }
+    }
+  },
+  {
+    id: "storage-advanced",
+    category: "storage",
+    title: "du / df / lsblk / fdisk / mount",
+    summary: "디스크 점유, 파티션, 마운트 상태를 함께 확인합니다.",
+    command: "du -xh --max-depth=1 /var && df -Th && lsblk -f && fdisk -l",
+    keywords: ["disk", "partition", "mount", "filesystem", "capacity"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "du -x", desc: "다른 파일시스템 제외" },
+          { flag: "df -T", desc: "파일시스템 타입 표시" },
+          { flag: "lsblk -f", desc: "UUID/타입 확인" },
+          { flag: "fdisk -l", desc: "파티션 목록" },
+          { flag: "mount | column -t", desc: "마운트 보기 좋게 정렬" }
+        ],
+        examples: [
+          { label: "용량 큰 디렉토리", code: "du -xh --max-depth=1 /var | sort -h" },
+          { label: "마운트 확인", code: "mount | column -t" }
+        ],
+        diff: "공통입니다.",
+        warnings: ["파티션 변경은 실제 쓰기 전 꼭 장치를 두 번 확인하세요."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "du -x", desc: "다른 파일시스템 제외" },
+          { flag: "df -T", desc: "파일시스템 타입 표시" },
+          { flag: "lsblk -f", desc: "UUID/타입 확인" },
+          { flag: "fdisk -l", desc: "파티션 목록" },
+          { flag: "mount | column -t", desc: "마운트 보기 좋게 정렬" }
+        ],
+        examples: [
+          { label: "용량 큰 디렉토리", code: "du -xh --max-depth=1 /var | sort -h" },
+          { label: "마운트 확인", code: "mount | column -t" }
+        ],
+        diff: "공통입니다.",
+        warnings: ["파티션 변경은 실제 쓰기 전 꼭 장치를 두 번 확인하세요."]
+      }
+    }
+  },
+  {
+    id: "net-tools",
+    category: "network",
+    title: "ping / traceroute / nslookup / ss",
+    summary: "연결, 경로, DNS, 리스닝 포트를 한 번에 점검합니다.",
+    command: "ping -c 4 host && traceroute host && nslookup host && ss -ltnp",
+    keywords: ["dns", "latency", "route", "listen", "socket"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "ping -c", desc: "정해진 횟수만 확인" },
+          { flag: "traceroute", desc: "경로 추적" },
+          { flag: "nslookup / dig", desc: "DNS 확인" },
+          { flag: "ss -ltnp", desc: "리스닝 포트 확인" }
+        ],
+        examples: [
+          { label: "연결 확인", code: "ping -c 4 8.8.8.8" },
+          { label: "포트 확인", code: "ss -ltnp | grep :443" }
+        ],
+        diff: "Rocky는 traceroute 패키지가 별도일 수 있습니다.",
+        warnings: ["ICMP가 막혀 있으면 ping만으로 서비스 상태를 단정하면 안 됩니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "ping -c", desc: "정해진 횟수만 확인" },
+          { flag: "traceroute", desc: "경로 추적" },
+          { flag: "nslookup / dig", desc: "DNS 확인" },
+          { flag: "ss -ltnp", desc: "리스닝 포트 확인" }
+        ],
+        examples: [
+          { label: "연결 확인", code: "ping -c 4 8.8.8.8" },
+          { label: "포트 확인", code: "ss -ltnp | grep :443" }
+        ],
+        diff: "Ubuntu는 tracepath를 대안으로 쓰기도 합니다.",
+        warnings: ["ICMP가 막혀 있으면 ping만으로 서비스 상태를 단정하면 안 됩니다."]
+      }
+    }
+  },
+  {
+    id: "package-tools",
+    category: "packages",
+    title: "dnf / apt / rpm / dpkg / apt-cache",
+    summary: "설치, 갱신, 조회, 버전 확인까지 패키지 작업 전반을 다룹니다.",
+    command: "dnf update && apt update && rpm -qa && dpkg -l && apt-cache policy pkg",
+    keywords: ["install", "update", "policy", "version", "package"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "dnf update", desc: "업데이트" },
+          { flag: "dnf list installed", desc: "설치 목록" },
+          { flag: "rpm -qa", desc: "설치 패키지 목록" },
+          { flag: "rpm -qf", desc: "파일 소유 패키지" }
+        ],
+        examples: [
+          { label: "설치 확인", code: "rpm -q nginx" },
+          { label: "파일 소유자", code: "rpm -qf /usr/bin/ssh" }
+        ],
+        diff: "Rocky는 dnf/rpm 조합이 기본입니다.",
+        warnings: ["업데이트 후 서비스 재시작이 필요한지 확인하세요."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "apt update", desc: "패키지 인덱스 갱신" },
+          { flag: "apt upgrade", desc: "업그레이드" },
+          { flag: "dpkg -l", desc: "설치 목록" },
+          { flag: "dpkg -S", desc: "파일 소유 패키지" },
+          { flag: "apt-cache policy", desc: "후보 버전 확인" }
+        ],
+        examples: [
+          { label: "설치 확인", code: "dpkg -l | grep nginx" },
+          { label: "버전 확인", code: "apt-cache policy nginx" }
+        ],
+        diff: "Ubuntu는 apt/dpkg 조합이 기본입니다.",
+        warnings: ["업데이트 후 서비스 재시작이 필요한지 확인하세요."]
+      }
+    }
+  },
+  {
+    id: "users-acl",
+    category: "users",
+    title: "whoami / who / last / getfacl / setfacl",
+    summary: "현재 세션과 ACL 권한을 함께 점검합니다.",
+    command: "whoami && who && last && getfacl file",
+    keywords: ["user", "session", "acl", "permission", "login"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "whoami", desc: "현재 사용자" },
+          { flag: "who", desc: "로그인 사용자" },
+          { flag: "last", desc: "로그인 이력" },
+          { flag: "getfacl/setfacl", desc: "ACL 확인/조정" }
+        ],
+        examples: [
+          { label: "세션 확인", code: "whoami && who" },
+          { label: "ACL 확인", code: "getfacl /var/www/html" }
+        ],
+        diff: "Rocky는 SELinux와 같이 봐야 할 때가 많습니다.",
+        warnings: ["권한과 소유권, ACL을 따로 구분해서 보세요."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "whoami", desc: "현재 사용자" },
+          { flag: "who", desc: "로그인 사용자" },
+          { flag: "last", desc: "로그인 이력" },
+          { flag: "getfacl/setfacl", desc: "ACL 확인/조정" }
+        ],
+        examples: [
+          { label: "세션 확인", code: "whoami && who" },
+          { label: "ACL 확인", code: "getfacl /var/www/html" }
+        ],
+        diff: "Ubuntu는 AppArmor와 같이 보는 경우가 많습니다.",
+        warnings: ["권한과 소유권, ACL을 따로 구분해서 보세요."]
+      }
+    }
+  },
+  {
+    id: "archive-tools",
+    category: "backup",
+    title: "tar / gzip / xz / zip / unzip",
+    summary: "압축 백업과 복원을 위한 기본 도구들입니다.",
+    command: "tar -czf backup.tar.gz data/ && zip -r backup.zip data/",
+    keywords: ["archive", "compress", "extract", "backup"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "tar -czf", desc: "tar.gz 생성" },
+          { flag: "tar -xzf", desc: "tar.gz 해제" },
+          { flag: "gzip / gunzip", desc: "단일 파일 압축/해제" },
+          { flag: "xz / xzcat", desc: "고압축 포맷" },
+          { flag: "zip / unzip", desc: "호환성 좋은 압축" }
+        ],
+        examples: [
+          { label: "디렉토리 백업", code: "tar -czf backup.tar.gz data/" },
+          { label: "압축 해제", code: "tar -xzf backup.tar.gz" }
+        ],
+        diff: "공통입니다.",
+        warnings: ["백업은 압축보다 복구 절차가 더 중요합니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "tar -czf", desc: "tar.gz 생성" },
+          { flag: "tar -xzf", desc: "tar.gz 해제" },
+          { flag: "gzip / gunzip", desc: "단일 파일 압축/해제" },
+          { flag: "xz / xzcat", desc: "고압축 포맷" },
+          { flag: "zip / unzip", desc: "호환성 좋은 압축" }
+        ],
+        examples: [
+          { label: "디렉토리 백업", code: "tar -czf backup.tar.gz data/" },
+          { label: "압축 해제", code: "tar -xzf backup.tar.gz" }
+        ],
+        diff: "공통입니다.",
+        warnings: ["백업은 압축보다 복구 절차가 더 중요합니다."]
+      }
+    }
+  },
+  {
+    id: "text-pipe",
+    category: "text",
+    title: "cut / sort / uniq / xargs",
+    summary: "텍스트 파이프라인 처리의 핵심 조합입니다.",
+    command: "cut -d: -f1 file | sort | uniq -c | xargs",
+    keywords: ["pipeline", "count", "column", "aggregate"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "cut -d", desc: "필드 추출" },
+          { flag: "sort", desc: "정렬" },
+          { flag: "uniq -c", desc: "집계" },
+          { flag: "xargs", desc: "다음 명령으로 전달" }
+        ],
+        examples: [
+          { label: "IP 집계", code: "cut -d' ' -f1 access.log | sort | uniq -c | sort -nr" },
+          { label: "파일 일괄 압축", code: "find . -name '*.log' | xargs gzip" }
+        ],
+        diff: "공통입니다.",
+        warnings: ["공백이 포함된 경로는 `find -print0 | xargs -0`를 고려하세요."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "cut -d", desc: "필드 추출" },
+          { flag: "sort", desc: "정렬" },
+          { flag: "uniq -c", desc: "집계" },
+          { flag: "xargs", desc: "다음 명령으로 전달" }
+        ],
+        examples: [
+          { label: "IP 집계", code: "cut -d' ' -f1 access.log | sort | uniq -c | sort -nr" },
+          { label: "파일 일괄 압축", code: "find . -name '*.log' | xargs gzip" }
+        ],
+        diff: "공통입니다.",
+        warnings: ["공백이 포함된 경로는 `find -print0 | xargs -0`를 고려하세요."]
+      }
+    }
+  },
+  {
+    id: "ssh-transfer",
+    category: "remote",
+    title: "ssh-keygen / ssh-copy-id / scp / rsync",
+    summary: "SSH 키 생성, 배포, 파일 전송과 동기화까지 다룹니다.",
+    command: "ssh-keygen -t ed25519 && ssh-copy-id user@host && scp -P 2222 file user@host:/tmp/",
+    keywords: ["ssh", "keygen", "transfer", "sync", "copy"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "ssh-keygen -t ed25519", desc: "키 생성" },
+          { flag: "ssh-copy-id", desc: "공개키 복사" },
+          { flag: "scp -P", desc: "포트 지정 복사" },
+          { flag: "rsync -av --exclude", desc: "제외 동기화" }
+        ],
+        examples: [
+          { label: "키 생성", code: "ssh-keygen -t ed25519 -C 'ops'" },
+          { label: "원격 동기화", code: "rsync -av --exclude node_modules src/ host:/dst/" }
+        ],
+        diff: "공통입니다.",
+        warnings: ["키 권한과 원격 authorized_keys 권한을 함께 확인하세요."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "ssh-keygen -t ed25519", desc: "키 생성" },
+          { flag: "ssh-copy-id", desc: "공개키 복사" },
+          { flag: "scp -P", desc: "포트 지정 복사" },
+          { flag: "rsync -av --exclude", desc: "제외 동기화" }
+        ],
+        examples: [
+          { label: "키 생성", code: "ssh-keygen -t ed25519 -C 'ops'" },
+          { label: "원격 동기화", code: "rsync -av --exclude node_modules src/ host:/dst/" }
+        ],
+        diff: "공통입니다.",
+        warnings: ["키 권한과 원격 authorized_keys 권한을 함께 확인하세요."]
+      }
+    }
+  },
+  {
+    id: "security-tools",
+    category: "security",
+    title: "SELinux / AppArmor / firewall",
+    summary: "배포판별 보안 제어와 방화벽 상태를 확인합니다.",
+    command: "getenforce && aa-status && firewall-cmd --state && ufw status verbose",
+    keywords: ["selinux", "apparmor", "firewall", "policy", "state"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "getenforce", desc: "SELinux 모드" },
+          { flag: "setenforce 0", desc: "임시 완화" },
+          { flag: "firewall-cmd --state", desc: "방화벽 상태" },
+          { flag: "firewall-cmd --list-all", desc: "규칙 전체" }
+        ],
+        examples: [
+          { label: "보안 상태", code: "getenforce && firewall-cmd --state" },
+          { label: "임시 완화", code: "setenforce 0" }
+        ],
+        diff: "Rocky는 SELinux와 firewalld가 핵심입니다.",
+        warnings: ["완화 설정은 장애 해결 후 반드시 원복하세요."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "aa-status", desc: "AppArmor 상태" },
+          { flag: "firewall-cmd --state", desc: "firewalld 사용 시 상태" },
+          { flag: "ufw status verbose", desc: "ufw 상세 상태" },
+          { flag: "ufw app list", desc: "앱 프로필" }
+        ],
+        examples: [
+          { label: "보안 상태", code: "aa-status && ufw status verbose" },
+          { label: "앱 프로필", code: "ufw app list" }
+        ],
+        diff: "Ubuntu는 AppArmor와 ufw가 핵심입니다.",
+        warnings: ["완화 설정은 장애 해결 후 반드시 원복하세요."]
       }
     }
   }
