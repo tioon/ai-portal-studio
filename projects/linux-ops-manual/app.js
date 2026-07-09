@@ -59,6 +59,11 @@ const categories = [
   { id: "containers", label: "컨테이너" },
   { id: "gpu", label: "GPU/하드웨어" },
   { id: "security", label: "보안" },
+  { id: "lvm", label: "LVM" },
+  { id: "diagnostics", label: "진단" },
+  { id: "time", label: "시간" },
+  { id: "performance", label: "성능" },
+  { id: "systemd", label: "systemd" },
   { id: "troubleshoot", label: "트러블슈팅" }
 ];
 
@@ -1899,6 +1904,1581 @@ const COMMANDS = [
         ],
         diff: "공통입니다.",
         warnings: ["alias가 있으면 which와 실제 실행 파일이 다를 수 있습니다."]
+      }
+    }
+  },
+  {
+    id: "dmesg",
+    category: "diagnostics",
+    title: "dmesg",
+    summary: "커널 로그와 부팅 직후 하드웨어 메시지를 확인합니다.",
+    command: "dmesg -T | tail -n 50",
+    keywords: ["kernel", "boot", "hardware", "ring buffer", "driver"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "-T", desc: "커널 타임스탬프를 사람이 읽기 쉬운 시간으로 변환" },
+          { flag: "-w", desc: "실시간 커널 로그 추적" },
+          { flag: "--level err,warn", desc: "오류/경고 레벨만 필터" },
+          { flag: "-c", desc: "출력 후 버퍼 비우기" }
+        ],
+        examples: [
+          { label: "최근 메시지", code: "dmesg -T | tail -n 50" },
+          { label: "실시간 추적", code: "dmesg -w" }
+        ],
+        diff: "Rocky에서는 드라이버, SELinux, 스토리지 이슈 확인의 시작점입니다.",
+        warnings: ["커널 로그는 빠르게 쌓이므로 문제 직후 바로 확인하는 게 좋습니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "-T", desc: "커널 타임스탬프를 사람이 읽기 쉬운 시간으로 변환" },
+          { flag: "-w", desc: "실시간 커널 로그 추적" },
+          { flag: "--level err,warn", desc: "오류/경고 레벨만 필터" },
+          { flag: "-c", desc: "출력 후 버퍼 비우기" }
+        ],
+        examples: [
+          { label: "최근 메시지", code: "dmesg -T | tail -n 50" },
+          { label: "실시간 추적", code: "dmesg -w" }
+        ],
+        diff: "Ubuntu에서도 부팅, 디스크, 네트워크 드라이버 문제 확인에 유용합니다.",
+        warnings: ["커널 로그는 빠르게 쌓이므로 문제 직후 바로 확인하는 게 좋습니다."]
+      }
+    }
+  },
+  {
+    id: "sysctl",
+    category: "diagnostics",
+    title: "sysctl",
+    summary: "커널 파라미터를 조회하고 런타임에 조정합니다.",
+    command: "sysctl -a | grep vm.swappiness && sysctl -w net.ipv4.ip_forward=1",
+    keywords: ["kernel parameter", "tuning", "vm", "net.ipv4"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "-a", desc: "전체 커널 파라미터 출력" },
+          { flag: "-n", desc: "값만 출력" },
+          { flag: "-w", desc: "런타임 값 변경" },
+          { flag: "-p", desc: "sysctl.conf 또는 지정 파일 재적용" }
+        ],
+        examples: [
+          { label: "스왑 성향 확인", code: "sysctl vm.swappiness" },
+          { label: "포워딩 활성화", code: "sysctl -w net.ipv4.ip_forward=1" }
+        ],
+        diff: "Rocky는 방화벽/라우팅 튜닝과 같이 보는 경우가 많습니다.",
+        warnings: ["재부팅 후에도 유지하려면 /etc/sysctl.conf 또는 /etc/sysctl.d/에 반영해야 합니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "-a", desc: "전체 커널 파라미터 출력" },
+          { flag: "-n", desc: "값만 출력" },
+          { flag: "-w", desc: "런타임 값 변경" },
+          { flag: "-p", desc: "sysctl.conf 또는 지정 파일 재적용" }
+        ],
+        examples: [
+          { label: "스왑 성향 확인", code: "sysctl vm.swappiness" },
+          { label: "포워딩 활성화", code: "sysctl -w net.ipv4.ip_forward=1" }
+        ],
+        diff: "Ubuntu도 동일하지만 netplan/ufw와 같이 보는 경우가 많습니다.",
+        warnings: ["재부팅 후에도 유지하려면 /etc/sysctl.conf 또는 /etc/sysctl.d/에 반영해야 합니다."]
+      }
+    }
+  },
+  {
+    id: "logrotate",
+    category: "diagnostics",
+    title: "logrotate",
+    summary: "로그 회전 정책을 테스트하고 강제 실행합니다.",
+    command: "logrotate -d /etc/logrotate.conf",
+    keywords: ["logs", "rotation", "disk", "policy", "compress"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "-d", desc: "드라이런으로 정책 점검" },
+          { flag: "-f", desc: "강제 회전" },
+          { flag: "-v", desc: "자세한 로그 출력" },
+          { flag: "-s", desc: "상태 파일 지정" }
+        ],
+        examples: [
+          { label: "정책 테스트", code: "logrotate -d /etc/logrotate.conf" },
+          { label: "강제 회전", code: "logrotate -f /etc/logrotate.conf" }
+        ],
+        diff: "Rocky에서는 디스크 부족 원인 분석에 매우 중요합니다.",
+        warnings: ["강제 회전은 실제 로그 운영에 영향을 줄 수 있으니 테스트 후 사용하세요."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "-d", desc: "드라이런으로 정책 점검" },
+          { flag: "-f", desc: "강제 회전" },
+          { flag: "-v", desc: "자세한 로그 출력" },
+          { flag: "-s", desc: "상태 파일 지정" }
+        ],
+        examples: [
+          { label: "정책 테스트", code: "logrotate -d /etc/logrotate.conf" },
+          { label: "강제 회전", code: "logrotate -f /etc/logrotate.conf" }
+        ],
+        diff: "Ubuntu에서도 디스크 부족과 로그 누적 문제를 볼 때 자주 씁니다.",
+        warnings: ["강제 회전은 실제 로그 운영에 영향을 줄 수 있으니 테스트 후 사용하세요."]
+      }
+    }
+  },
+  {
+    id: "nc",
+    category: "network",
+    title: "nc",
+    summary: "포트 연결 테스트, 간단한 리스너, 데이터 전송에 씁니다.",
+    command: "nc -vz host 443",
+    keywords: ["netcat", "port test", "listener", "socket"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "-z", desc: "데이터 전송 없이 포트 스캔처럼 연결만 확인" },
+          { flag: "-v", desc: "상세 출력" },
+          { flag: "-w", desc: "타임아웃 지정" },
+          { flag: "-l", desc: "리스닝 모드" },
+          { flag: "-u", desc: "UDP 사용" }
+        ],
+        examples: [
+          { label: "포트 확인", code: "nc -vz host 443" },
+          { label: "간단한 리스너", code: "nc -l 8080" }
+        ],
+        diff: "Rocky는 패키지에 따라 `nmap-ncat`로 제공될 수 있습니다.",
+        warnings: ["운영 환경에서는 허가된 대상만 테스트하세요."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "-z", desc: "데이터 전송 없이 포트 스캔처럼 연결만 확인" },
+          { flag: "-v", desc: "상세 출력" },
+          { flag: "-w", desc: "타임아웃 지정" },
+          { flag: "-l", desc: "리스닝 모드" },
+          { flag: "-u", desc: "UDP 사용" }
+        ],
+        examples: [
+          { label: "포트 확인", code: "nc -vz host 443" },
+          { label: "간단한 리스너", code: "nc -l 8080" }
+        ],
+        diff: "Ubuntu도 `netcat-openbsd` 또는 `netcat-traditional` 패키지 차이가 있을 수 있습니다.",
+        warnings: ["운영 환경에서는 허가된 대상만 테스트하세요."]
+      }
+    }
+  },
+  {
+    id: "tcpdump",
+    category: "network",
+    title: "tcpdump",
+    summary: "패킷을 캡처해서 네트워크 문제를 분석합니다.",
+    command: "tcpdump -i eth0 port 443",
+    keywords: ["packet", "capture", "pcap", "traffic", "sniff"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "-i", desc: "캡처할 인터페이스 지정" },
+          { flag: "-nn", desc: "호스트명/포트명 해석 없이 숫자로 표시" },
+          { flag: "-s 0", desc: "패킷 전체 길이 캡처" },
+          { flag: "-w", desc: "pcap 파일로 저장" },
+          { flag: "-A", desc: "ASCII로 payload 출력" }
+        ],
+        examples: [
+          { label: "HTTPS 트래픽 캡처", code: "tcpdump -i eth0 port 443" },
+          { label: "파일로 저장", code: "tcpdump -i eth0 -w /tmp/capture.pcap" }
+        ],
+        diff: "Rocky는 방화벽/SELinux와 함께 보며, root 권한이 필요합니다.",
+        warnings: ["민감한 데이터가 노출될 수 있으니 캡처 파일 관리를 조심하세요."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "-i", desc: "캡처할 인터페이스 지정" },
+          { flag: "-nn", desc: "호스트명/포트명 해석 없이 숫자로 표시" },
+          { flag: "-s 0", desc: "패킷 전체 길이 캡처" },
+          { flag: "-w", desc: "pcap 파일로 저장" },
+          { flag: "-A", desc: "ASCII로 payload 출력" }
+        ],
+        examples: [
+          { label: "HTTPS 트래픽 캡처", code: "tcpdump -i eth0 port 443" },
+          { label: "파일로 저장", code: "tcpdump -i eth0 -w /tmp/capture.pcap" }
+        ],
+        diff: "Ubuntu도 동일하지만 AppArmor/권한을 같이 고려해야 합니다.",
+        warnings: ["민감한 데이터가 노출될 수 있으니 캡처 파일 관리를 조심하세요."]
+      }
+    }
+  },
+  {
+    id: "mtr",
+    category: "network",
+    title: "mtr",
+    summary: "ping과 traceroute를 합친 경로/지연 진단 도구입니다.",
+    command: "mtr -rw host",
+    keywords: ["network path", "latency", "route", "diagnostic"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "-r", desc: "리포트 모드" },
+          { flag: "-w", desc: "넓은 출력" },
+          { flag: "-c", desc: "샘플 수 지정" },
+          { flag: "-n", desc: "DNS 해석 없이 숫자로 출력" }
+        ],
+        examples: [
+          { label: "리포트 확인", code: "mtr -rw 8.8.8.8" },
+          { label: "샘플 수 늘리기", code: "mtr -rwc 100 host" }
+        ],
+        diff: "Rocky는 네트워크 경로 지연 문제를 볼 때 유용합니다.",
+        warnings: ["ICMP가 차단되면 결과가 제한될 수 있습니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "-r", desc: "리포트 모드" },
+          { flag: "-w", desc: "넓은 출력" },
+          { flag: "-c", desc: "샘플 수 지정" },
+          { flag: "-n", desc: "DNS 해석 없이 숫자로 출력" }
+        ],
+        examples: [
+          { label: "리포트 확인", code: "mtr -rw 8.8.8.8" },
+          { label: "샘플 수 늘리기", code: "mtr -rwc 100 host" }
+        ],
+        diff: "Ubuntu도 동일합니다.",
+        warnings: ["ICMP가 차단되면 결과가 제한될 수 있습니다."]
+      }
+    }
+  },
+  {
+    id: "podman",
+    category: "containers",
+    title: "podman",
+    summary: "Rocky/RHEL 계열에서 자주 쓰는 rootless 컨테이너 도구입니다.",
+    command: "podman ps",
+    keywords: ["container", "rootless", "oci", "docker alternative"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "ps", desc: "컨테이너 목록" },
+          { flag: "images", desc: "이미지 목록" },
+          { flag: "run", desc: "컨테이너 실행" },
+          { flag: "logs", desc: "로그 확인" },
+          { flag: "exec", desc: "실행 중 컨테이너 내부 진입" }
+        ],
+        examples: [
+          { label: "컨테이너 목록", code: "podman ps" },
+          { label: "이미지 목록", code: "podman images" }
+        ],
+        diff: "Rocky는 Docker 대신 Podman이 더 자연스러운 선택일 수 있습니다.",
+        warnings: ["rootless 모드에서는 권한/포트 바인딩 차이를 주의하세요."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "ps", desc: "컨테이너 목록" },
+          { flag: "images", desc: "이미지 목록" },
+          { flag: "run", desc: "컨테이너 실행" },
+          { flag: "logs", desc: "로그 확인" },
+          { flag: "exec", desc: "실행 중 컨테이너 내부 진입" }
+        ],
+        examples: [
+          { label: "컨테이너 목록", code: "podman ps" },
+          { label: "이미지 목록", code: "podman images" }
+        ],
+        diff: "Ubuntu에서도 Podman을 쓸 수 있고, Docker 대안으로 유용합니다.",
+        warnings: ["rootless 모드에서는 권한/포트 바인딩 차이를 주의하세요."]
+      }
+    }
+  },
+  {
+    id: "useradd",
+    category: "users",
+    title: "useradd",
+    summary: "새 사용자 계정을 생성합니다.",
+    command: "useradd -m -s /bin/bash user",
+    keywords: ["create user", "account", "home", "shell"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "-m", desc: "홈 디렉토리 생성" },
+          { flag: "-s", desc: "로그인 셸 지정" },
+          { flag: "-u", desc: "UID 직접 지정" },
+          { flag: "-G", desc: "보조 그룹 지정" }
+        ],
+        examples: [
+          { label: "기본 사용자 생성", code: "useradd -m -s /bin/bash deploy" },
+          { label: "보조 그룹 포함", code: "useradd -m -G wheel,docker ops" }
+        ],
+        diff: "Rocky는 `wheel` 그룹이 sudo 권한의 핵심입니다.",
+        warnings: ["계정 생성 후 비밀번호 설정과 그룹 확인을 잊지 마세요."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "-m", desc: "홈 디렉토리 생성" },
+          { flag: "-s", desc: "로그인 셸 지정" },
+          { flag: "-u", desc: "UID 직접 지정" },
+          { flag: "-G", desc: "보조 그룹 지정" }
+        ],
+        examples: [
+          { label: "기본 사용자 생성", code: "useradd -m -s /bin/bash deploy" },
+          { label: "보조 그룹 포함", code: "useradd -m -G sudo,docker ops" }
+        ],
+        diff: "Ubuntu는 보통 `sudo` 그룹을 함께 사용합니다.",
+        warnings: ["계정 생성 후 비밀번호 설정과 그룹 확인을 잊지 마세요."]
+      }
+    }
+  },
+  {
+    id: "usermod",
+    category: "users",
+    title: "usermod",
+    summary: "기존 사용자 계정의 그룹, 셸, 홈 디렉토리를 수정합니다.",
+    command: "usermod -aG wheel user",
+    keywords: ["modify user", "group", "shell", "home"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "-aG", desc: "기존 그룹을 유지하면서 보조 그룹 추가" },
+          { flag: "-s", desc: "로그인 셸 변경" },
+          { flag: "-d", desc: "홈 디렉토리 변경" },
+          { flag: "-l", desc: "로그인 이름 변경" }
+        ],
+        examples: [
+          { label: "sudo 권한 부여", code: "usermod -aG wheel user" },
+          { label: "셸 변경", code: "usermod -s /bin/zsh user" }
+        ],
+        diff: "Rocky에서는 wheel 그룹을 자주 추가합니다.",
+        warnings: ["`-aG` 없이 `-G`만 쓰면 기존 그룹이 덮일 수 있습니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "-aG", desc: "기존 그룹을 유지하면서 보조 그룹 추가" },
+          { flag: "-s", desc: "로그인 셸 변경" },
+          { flag: "-d", desc: "홈 디렉토리 변경" },
+          { flag: "-l", desc: "로그인 이름 변경" }
+        ],
+        examples: [
+          { label: "sudo 권한 부여", code: "usermod -aG sudo user" },
+          { label: "셸 변경", code: "usermod -s /bin/zsh user" }
+        ],
+        diff: "Ubuntu에서는 sudo 그룹을 자주 추가합니다.",
+        warnings: ["`-aG` 없이 `-G`만 쓰면 기존 그룹이 덮일 수 있습니다."]
+      }
+    }
+  },
+  {
+    id: "passwd",
+    category: "users",
+    title: "passwd",
+    summary: "계정 비밀번호를 설정하거나 잠금 상태를 관리합니다.",
+    command: "passwd user",
+    keywords: ["password", "lock", "unlock", "account"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "passwd user", desc: "지정 사용자 비밀번호 변경" },
+          { flag: "-l", desc: "계정 잠금" },
+          { flag: "-u", desc: "계정 잠금 해제" },
+          { flag: "-S", desc: "상태 확인" }
+        ],
+        examples: [
+          { label: "비밀번호 변경", code: "passwd deploy" },
+          { label: "계정 상태", code: "passwd -S deploy" }
+        ],
+        diff: "공통입니다.",
+        warnings: ["보안 정책에 따라 일반 사용자는 다른 계정 비밀번호를 바꿀 수 없을 수 있습니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "passwd user", desc: "지정 사용자 비밀번호 변경" },
+          { flag: "-l", desc: "계정 잠금" },
+          { flag: "-u", desc: "계정 잠금 해제" },
+          { flag: "-S", desc: "상태 확인" }
+        ],
+        examples: [
+          { label: "비밀번호 변경", code: "passwd deploy" },
+          { label: "계정 상태", code: "passwd -S deploy" }
+        ],
+        diff: "공통입니다.",
+        warnings: ["보안 정책에 따라 일반 사용자는 다른 계정 비밀번호를 바꿀 수 없을 수 있습니다."]
+      }
+    }
+  },
+  {
+    id: "groupadd",
+    category: "users",
+    title: "groupadd",
+    summary: "새 그룹을 만들고 사용자 권한의 기준을 분리합니다.",
+    command: "groupadd docker",
+    keywords: ["group", "access", "permission", "team"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "-g", desc: "GID 직접 지정" },
+          { flag: "-r", desc: "시스템 그룹 생성" },
+          { flag: "groupdel", desc: "그룹 삭제" },
+          { flag: "gpasswd", desc: "그룹 멤버 관리" }
+        ],
+        examples: [
+          { label: "그룹 생성", code: "groupadd deploy" },
+          { label: "사용자 그룹 추가", code: "usermod -aG deploy user" }
+        ],
+        diff: "Rocky는 wheel/group 조합을 자주 씁니다.",
+        warnings: ["그룹 생성만으로 권한이 생기는 것은 아니고 파일/서비스 권한과 함께 봐야 합니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "-g", desc: "GID 직접 지정" },
+          { flag: "-r", desc: "시스템 그룹 생성" },
+          { flag: "groupdel", desc: "그룹 삭제" },
+          { flag: "gpasswd", desc: "그룹 멤버 관리" }
+        ],
+        examples: [
+          { label: "그룹 생성", code: "groupadd deploy" },
+          { label: "사용자 그룹 추가", code: "usermod -aG deploy user" }
+        ],
+        diff: "Ubuntu는 sudo 그룹과 함께 관리하는 경우가 많습니다.",
+        warnings: ["그룹 생성만으로 권한이 생기는 것은 아니고 파일/서비스 권한과 함께 봐야 합니다."]
+      }
+    }
+  },
+  {
+    id: "visudo",
+    category: "users",
+    title: "visudo",
+    summary: "sudoers 파일을 안전하게 편집하고 문법 검사를 같이 합니다.",
+    command: "visudo",
+    keywords: ["sudoers", "privilege", "edit safely", "admin"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "-c", desc: "sudoers 문법 검사" },
+          { flag: "-f", desc: "다른 sudoers 파일 지정" },
+          { flag: "-s", desc: "셸 모드 편집" }
+        ],
+        examples: [
+          { label: "sudoers 편집", code: "visudo" },
+          { label: "문법 검사", code: "visudo -c" }
+        ],
+        diff: "Rocky는 wheel 그룹 기반 sudo 설정을 자주 다룹니다.",
+        warnings: ["sudoers 오타는 접근 불가로 이어질 수 있으니 visudo만 사용하는 게 안전합니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "-c", desc: "sudoers 문법 검사" },
+          { flag: "-f", desc: "다른 sudoers 파일 지정" },
+          { flag: "-s", desc: "셸 모드 편집" }
+        ],
+        examples: [
+          { label: "sudoers 편집", code: "visudo" },
+          { label: "문법 검사", code: "visudo -c" }
+        ],
+        diff: "Ubuntu는 sudo 그룹 기반 권한 관리가 일반적입니다.",
+        warnings: ["sudoers 오타는 접근 불가로 이어질 수 있으니 visudo만 사용하는 게 안전합니다."]
+      }
+    }
+  },
+  {
+    id: "restorecon",
+    category: "security",
+    title: "restorecon",
+    summary: "SELinux 파일 컨텍스트를 기본값으로 복구합니다.",
+    command: "restorecon -Rv /var/www",
+    keywords: ["selinux", "context", "label", "relabel"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "-R", desc: "재귀 적용" },
+          { flag: "-v", desc: "변경 내용 표시" },
+          { flag: "-n", desc: "실제 변경 없이 미리보기" },
+          { flag: "-F", desc: "강제 재라벨" }
+        ],
+        examples: [
+          { label: "웹 컨텍스트 복구", code: "restorecon -Rv /var/www" },
+          { label: "미리보기", code: "restorecon -nRv /var/www" }
+        ],
+        diff: "Rocky에서는 SELinux deny 이후 가장 먼저 보는 도구 중 하나입니다.",
+        warnings: ["임의의 chcon보다 restorecon이 더 안전한 경우가 많습니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "-R", desc: "재귀 적용" },
+          { flag: "-v", desc: "변경 내용 표시" },
+          { flag: "-n", desc: "실제 변경 없이 미리보기" },
+          { flag: "-F", desc: "강제 재라벨" }
+        ],
+        examples: [
+          { label: "웹 컨텍스트 복구", code: "restorecon -Rv /var/www" },
+          { label: "미리보기", code: "restorecon -nRv /var/www" }
+        ],
+        diff: "Ubuntu에서는 보통 AppArmor를 쓰지만 SELinux 활성화 환경에서도 필요합니다.",
+        warnings: ["임의의 chcon보다 restorecon이 더 안전한 경우가 많습니다."]
+      }
+    }
+  },
+  {
+    id: "semanage",
+    category: "security",
+    title: "semanage",
+    summary: "SELinux 정책과 포트/컨텍스트를 영구적으로 조정합니다.",
+    command: "semanage port -a -t http_port_t -p tcp 8080",
+    keywords: ["selinux", "policy", "port", "context", "permanent"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "port -a", desc: "포트 타입 영구 추가" },
+          { flag: "fcontext -a", desc: "파일 컨텍스트 영구 추가" },
+          { flag: "-l", desc: "정책 목록 보기" },
+          { flag: "-n", desc: "오프라인 처럼 미리 확인" }
+        ],
+        examples: [
+          { label: "8080 포트 허용", code: "semanage port -a -t http_port_t -p tcp 8080" },
+          { label: "컨텍스트 추가", code: "semanage fcontext -a -t httpd_sys_content_t '/srv/web(/.*)?'" }
+        ],
+        diff: "Rocky에서 SELinux 정책 수정의 핵심 도구입니다.",
+        warnings: ["패키지 `policycoreutils-python-utils`가 필요할 수 있습니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "port -a", desc: "포트 타입 영구 추가" },
+          { flag: "fcontext -a", desc: "파일 컨텍스트 영구 추가" },
+          { flag: "-l", desc: "정책 목록 보기" },
+          { flag: "-n", desc: "오프라인 처럼 미리 확인" }
+        ],
+        examples: [
+          { label: "8080 포트 허용", code: "semanage port -a -t http_port_t -p tcp 8080" },
+          { label: "컨텍스트 추가", code: "semanage fcontext -a -t httpd_sys_content_t '/srv/web(/.*)?'" }
+        ],
+        diff: "Ubuntu에서는 SELinux 사용 환경에서만 의미가 큽니다.",
+        warnings: ["패키지 `policycoreutils-python-utils`가 필요할 수 있습니다."]
+      }
+    }
+  },
+  {
+    id: "chcon",
+    category: "security",
+    title: "chcon",
+    summary: "파일의 SELinux 컨텍스트를 즉시 바꿉니다.",
+    command: "chcon -t httpd_sys_content_t /srv/web/index.html",
+    keywords: ["selinux", "context", "label", "temporary"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "-t", desc: "타입 지정" },
+          { flag: "-R", desc: "재귀 적용" },
+          { flag: "-v", desc: "변경 내용 표시" },
+          { flag: "--reference", desc: "기준 파일과 동일한 컨텍스트 적용" }
+        ],
+        examples: [
+          { label: "컨텍스트 즉시 변경", code: "chcon -t httpd_sys_content_t /srv/web/index.html" },
+          { label: "기준 파일 따라가기", code: "chcon --reference=/var/www/html/index.html /srv/web/index.html" }
+        ],
+        diff: "Rocky에서 임시 복구용으로 자주 씁니다.",
+        warnings: ["영구 반영이 아니라서 재부팅/재라벨 시 원복될 수 있습니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "-t", desc: "타입 지정" },
+          { flag: "-R", desc: "재귀 적용" },
+          { flag: "-v", desc: "변경 내용 표시" },
+          { flag: "--reference", desc: "기준 파일과 동일한 컨텍스트 적용" }
+        ],
+        examples: [
+          { label: "컨텍스트 즉시 변경", code: "chcon -t httpd_sys_content_t /srv/web/index.html" },
+          { label: "기준 파일 따라가기", code: "chcon --reference=/var/www/html/index.html /srv/web/index.html" }
+        ],
+        diff: "Ubuntu에서는 SELinux 사용 환경에서만 의미가 큽니다.",
+        warnings: ["영구 반영이 아니라서 재부팅/재라벨 시 원복될 수 있습니다."]
+      }
+    }
+  },
+  {
+    id: "timedatectl",
+    category: "time",
+    title: "timedatectl",
+    summary: "시간, 타임존, NTP 동기화 상태를 확인합니다.",
+    command: "timedatectl status",
+    keywords: ["time", "timezone", "ntp", "clock"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "status", desc: "시간/타임존/NTP 상태 확인" },
+          { flag: "set-timezone", desc: "타임존 설정" },
+          { flag: "set-ntp", desc: "NTP 활성화/비활성화" }
+        ],
+        examples: [
+          { label: "상태 확인", code: "timedatectl status" },
+          { label: "타임존 변경", code: "timedatectl set-timezone Asia/Seoul" }
+        ],
+        diff: "Rocky에서도 systemd 기반으로 동일하게 사용합니다.",
+        warnings: ["서버 시간은 인증서와 로그 정합성에 직접 영향을 줍니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "status", desc: "시간/타임존/NTP 상태 확인" },
+          { flag: "set-timezone", desc: "타임존 설정" },
+          { flag: "set-ntp", desc: "NTP 활성화/비활성화" }
+        ],
+        examples: [
+          { label: "상태 확인", code: "timedatectl status" },
+          { label: "타임존 변경", code: "timedatectl set-timezone Asia/Seoul" }
+        ],
+        diff: "Ubuntu도 동일합니다.",
+        warnings: ["서버 시간은 인증서와 로그 정합성에 직접 영향을 줍니다."]
+      }
+    }
+  },
+  {
+    id: "chronyc",
+    category: "time",
+    title: "chronyc",
+    summary: "chrony NTP 동기화 상태와 소스를 확인합니다.",
+    command: "chronyc tracking && chronyc sources -v",
+    keywords: ["ntp", "chrony", "clock", "sync"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "tracking", desc: "동기화 상태 요약" },
+          { flag: "sources -v", desc: "시간 소스 목록 상세" },
+          { flag: "burst", desc: "즉시 동기화 시도" },
+          { flag: "makestep", desc: "큰 시간 차이를 즉시 보정" }
+        ],
+        examples: [
+          { label: "동기화 상태", code: "chronyc tracking" },
+          { label: "소스 확인", code: "chronyc sources -v" }
+        ],
+        diff: "Rocky는 chrony가 표준인 경우가 많습니다.",
+        warnings: ["시간이 크게 틀어지면 인증/로그/클러스터에 영향이 큽니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "tracking", desc: "동기화 상태 요약" },
+          { flag: "sources -v", desc: "시간 소스 목록 상세" },
+          { flag: "burst", desc: "즉시 동기화 시도" },
+          { flag: "makestep", desc: "큰 시간 차이를 즉시 보정" }
+        ],
+        examples: [
+          { label: "동기화 상태", code: "chronyc tracking" },
+          { label: "소스 확인", code: "chronyc sources -v" }
+        ],
+        diff: "Ubuntu 서버에서도 chrony 사용 시 그대로 동일합니다.",
+        warnings: ["시간이 크게 틀어지면 인증/로그/클러스터에 영향이 큽니다."]
+      }
+    }
+  },
+  {
+    id: "iostat",
+    category: "performance",
+    title: "iostat",
+    summary: "디스크 I/O와 CPU 사용률을 확인합니다.",
+    command: "iostat -xz 1",
+    keywords: ["io", "disk", "cpu", "sysstat"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "-x", desc: "확장 통계" },
+          { flag: "-z", desc: "0인 항목 숨김" },
+          { flag: "1", desc: "1초 간격 반복" }
+        ],
+        examples: [
+          { label: "I/O 점검", code: "iostat -xz 1" },
+          { label: "디스크별 상세", code: "iostat -xz /dev/nvme0n1 1" }
+        ],
+        diff: "Rocky에서는 디스크 병목을 볼 때 필수입니다.",
+        warnings: ["`sysstat` 패키지가 필요할 수 있습니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "-x", desc: "확장 통계" },
+          { flag: "-z", desc: "0인 항목 숨김" },
+          { flag: "1", desc: "1초 간격 반복" }
+        ],
+        examples: [
+          { label: "I/O 점검", code: "iostat -xz 1" },
+          { label: "디스크별 상세", code: "iostat -xz /dev/sda 1" }
+        ],
+        diff: "Ubuntu도 `sysstat` 패키지가 있어야 합니다.",
+        warnings: ["`sysstat` 패키지가 필요할 수 있습니다."]
+      }
+    }
+  },
+  {
+    id: "iotop",
+    category: "performance",
+    title: "iotop",
+    summary: "프로세스별 디스크 I/O 사용량을 확인합니다.",
+    command: "iotop -oPa",
+    keywords: ["io", "process", "disk", "bottleneck"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "-o", desc: "실제 I/O가 있는 프로세스만 표시" },
+          { flag: "-P", desc: "스레드 대신 프로세스 단위 표시" },
+          { flag: "-a", desc: "누적 사용량 표시" }
+        ],
+        examples: [
+          { label: "I/O 많은 프로세스", code: "iotop -oPa" },
+          { label: "실시간 보기", code: "iotop" }
+        ],
+        diff: "루트 권한이 필요할 수 있습니다.",
+        warnings: ["I/O 문제는 disk, fs, DB, 로그 로테이션과 함께 봐야 합니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "-o", desc: "실제 I/O가 있는 프로세스만 표시" },
+          { flag: "-P", desc: "스레드 대신 프로세스 단위 표시" },
+          { flag: "-a", desc: "누적 사용량 표시" }
+        ],
+        examples: [
+          { label: "I/O 많은 프로세스", code: "iotop -oPa" },
+          { label: "실시간 보기", code: "iotop" }
+        ],
+        diff: "루트 권한이 필요할 수 있습니다.",
+        warnings: ["I/O 문제는 disk, fs, DB, 로그 로테이션과 함께 봐야 합니다."]
+      }
+    }
+  },
+  {
+    id: "sar",
+    category: "performance",
+    title: "sar",
+    summary: "시스템 성능 히스토리를 확인합니다.",
+    command: "sar -u 1 5",
+    keywords: ["sysstat", "history", "cpu", "memory", "io"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "-u", desc: "CPU 사용률" },
+          { flag: "-r", desc: "메모리 사용량" },
+          { flag: "-b", desc: "블록 I/O" },
+          { flag: "-n DEV", desc: "네트워크 인터페이스" }
+        ],
+        examples: [
+          { label: "CPU 히스토리", code: "sar -u 1 5" },
+          { label: "디스크 I/O", code: "sar -b 1 5" }
+        ],
+        diff: "Rocky에서는 sysstat 히스토리가 쌓여 있으면 사후 분석에 유용합니다.",
+        warnings: ["기록이 꺼져 있으면 과거 데이터를 못 볼 수 있습니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "-u", desc: "CPU 사용률" },
+          { flag: "-r", desc: "메모리 사용량" },
+          { flag: "-b", desc: "블록 I/O" },
+          { flag: "-n DEV", desc: "네트워크 인터페이스" }
+        ],
+        examples: [
+          { label: "CPU 히스토리", code: "sar -u 1 5" },
+          { label: "디스크 I/O", code: "sar -b 1 5" }
+        ],
+        diff: "Ubuntu에서도 sysstat 히스토리가 있으면 유용합니다.",
+        warnings: ["기록이 꺼져 있으면 과거 데이터를 못 볼 수 있습니다."]
+      }
+    }
+  },
+  {
+    id: "dnf-history",
+    category: "packages",
+    title: "dnf history",
+    summary: "DNF로 수행한 설치/업데이트 기록을 확인합니다.",
+    command: "dnf history",
+    keywords: ["package history", "rollback", "update", "audit"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "history", desc: "패키지 작업 이력 표시" },
+          { flag: "history info", desc: "특정 트랜잭션 상세 확인" },
+          { flag: "history undo", desc: "트랜잭션 되돌리기" }
+        ],
+        examples: [
+          { label: "이력 보기", code: "dnf history" },
+          { label: "트랜잭션 상세", code: "dnf history info 42" }
+        ],
+        diff: "Rocky는 롤백 검토에 유용합니다.",
+        warnings: ["되돌리기 전 현재 상태와 의존성을 확인하세요."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "apt history", desc: "apt 로그 파일을 기반으로 이력 확인" },
+          { flag: "history.log", desc: "로그 경로 참고" }
+        ],
+        examples: [
+          { label: "이력 비슷하게 확인", code: "grep 'Commandline' /var/log/apt/history.log" }
+        ],
+        diff: "Ubuntu는 apt 로그를 직접 보는 방식이 더 일반적입니다.",
+        warnings: ["로그 기반이라 DNF처럼 트랜잭션 단위 되돌리기는 제한적입니다."]
+      }
+    }
+  },
+  {
+    id: "dnf-autoremove",
+    category: "packages",
+    title: "dnf autoremove",
+    summary: "더 이상 필요 없는 의존 패키지를 제거합니다.",
+    command: "dnf autoremove",
+    keywords: ["cleanup", "dependencies", "unused", "package"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "autoremove", desc: "불필요 의존성 제거" },
+          { flag: "--assumeno", desc: "실행 전 미리보기" },
+          { flag: "-y", desc: "자동 확인" }
+        ],
+        examples: [
+          { label: "정리", code: "dnf autoremove" },
+          { label: "미리보기", code: "dnf autoremove --assumeno" }
+        ],
+        diff: "Rocky에서는 커널/라이브러리 잔여물을 정리할 때 유용합니다.",
+        warnings: ["의존성 자동 제거가 필요한 패키지까지 지우지 않는지 확인하세요."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "autoremove", desc: "불필요 의존성 제거" },
+          { flag: "--purge", desc: "설정 파일까지 제거" },
+          { flag: "-y", desc: "자동 확인" }
+        ],
+        examples: [
+          { label: "정리", code: "apt autoremove" },
+          { label: "설정까지 제거", code: "apt autoremove --purge" }
+        ],
+        diff: "Ubuntu는 apt autoremove가 대응 명령입니다.",
+        warnings: ["운영 서버에서는 제거 목록을 꼭 먼저 검토하세요."]
+      }
+    }
+  },
+  {
+    id: "dnf-config-manager",
+    category: "packages",
+    title: "dnf config-manager",
+    summary: "리포지토리 추가와 저장소 설정을 관리합니다.",
+    command: "dnf config-manager --add-repo URL",
+    keywords: ["repo", "repository", "config", "enable", "disable"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "--add-repo", desc: "새 저장소 추가" },
+          { flag: "--set-enabled", desc: "저장소 활성화" },
+          { flag: "--set-disabled", desc: "저장소 비활성화" },
+          { flag: "--dump", desc: "저장소 설정 출력" }
+        ],
+        examples: [
+          { label: "저장소 추가", code: "dnf config-manager --add-repo https://example/repo.repo" },
+          { label: "저장소 목록", code: "dnf repolist" }
+        ],
+        diff: "Rocky는 저장소를 신중하게 관리해야 합니다.",
+        warnings: ["외부 저장소는 보안과 유지보수성을 확인한 뒤 추가하세요."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "add-apt-repository", desc: "저장소 추가" },
+          { flag: "sources.list", desc: "소스 파일 관리" },
+          { flag: "apt update", desc: "목록 갱신" }
+        ],
+        examples: [
+          { label: "PPA 추가", code: "add-apt-repository ppa:some/ppa" },
+          { label: "목록 갱신", code: "apt update" }
+        ],
+        diff: "Ubuntu는 add-apt-repository가 대응합니다.",
+        warnings: ["불필요한 PPA는 추후 업그레이드 충돌을 만들 수 있습니다."]
+      }
+    }
+  },
+  {
+    id: "apt-autoremove",
+    category: "packages",
+    title: "apt autoremove",
+    summary: "Ubuntu에서 더 이상 필요 없는 의존 패키지를 제거합니다.",
+    command: "apt autoremove",
+    keywords: ["cleanup", "dependencies", "unused", "package"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "n/a", desc: "Ubuntu 전용 대응 명령" }
+        ],
+        examples: [
+          { label: "동등 기능", code: "dnf autoremove" }
+        ],
+        diff: "Rocky에서는 dnf autoremove를 사용합니다.",
+        warnings: ["이 카드는 Ubuntu 전용입니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "autoremove", desc: "불필요 의존성 제거" },
+          { flag: "--purge", desc: "설정 파일까지 제거" },
+          { flag: "-y", desc: "자동 확인" }
+        ],
+        examples: [
+          { label: "정리", code: "apt autoremove" },
+          { label: "설정까지 제거", code: "apt autoremove --purge" }
+        ],
+        diff: "Ubuntu에서 불필요 의존성을 정리하는 기본 명령입니다.",
+        warnings: ["운영 서버에서는 제거 목록을 꼭 먼저 검토하세요."]
+      }
+    }
+  },
+  {
+    id: "apt-mark-hold",
+    category: "packages",
+    title: "apt-mark hold",
+    summary: "특정 패키지의 자동 업그레이드를 고정합니다.",
+    command: "apt-mark hold package",
+    keywords: ["pin", "freeze", "upgrade", "package"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "dnf versionlock", desc: "Rocky 쪽 대응 기능" }
+        ],
+        examples: [
+          { label: "대응 기능", code: "dnf versionlock add package" }
+        ],
+        diff: "Rocky는 versionlock 플러그인을 씁니다.",
+        warnings: ["이 카드는 Ubuntu 중심입니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "hold", desc: "업그레이드 고정" },
+          { flag: "unhold", desc: "고정 해제" },
+          { flag: "showhold", desc: "고정 목록 확인" }
+        ],
+        examples: [
+          { label: "고정", code: "apt-mark hold nginx" },
+          { label: "해제", code: "apt-mark unhold nginx" }
+        ],
+        diff: "Ubuntu에서 특정 버전을 유지할 때 자주 씁니다.",
+        warnings: ["핵심 패키지 고정은 보안 업데이트를 막을 수 있습니다."]
+      }
+    }
+  },
+  {
+    id: "add-apt-repository",
+    category: "packages",
+    title: "add-apt-repository",
+    summary: "Ubuntu에서 저장소나 PPA를 추가합니다.",
+    command: "add-apt-repository ppa:example/ppa",
+    keywords: ["ppa", "repo", "source", "apt"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "dnf config-manager", desc: "Rocky 쪽 저장소 추가 대응" }
+        ],
+        examples: [
+          { label: "대응 기능", code: "dnf config-manager --add-repo URL" }
+        ],
+        diff: "Rocky는 dnf config-manager가 대응 기능입니다.",
+        warnings: ["이 카드는 Ubuntu 전용에 가깝습니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "PPA", desc: "개인 패키지 저장소 추가" },
+          { flag: "--remove", desc: "저장소 제거" }
+        ],
+        examples: [
+          { label: "PPA 추가", code: "add-apt-repository ppa:example/ppa" },
+          { label: "저장소 제거", code: "add-apt-repository --remove ppa:example/ppa" }
+        ],
+        diff: "Ubuntu에서 외부 저장소를 추가하는 대표 명령입니다.",
+        warnings: ["출처가 불분명한 PPA는 운영 서버에 넣지 마세요."]
+      }
+    }
+  },
+  {
+    id: "md5sum",
+    category: "diagnostics",
+    title: "md5sum",
+    summary: "파일 체크섬을 확인합니다.",
+    command: "md5sum file",
+    keywords: ["checksum", "integrity", "hash", "verify"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "--check", desc: "체크섬 파일로 검증" },
+          { flag: "-b", desc: "바이너리 모드" },
+          { flag: "-c", desc: "검증" }
+        ],
+        examples: [
+          { label: "무결성 확인", code: "md5sum file.iso" },
+          { label: "검증", code: "md5sum -c MD5SUMS" }
+        ],
+        diff: "공통입니다.",
+        warnings: ["보안 목적보다는 무결성 확인용으로 쓰는 편이 적절합니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "--check", desc: "체크섬 파일로 검증" },
+          { flag: "-b", desc: "바이너리 모드" },
+          { flag: "-c", desc: "검증" }
+        ],
+        examples: [
+          { label: "무결성 확인", code: "md5sum file.iso" },
+          { label: "검증", code: "md5sum -c MD5SUMS" }
+        ],
+        diff: "공통입니다.",
+        warnings: ["보안 목적보다는 무결성 확인용으로 쓰는 편이 적절합니다."]
+      }
+    }
+  },
+  {
+    id: "sha256sum",
+    category: "diagnostics",
+    title: "sha256sum",
+    summary: "더 강한 해시로 파일 무결성을 확인합니다.",
+    command: "sha256sum file",
+    keywords: ["checksum", "integrity", "hash", "verify"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "--check", desc: "체크섬 파일로 검증" },
+          { flag: "-b", desc: "바이너리 모드" },
+          { flag: "-c", desc: "검증" }
+        ],
+        examples: [
+          { label: "무결성 확인", code: "sha256sum file.iso" },
+          { label: "검증", code: "sha256sum -c SHA256SUMS" }
+        ],
+        diff: "공통입니다.",
+        warnings: ["배포 파일 검증에는 md5보다 sha256이 더 일반적입니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "--check", desc: "체크섬 파일로 검증" },
+          { flag: "-b", desc: "바이너리 모드" },
+          { flag: "-c", desc: "검증" }
+        ],
+        examples: [
+          { label: "무결성 확인", code: "sha256sum file.iso" },
+          { label: "검증", code: "sha256sum -c SHA256SUMS" }
+        ],
+        diff: "공통입니다.",
+        warnings: ["배포 파일 검증에는 md5보다 sha256이 더 일반적입니다."]
+      }
+    }
+  },
+  {
+    id: "strace",
+    category: "diagnostics",
+    title: "strace",
+    summary: "프로세스가 무슨 시스템 호출을 하는지 추적합니다.",
+    command: "strace -f -p PID",
+    keywords: ["syscall", "debug", "process", "troubleshoot"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "-p", desc: "실행 중 프로세스에 붙기" },
+          { flag: "-f", desc: "자식 프로세스까지 추적" },
+          { flag: "-o", desc: "출력을 파일로 저장" },
+          { flag: "-e", desc: "시스템 콜 필터" }
+        ],
+        examples: [
+          { label: "프로세스 추적", code: "strace -f -p 1234" },
+          { label: "파일 열기만 보기", code: "strace -e trace=openat -p 1234" }
+        ],
+        diff: "Rocky에서 장애 원인 파악용으로 자주 씁니다.",
+        warnings: ["부하가 커질 수 있어 짧게 필요한 부분만 추적하세요."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "-p", desc: "실행 중 프로세스에 붙기" },
+          { flag: "-f", desc: "자식 프로세스까지 추적" },
+          { flag: "-o", desc: "출력을 파일로 저장" },
+          { flag: "-e", desc: "시스템 콜 필터" }
+        ],
+        examples: [
+          { label: "프로세스 추적", code: "strace -f -p 1234" },
+          { label: "파일 열기만 보기", code: "strace -e trace=openat -p 1234" }
+        ],
+        diff: "Ubuntu에서도 동일하게 유용합니다.",
+        warnings: ["부하가 커질 수 있어 짧게 필요한 부분만 추적하세요."]
+      }
+    }
+  },
+  {
+    id: "at",
+    category: "services",
+    title: "at",
+    summary: "한 번만 실행할 예약 작업을 등록합니다.",
+    command: "echo 'backup.sh' | at 23:00",
+    keywords: ["one-time", "schedule", "job", "batch"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "at", desc: "한 번 실행할 작업 예약" },
+          { flag: "atq", desc: "예약 목록" },
+          { flag: "atrm", desc: "예약 삭제" }
+        ],
+        examples: [
+          { label: "한 번 예약", code: "echo 'backup.sh' | at 23:00" },
+          { label: "목록 확인", code: "atq" }
+        ],
+        diff: "크론보다 단발성 작업에 적합합니다.",
+        warnings: ["atd 서비스가 활성화되어 있어야 합니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "at", desc: "한 번 실행할 작업 예약" },
+          { flag: "atq", desc: "예약 목록" },
+          { flag: "atrm", desc: "예약 삭제" }
+        ],
+        examples: [
+          { label: "한 번 예약", code: "echo 'backup.sh' | at 23:00" },
+          { label: "목록 확인", code: "atq" }
+        ],
+        diff: "크론보다 단발성 작업에 적합합니다.",
+        warnings: ["atd 서비스가 활성화되어 있어야 합니다."]
+      }
+    }
+  },
+  {
+    id: "systemd-analyze",
+    category: "systemd",
+    title: "systemd-analyze",
+    summary: "부팅 시간과 systemd 유닛 병목을 분석합니다.",
+    command: "systemd-analyze blame",
+    keywords: ["boot", "startup", "units", "performance"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "blame", desc: "부팅에 오래 걸린 유닛 순서" },
+          { flag: "critical-chain", desc: "부팅 병목 체인" },
+          { flag: "time", desc: "전체 부팅 시간 요약" },
+          { flag: "plot", desc: "SVG 타임라인 생성" }
+        ],
+        examples: [
+          { label: "부팅 느린 유닛", code: "systemd-analyze blame" },
+          { label: "병목 체인", code: "systemd-analyze critical-chain" }
+        ],
+        diff: "Rocky에서 부팅 지연 분석에 유용합니다.",
+        warnings: ["유닛 비활성화 전에 의존성을 확인하세요."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "blame", desc: "부팅에 오래 걸린 유닛 순서" },
+          { flag: "critical-chain", desc: "부팅 병목 체인" },
+          { flag: "time", desc: "전체 부팅 시간 요약" },
+          { flag: "plot", desc: "SVG 타임라인 생성" }
+        ],
+        examples: [
+          { label: "부팅 느린 유닛", code: "systemd-analyze blame" },
+          { label: "병목 체인", code: "systemd-analyze critical-chain" }
+        ],
+        diff: "Ubuntu에서도 부팅 지연 분석에 유용합니다.",
+        warnings: ["유닛 비활성화 전에 의존성을 확인하세요."]
+      }
+    }
+  },
+  {
+    id: "systemctl-edit",
+    category: "systemd",
+    title: "systemctl edit",
+    summary: "유닛 오버라이드를 안전하게 추가합니다.",
+    command: "systemctl edit nginx",
+    keywords: ["override", "unit", "daemon", "service"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "edit", desc: "오버라이드 파일 편집" },
+          { flag: "--full", desc: "유닛 전체 복사 편집" },
+          { flag: "daemon-reload", desc: "변경 후 재로드" }
+        ],
+        examples: [
+          { label: "오버라이드", code: "systemctl edit nginx" },
+          { label: "전체 편집", code: "systemctl edit --full nginx" }
+        ],
+        diff: "Rocky에서 서비스 튜닝 시 자주 씁니다.",
+        warnings: ["직접 원본을 고치지 말고 오버라이드 방식이 더 안전합니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "edit", desc: "오버라이드 파일 편집" },
+          { flag: "--full", desc: "유닛 전체 복사 편집" },
+          { flag: "daemon-reload", desc: "변경 후 재로드" }
+        ],
+        examples: [
+          { label: "오버라이드", code: "systemctl edit nginx" },
+          { label: "전체 편집", code: "systemctl edit --full nginx" }
+        ],
+        diff: "Ubuntu에서도 동일합니다.",
+        warnings: ["직접 원본을 고치지 말고 오버라이드 방식이 더 안전합니다."]
+      }
+    }
+  },
+  {
+    id: "pvs",
+    category: "lvm",
+    title: "pvs",
+    summary: "LVM 물리 볼륨 상태를 확인합니다.",
+    command: "pvs",
+    keywords: ["lvm", "pv", "storage", "disk expansion"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "-o", desc: "출력 컬럼 지정" },
+          { flag: "--segments", desc: "세그먼트 정보 포함" }
+        ],
+        examples: [
+          { label: "물리 볼륨 확인", code: "pvs" },
+          { label: "세부 보기", code: "pvs -o pv_name,pv_size,pv_free" }
+        ],
+        diff: "LVM 디스크 증설의 출발점입니다.",
+        warnings: ["새 디스크가 보이지 않으면 먼저 `lsblk`와 `fdisk -l`을 확인하세요."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "-o", desc: "출력 컬럼 지정" },
+          { flag: "--segments", desc: "세그먼트 정보 포함" }
+        ],
+        examples: [
+          { label: "물리 볼륨 확인", code: "pvs" },
+          { label: "세부 보기", code: "pvs -o pv_name,pv_size,pv_free" }
+        ],
+        diff: "Ubuntu에서도 LVM 디스크 증설의 출발점입니다.",
+        warnings: ["새 디스크가 보이지 않으면 먼저 `lsblk`와 `fdisk -l`을 확인하세요."]
+      }
+    }
+  },
+  {
+    id: "vgs",
+    category: "lvm",
+    title: "vgs",
+    summary: "LVM 볼륨 그룹의 여유 공간을 확인합니다.",
+    command: "vgs",
+    keywords: ["lvm", "vg", "free space", "storage"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "-o", desc: "출력 컬럼 지정" },
+          { flag: "--units g", desc: "기본 단위를 GiB로 표시" }
+        ],
+        examples: [
+          { label: "볼륨 그룹 확인", code: "vgs" },
+          { label: "여유 공간 확인", code: "vgs -o vg_name,vg_size,vg_free" }
+        ],
+        diff: "LV 확장 가능 여부를 판단할 때 먼저 봅니다.",
+        warnings: ["VG 여유 공간이 없으면 PV 추가나 디스크 확장이 필요합니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "-o", desc: "출력 컬럼 지정" },
+          { flag: "--units g", desc: "기본 단위를 GiB로 표시" }
+        ],
+        examples: [
+          { label: "볼륨 그룹 확인", code: "vgs" },
+          { label: "여유 공간 확인", code: "vgs -o vg_name,vg_size,vg_free" }
+        ],
+        diff: "Ubuntu에서도 동일합니다.",
+        warnings: ["VG 여유 공간이 없으면 PV 추가나 디스크 확장이 필요합니다."]
+      }
+    }
+  },
+  {
+    id: "lvs",
+    category: "lvm",
+    title: "lvs",
+    summary: "LVM 논리 볼륨과 크기, 마운트 대상을 확인합니다.",
+    command: "lvs",
+    keywords: ["lvm", "lv", "logical volume", "storage"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "-o", desc: "출력 컬럼 지정" },
+          { flag: "--segments", desc: "세그먼트 정보 포함" },
+          { flag: "--units g", desc: "GiB 단위로 보기" }
+        ],
+        examples: [
+          { label: "논리 볼륨 확인", code: "lvs" },
+          { label: "세부 확인", code: "lvs -o lv_name,lv_size,lv_path" }
+        ],
+        diff: "실제 서비스 데이터가 올라간 볼륨을 볼 때 중요합니다.",
+        warnings: ["확장 전후 파일시스템 크기도 함께 봐야 합니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "-o", desc: "출력 컬럼 지정" },
+          { flag: "--segments", desc: "세그먼트 정보 포함" },
+          { flag: "--units g", desc: "GiB 단위로 보기" }
+        ],
+        examples: [
+          { label: "논리 볼륨 확인", code: "lvs" },
+          { label: "세부 확인", code: "lvs -o lv_name,lv_size,lv_path" }
+        ],
+        diff: "Ubuntu에서도 동일합니다.",
+        warnings: ["확장 전후 파일시스템 크기도 함께 봐야 합니다."]
+      }
+    }
+  },
+  {
+    id: "pvcreate",
+    category: "lvm",
+    title: "pvcreate",
+    summary: "새 디스크 또는 파티션을 LVM 물리 볼륨으로 초기화합니다.",
+    command: "pvcreate /dev/sdb1",
+    keywords: ["lvm", "physical volume", "initialize", "disk expansion"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "-ff", desc: "강제 초기화" },
+          { flag: "-y", desc: "확인 자동 승인" },
+          { flag: "-t", desc: "테스트 모드" }
+        ],
+        examples: [
+          { label: "물리 볼륨 생성", code: "pvcreate /dev/sdb1" },
+          { label: "테스트", code: "pvcreate -t /dev/sdb1" }
+        ],
+        diff: "LVM 디스크 증설의 시작 단계입니다.",
+        warnings: ["장치명을 잘못 지정하면 데이터가 사라질 수 있습니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "-ff", desc: "강제 초기화" },
+          { flag: "-y", desc: "확인 자동 승인" },
+          { flag: "-t", desc: "테스트 모드" }
+        ],
+        examples: [
+          { label: "물리 볼륨 생성", code: "pvcreate /dev/sdb1" },
+          { label: "테스트", code: "pvcreate -t /dev/sdb1" }
+        ],
+        diff: "Ubuntu에서도 동일합니다.",
+        warnings: ["장치명을 잘못 지정하면 데이터가 사라질 수 있습니다."]
+      }
+    }
+  },
+  {
+    id: "vgcreate",
+    category: "lvm",
+    title: "vgcreate",
+    summary: "물리 볼륨을 묶어서 볼륨 그룹을 만듭니다.",
+    command: "vgcreate vg_data /dev/sdb1",
+    keywords: ["lvm", "volume group", "storage", "pool"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "-s", desc: "PE 크기 지정" },
+          { flag: "-f", desc: "강제 생성" },
+          { flag: "-t", desc: "테스트 모드" }
+        ],
+        examples: [
+          { label: "볼륨 그룹 생성", code: "vgcreate vg_data /dev/sdb1" },
+          { label: "PE 크기 지정", code: "vgcreate -s 16M vg_data /dev/sdb1" }
+        ],
+        diff: "VG는 나중에 LV를 만들기 위한 저장소 풀입니다.",
+        warnings: ["VG 이름은 나중에 서비스 스크립트에 들어가므로 규칙적으로 짓는 게 좋습니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "-s", desc: "PE 크기 지정" },
+          { flag: "-f", desc: "강제 생성" },
+          { flag: "-t", desc: "테스트 모드" }
+        ],
+        examples: [
+          { label: "볼륨 그룹 생성", code: "vgcreate vg_data /dev/sdb1" },
+          { label: "PE 크기 지정", code: "vgcreate -s 16M vg_data /dev/sdb1" }
+        ],
+        diff: "Ubuntu에서도 동일합니다.",
+        warnings: ["VG 이름은 나중에 서비스 스크립트에 들어가므로 규칙적으로 짓는 게 좋습니다."]
+      }
+    }
+  },
+  {
+    id: "lvcreate",
+    category: "lvm",
+    title: "lvcreate",
+    summary: "볼륨 그룹 안에 논리 볼륨을 생성합니다.",
+    command: "lvcreate -n lv_data -L 100G vg_data",
+    keywords: ["lvm", "logical volume", "storage", "filesystem"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "-n", desc: "LV 이름 지정" },
+          { flag: "-L", desc: "크기 지정" },
+          { flag: "-l", desc: "PE 개수로 크기 지정" },
+          { flag: "-t", desc: "테스트 모드" }
+        ],
+        examples: [
+          { label: "LV 생성", code: "lvcreate -n lv_data -L 100G vg_data" },
+          { label: "전체 공간 사용", code: "lvcreate -n lv_data -l 100%FREE vg_data" }
+        ],
+        diff: "실제 마운트할 공간을 만드는 단계입니다.",
+        warnings: ["LV 생성 후 파일시스템 생성 단계가 따로 필요합니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "-n", desc: "LV 이름 지정" },
+          { flag: "-L", desc: "크기 지정" },
+          { flag: "-l", desc: "PE 개수로 크기 지정" },
+          { flag: "-t", desc: "테스트 모드" }
+        ],
+        examples: [
+          { label: "LV 생성", code: "lvcreate -n lv_data -L 100G vg_data" },
+          { label: "전체 공간 사용", code: "lvcreate -n lv_data -l 100%FREE vg_data" }
+        ],
+        diff: "Ubuntu에서도 동일합니다.",
+        warnings: ["LV 생성 후 파일시스템 생성 단계가 따로 필요합니다."]
+      }
+    }
+  },
+  {
+    id: "lvextend",
+    category: "lvm",
+    title: "lvextend",
+    summary: "논리 볼륨 크기를 늘립니다.",
+    command: "lvextend -r -L +50G /dev/vg_data/lv_data",
+    keywords: ["expand", "grow", "lvm", "filesystem"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "-r", desc: "파일시스템까지 자동 확장" },
+          { flag: "-L +", desc: "지정 크기만큼 증가" },
+          { flag: "-l +", desc: "PE 단위로 증가" }
+        ],
+        examples: [
+          { label: "50G 확장", code: "lvextend -r -L +50G /dev/vg_data/lv_data" },
+          { label: "남은 공간 모두", code: "lvextend -r -l +100%FREE /dev/vg_data/lv_data" }
+        ],
+        diff: "Rocky에서는 디스크 증설의 핵심 명령입니다.",
+        warnings: ["`-r`가 없으면 파일시스템 확장은 별도 작업입니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "-r", desc: "파일시스템까지 자동 확장" },
+          { flag: "-L +", desc: "지정 크기만큼 증가" },
+          { flag: "-l +", desc: "PE 단위로 증가" }
+        ],
+        examples: [
+          { label: "50G 확장", code: "lvextend -r -L +50G /dev/vg_data/lv_data" },
+          { label: "남은 공간 모두", code: "lvextend -r -l +100%FREE /dev/vg_data/lv_data" }
+        ],
+        diff: "Ubuntu에서도 동일합니다.",
+        warnings: ["`-r`가 없으면 파일시스템 확장은 별도 작업입니다."]
+      }
+    }
+  },
+  {
+    id: "fsck",
+    category: "lvm",
+    title: "fsck",
+    summary: "파일시스템 무결성을 검사하고 복구합니다.",
+    command: "fsck -f /dev/sdb1",
+    keywords: ["filesystem check", "repair", "disk", "integrity"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "-f", desc: "강제로 검사" },
+          { flag: "-y", desc: "수정 제안을 자동 승인" },
+          { flag: "-n", desc: "수정 없이 검사" }
+        ],
+        examples: [
+          { label: "강제 검사", code: "fsck -f /dev/sdb1" },
+          { label: "자동 복구", code: "fsck -fy /dev/sdb1" }
+        ],
+        diff: "디스크 오류 복구 시 매우 중요합니다.",
+        warnings: ["마운트된 파일시스템에 실행하면 위험할 수 있습니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "-f", desc: "강제로 검사" },
+          { flag: "-y", desc: "수정 제안을 자동 승인" },
+          { flag: "-n", desc: "수정 없이 검사" }
+        ],
+        examples: [
+          { label: "강제 검사", code: "fsck -f /dev/sdb1" },
+          { label: "자동 복구", code: "fsck -fy /dev/sdb1" }
+        ],
+        diff: "Ubuntu에서도 동일합니다.",
+        warnings: ["마운트된 파일시스템에 실행하면 위험할 수 있습니다."]
+      }
+    }
+  },
+  {
+    id: "mkswap",
+    category: "lvm",
+    title: "mkswap",
+    summary: "스왑 영역을 초기화합니다.",
+    command: "mkswap /dev/sdb2",
+    keywords: ["swap", "memory", "page", "initialize"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "-L", desc: "레이블 지정" },
+          { flag: "-U", desc: "UUID 지정" },
+          { flag: "-v", desc: "상세 출력" }
+        ],
+        examples: [
+          { label: "스왑 초기화", code: "mkswap /dev/sdb2" },
+          { label: "레이블 포함", code: "mkswap -L swap1 /dev/sdb2" }
+        ],
+        diff: "스왑 파티션 생성 시 사용합니다.",
+        warnings: ["데이터가 있던 파티션에 쓰면 내용이 사라집니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "-L", desc: "레이블 지정" },
+          { flag: "-U", desc: "UUID 지정" },
+          { flag: "-v", desc: "상세 출력" }
+        ],
+        examples: [
+          { label: "스왑 초기화", code: "mkswap /dev/sdb2" },
+          { label: "레이블 포함", code: "mkswap -L swap1 /dev/sdb2" }
+        ],
+        diff: "Ubuntu에서도 동일합니다.",
+        warnings: ["데이터가 있던 파티션에 쓰면 내용이 사라집니다."]
+      }
+    }
+  },
+  {
+    id: "swapon",
+    category: "lvm",
+    title: "swapon",
+    summary: "스왑을 활성화합니다.",
+    command: "swapon /dev/sdb2",
+    keywords: ["swap", "memory", "activate", "paging"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "-a", desc: "fstab 기반 모든 스왑 활성화" },
+          { flag: "-s", desc: "현재 스왑 상태 표시" },
+          { flag: "-v", desc: "상세 출력" }
+        ],
+        examples: [
+          { label: "스왑 활성화", code: "swapon /dev/sdb2" },
+          { label: "상태 확인", code: "swapon -s" }
+        ],
+        diff: "스왑 활성화 후 free -h로 확인하는 습관이 좋습니다.",
+        warnings: ["스왑 사용량이 높다면 메모리 압박 원인도 같이 봐야 합니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "-a", desc: "fstab 기반 모든 스왑 활성화" },
+          { flag: "-s", desc: "현재 스왑 상태 표시" },
+          { flag: "-v", desc: "상세 출력" }
+        ],
+        examples: [
+          { label: "스왑 활성화", code: "swapon /dev/sdb2" },
+          { label: "상태 확인", code: "swapon -s" }
+        ],
+        diff: "Ubuntu에서도 동일합니다.",
+        warnings: ["스왑 사용량이 높다면 메모리 압박 원인도 같이 봐야 합니다."]
+      }
+    }
+  },
+  {
+    id: "swapoff",
+    category: "lvm",
+    title: "swapoff",
+    summary: "스왑을 비활성화합니다.",
+    command: "swapoff /dev/sdb2",
+    keywords: ["swap", "memory", "deactivate", "paging"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "-a", desc: "모든 스왑 비활성화" },
+          { flag: "-v", desc: "상세 출력" }
+        ],
+        examples: [
+          { label: "스왑 비활성화", code: "swapoff /dev/sdb2" },
+          { label: "모두 끄기", code: "swapoff -a" }
+        ],
+        diff: "스왑 제거 전 데이터 이동 상태를 확인해야 합니다.",
+        warnings: ["메모리가 부족하면 swapoff가 실패할 수 있습니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "-a", desc: "모든 스왑 비활성화" },
+          { flag: "-v", desc: "상세 출력" }
+        ],
+        examples: [
+          { label: "스왑 비활성화", code: "swapoff /dev/sdb2" },
+          { label: "모두 끄기", code: "swapoff -a" }
+        ],
+        diff: "Ubuntu에서도 동일합니다.",
+        warnings: ["메모리가 부족하면 swapoff가 실패할 수 있습니다."]
       }
     }
   }
