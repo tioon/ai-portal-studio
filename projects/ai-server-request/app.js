@@ -4,6 +4,7 @@ const gpuPlatformSelect = document.querySelector("#gpuPlatform");
 const gpuCountInput = document.querySelector("#gpuCount");
 const siteTypeSelect = document.querySelector("#siteType");
 const serverSelect = document.querySelector("#serverSelect");
+const extraServerSelect = document.querySelector("#extraServerSelect");
 
 const cpuValue = document.querySelector("#cpuValue");
 const memoryValue = document.querySelector("#memoryValue");
@@ -22,7 +23,10 @@ const gpuPowerValue = document.querySelector("#gpuPowerValue");
 const gpuConnectorValue = document.querySelector("#gpuConnectorValue");
 const gpuExactnessValue = document.querySelector("#gpuExactnessValue");
 const gpuRequiredPartsValue = document.querySelector("#gpuRequiredPartsValue");
+const clearExtraServersButton = document.querySelector("#clearExtraServers");
 const STORAGE_KEY = "ai-server-request-state";
+const DEFAULT_VENDOR_LIMIT = 6;
+let extraVisibleServerIds = [];
 const DEFAULT_PROJECTS = [
   {
     id: "ai-server-request",
@@ -1013,6 +1017,43 @@ function renderServerOptions(selectedServerId) {
   `;
 }
 
+function renderExtraServerOptions(vendors) {
+  if (!extraServerSelect) return;
+
+  const grouped = vendors.reduce((acc, vendor) => {
+    const bucket = acc.get(vendor.vendor) || [];
+    bucket.push(vendor);
+    acc.set(vendor.vendor, bucket);
+    return acc;
+  }, new Map());
+
+  const optionGroups = Array.from(grouped.entries())
+    .map(
+      ([vendorName, items]) => `
+        <optgroup label="${vendorName === "HPE" ? "HP / HPE" : vendorName}">
+          ${items
+            .map((vendor) => {
+              const id = getVendorId(vendor);
+              return `<option value="${id}">${vendor.model}</option>`;
+            })
+            .join("")}
+        </optgroup>
+      `
+    )
+    .join("");
+
+  extraServerSelect.innerHTML = vendors.length
+    ? `
+      <option value="">추천 6대 외 서버 추가</option>
+      ${optionGroups}
+    `
+    : `
+      <option value="">추가할 서버가 없습니다</option>
+    `;
+  extraServerSelect.disabled = vendors.length === 0;
+  extraServerSelect.value = "";
+}
+
 function renderSelectedVendorPanel(vendor, state) {
   if (!vendor) {
     selectedServerPanel.innerHTML = `
@@ -1020,7 +1061,7 @@ function renderSelectedVendorPanel(vendor, state) {
         <div>
           <span class="eyebrow-inline">선택 서버</span>
           <h3>특정 서버를 골라서 볼 수 있습니다</h3>
-          <p>아래 추천 카드나 상단 드롭다운에서 HP / HPE / Dell 라인업을 선택하면, 그 서버를 고정해서 상세를 볼 수 있습니다.</p>
+          <p>아래 추천 카드나 상단 드롭다운에서 HP / HPE / Dell 라인업을 선택하면, 그 서버를 고정해서 상세를 볼 수 있습니다. 추천 6대 외의 서버는 추가 드롭다운에서 펼쳐 볼 수 있습니다.</p>
         </div>
         <button type="button" class="button button-secondary small" data-clear-server>추천 순으로 보기</button>
       </div>
@@ -1064,6 +1105,24 @@ function renderSelectedVendorPanel(vendor, state) {
   selectedServerPanel.querySelectorAll("[data-clear-server]").forEach((button) => {
     button.addEventListener("click", () => selectServer(""));
   });
+}
+
+function addExtraServer(serverId) {
+  if (!serverId) return;
+  if (extraVisibleServerIds.includes(serverId)) return;
+  extraVisibleServerIds = [...extraVisibleServerIds, serverId];
+  render();
+}
+
+function removeExtraServer(serverId) {
+  extraVisibleServerIds = extraVisibleServerIds.filter((id) => id !== serverId);
+  render();
+}
+
+function clearExtraServers() {
+  if (!extraVisibleServerIds.length) return;
+  extraVisibleServerIds = [];
+  render();
 }
 
 function getGpuDemandLevel(gpuValue) {
@@ -1230,7 +1289,8 @@ function getSelectedOptions() {
     gpuPlatform: normalized.gpuPlatform || "PCIe",
     gpuCount: params.get("count") || stored?.gpuCount || "2",
     siteType: params.get("site") || stored?.siteType || "datacenter",
-    selectedServerId: params.get("server") || stored?.selectedServerId || ""
+    selectedServerId: params.get("server") || stored?.selectedServerId || "",
+    extraVisibleServerIds: Array.isArray(stored?.extraVisibleServerIds) ? stored.extraVisibleServerIds : []
   };
 }
 
@@ -1360,11 +1420,12 @@ function fallbackSvg(vendor, model, accentA = "#1f3552", accentB = "#0d1726") {
   `)}`;
 }
 
-function makeVendorCard(vendor, state) {
+function makeVendorCard(vendor, state, options = {}) {
+  const { removable = false } = options;
   const card = document.createElement("article");
   const vendorId = getVendorId(vendor);
   const isSelected = vendorId === state.selectedServerId;
-  card.className = `card vendor-card ${vendor.model === "PowerEdge XE9680" ? "vendor-card--dense" : ""} ${isSelected ? "is-selected" : ""}`;
+  card.className = `card vendor-card ${vendor.model === "PowerEdge XE9680" ? "vendor-card--dense" : ""} ${isSelected ? "is-selected" : ""} ${removable ? "vendor-card--extra" : ""}`;
   card.tabIndex = 0;
   card.setAttribute("role", "button");
   card.setAttribute("aria-pressed", isSelected ? "true" : "false");
@@ -1394,6 +1455,7 @@ function makeVendorCard(vendor, state) {
         <div class="vendor-top-badges">
           ${isSelected ? '<span class="best-pill">선택됨</span>' : ""}
           ${score > 0 ? '<span class="best-pill">추천</span>' : ""}
+          ${removable ? '<button type="button" class="button button-secondary small vendor-card-remove" data-remove-extra>숨기기</button>' : ""}
         </div>
       </div>
       <p>${vendor.summary}</p>
@@ -1465,6 +1527,13 @@ function makeVendorCard(vendor, state) {
       event.preventDefault();
       selectServer(vendorId);
     }
+  });
+
+  card.querySelectorAll("[data-remove-extra]").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      removeExtraServer(vendorId);
+    });
   });
 
   return card;
@@ -1585,15 +1654,34 @@ function render() {
     });
 
   const topScore = ranked[0]?.score || 0;
+  const baseRanked = ranked.slice(0, DEFAULT_VENDOR_LIMIT);
+  const baseIds = new Set(baseRanked.map(({ vendor }) => getVendorId(vendor)));
+  extraVisibleServerIds = extraVisibleServerIds.filter(
+    (id) => !baseIds.has(id) && ranked.some(({ vendor }) => getVendorId(vendor) === id)
+  );
+  const extraRanked = ranked.slice(DEFAULT_VENDOR_LIMIT);
+  const visibleExtraRanked = extraVisibleServerIds
+    .map((id) => ranked.find(({ vendor }) => getVendorId(vendor) === id))
+    .filter(Boolean);
+  const hiddenExtraRanked = extraRanked.filter(({ vendor }) => !extraVisibleServerIds.includes(getVendorId(vendor)));
+
   vendorGrid.replaceChildren(
-    ...ranked.map(({ vendor, score }) => {
+    ...baseRanked.map(({ vendor, score }) => {
       const card = makeVendorCard(vendor, state);
+      if (score === topScore && topScore > 0) {
+        card.classList.add("is-best");
+      }
+      return card;
+    }),
+    ...visibleExtraRanked.map(({ vendor, score }) => {
+      const card = makeVendorCard(vendor, state, { removable: true });
       if (score === topScore && topScore > 0) {
         card.classList.add("is-best");
       }
       return card;
     })
   );
+  renderExtraServerOptions(hiddenExtraRanked.map(({ vendor }) => vendor));
   copyButton.dataset.copy = requestTemplate.textContent;
   persistState({
     workload: workloadKey,
@@ -1601,7 +1689,8 @@ function render() {
     gpuPlatform,
     gpuCount,
     siteType,
-    selectedServerId
+    selectedServerId,
+    extraVisibleServerIds
   });
 }
 
@@ -1619,12 +1708,26 @@ async function copyRequest() {
 }
 
 const initial = getSelectedOptions();
+extraVisibleServerIds = [...initial.extraVisibleServerIds];
 workloadSelect.value = initial.workload;
 gpuPlatformSelect.value = initial.gpuPlatform;
 renderGpuOptions(initial.gpuPlatform, initial.gpuTier);
 gpuCountInput.value = initial.gpuCount;
 siteTypeSelect.value = initial.siteType;
 serverSelect.value = initial.selectedServerId;
+
+if (extraServerSelect) {
+  extraServerSelect.addEventListener("change", () => {
+    const serverId = extraServerSelect.value;
+    if (!serverId) return;
+    addExtraServer(serverId);
+    extraServerSelect.value = "";
+  });
+}
+
+if (clearExtraServersButton) {
+  clearExtraServersButton.addEventListener("click", clearExtraServers);
+}
 
 workloadSelect.addEventListener("change", render);
 gpuTierSelect.addEventListener("change", render);

@@ -630,6 +630,31 @@ input[type="range"] {
   gap: 14px;
 }
 
+.catalog-controls {
+  margin: 0 0 14px;
+  padding: 14px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.catalog-select {
+  display: grid;
+  gap: 8px;
+  min-width: min(420px, 100%);
+}
+
+.catalog-select span {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.catalog-select select {
+  width: 100%;
+}
+
 .vendor-card {
   padding: 12px;
 }
@@ -677,6 +702,15 @@ input[type="range"] {
   flex-wrap: wrap;
   gap: 8px;
   justify-content: flex-end;
+}
+
+.vendor-card-remove {
+  padding: 7px 10px;
+}
+
+.vendor-card--extra {
+  border-style: dashed;
+  border-color: rgba(110, 231, 255, 0.28);
 }
 
 .vendor-card.is-selected {
@@ -866,6 +900,14 @@ input[type="range"] {
 
   .selected-server-actions {
     justify-items: start;
+  }
+
+  .catalog-controls {
+    align-items: stretch;
+  }
+
+  .catalog-select {
+    min-width: 100%;
   }
 
   h1 {
