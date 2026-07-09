@@ -1,6 +1,6 @@
 const searchInput = document.querySelector("#searchInput");
 const categoryRow = document.querySelector("#categoryRow");
-const commandGrid = document.querySelector("#commandGrid");
+const commandSections = document.querySelector("#commandSections");
 const scenarioGrid = document.querySelector("#scenarioGrid");
 const commandTemplate = document.querySelector("#commandTemplate");
 const resultCount = document.querySelector("#resultCount");
@@ -54,8 +54,10 @@ const categories = [
   { id: "backup", label: "압축/백업" },
   { id: "text", label: "텍스트 처리" },
   { id: "storage", label: "디스크/마운트" },
+  { id: "users", label: "사용자/접근" },
   { id: "remote", label: "SSH/원격" },
   { id: "containers", label: "컨테이너" },
+  { id: "gpu", label: "GPU/하드웨어" },
   { id: "troubleshoot", label: "트러블슈팅" }
 ];
 
@@ -735,6 +737,434 @@ const COMMANDS = [
         warnings: ["한 번에 너무 많은 명령을 넣기보다 상태부터 빠르게 확인하세요."]
       }
     }
+  },
+  {
+    id: "grep",
+    category: "text",
+    title: "grep",
+    summary: "로그와 텍스트에서 원하는 패턴만 빠르게 걸러냅니다.",
+    command: "grep -Rni ERROR /var/log/app",
+    keywords: ["filter", "search", "pattern", "match"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "-n", desc: "줄 번호 포함" },
+          { flag: "-i", desc: "대소문자 무시" },
+          { flag: "-R", desc: "하위 디렉토리 재귀 검색" },
+          { flag: "--color=auto", desc: "매칭 부분 강조" }
+        ],
+        examples: [
+          { label: "에러 키워드 찾기", code: "grep -Rni ERROR /var/log" },
+          { label: "접속 로그에서 특정 IP 찾기", code: "grep -n '10.10.10.10' access.log" }
+        ],
+        diff: "Rocky와 Ubuntu 모두 동일합니다. grep은 가장 먼저 익혀두면 좋은 텍스트 필터입니다.",
+        warnings: ["큰 디렉토리를 재귀 검색할 때는 제외 경로를 같이 생각하세요."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "-n", desc: "줄 번호 포함" },
+          { flag: "-i", desc: "대소문자 무시" },
+          { flag: "-R", desc: "하위 디렉토리 재귀 검색" },
+          { flag: "--color=auto", desc: "매칭 부분 강조" }
+        ],
+        examples: [
+          { label: "에러 키워드 찾기", code: "grep -Rni ERROR /var/log" },
+          { label: "접속 로그에서 특정 IP 찾기", code: "grep -n '10.10.10.10' access.log" }
+        ],
+        diff: "Ubuntu도 동일합니다. 재귀 검색은 권한 오류가 섞이니 stderr를 분리해 보는 습관이 좋습니다.",
+        warnings: ["큰 디렉토리를 재귀 검색할 때는 제외 경로를 같이 생각하세요."]
+      }
+    }
+  },
+  {
+    id: "less",
+    category: "text",
+    title: "less",
+    summary: "긴 로그를 스크롤하면서 찾기 좋은 뷰어입니다.",
+    command: "less +F /var/log/messages",
+    keywords: ["viewer", "pager", "log viewer", "scroll"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "+F", desc: "실시간 추적 후 보기" },
+          { flag: "/pattern", desc: "문자열 검색" },
+          { flag: "n / N", desc: "다음/이전 검색 결과 이동" },
+          { flag: "Shift+G", desc: "맨 아래로 이동" }
+        ],
+        examples: [
+          { label: "실시간 로그 추적", code: "less +F /var/log/messages" },
+          { label: "검색 후 위아래 이동", code: "less /var/log/messages" }
+        ],
+        diff: "Rocky에서는 journalctl과 less를 같이 쓰면 긴 로그 분석이 편합니다.",
+        warnings: ["실시간 추적 중에는 `Ctrl+C` 대신 `q`로 종료하는 습관이 편합니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "+F", desc: "실시간 추적 후 보기" },
+          { flag: "/pattern", desc: "문자열 검색" },
+          { flag: "n / N", desc: "다음/이전 검색 결과 이동" },
+          { flag: "Shift+G", desc: "맨 아래로 이동" }
+        ],
+        examples: [
+          { label: "실시간 로그 추적", code: "less +F /var/log/syslog" },
+          { label: "검색 후 위아래 이동", code: "less /var/log/syslog" }
+        ],
+        diff: "Ubuntu는 syslog, auth.log 같은 파일을 less로 보는 경우가 많습니다.",
+        warnings: ["실시간 추적 중에는 `Ctrl+C` 대신 `q`로 종료하는 습관이 편합니다."]
+      }
+    }
+  },
+  {
+    id: "headtail",
+    category: "text",
+    title: "head / tail",
+    summary: "파일 앞부분이나 끝부분을 빠르게 확인합니다.",
+    command: "head -n 20 file && tail -n 50 file",
+    keywords: ["first lines", "last lines", "preview", "follow"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "head -n", desc: "앞에서 N줄 확인" },
+          { flag: "tail -n", desc: "뒤에서 N줄 확인" },
+          { flag: "tail -f", desc: "실시간 추적" },
+          { flag: "tail -F", desc: "파일 교체에도 추적 유지" }
+        ],
+        examples: [
+          { label: "설정 파일 상단 확인", code: "head -n 30 /etc/nginx/nginx.conf" },
+          { label: "에러 로그 끝부분 보기", code: "tail -n 100 /var/log/messages" }
+        ],
+        diff: "Rocky와 Ubuntu 모두 동일합니다.",
+        warnings: ["로그 회전이 있는 파일은 `tail -F`가 더 안전합니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "head -n", desc: "앞에서 N줄 확인" },
+          { flag: "tail -n", desc: "뒤에서 N줄 확인" },
+          { flag: "tail -f", desc: "실시간 추적" },
+          { flag: "tail -F", desc: "파일 교체에도 추적 유지" }
+        ],
+        examples: [
+          { label: "설정 파일 상단 확인", code: "head -n 30 /etc/nginx/nginx.conf" },
+          { label: "에러 로그 끝부분 보기", code: "tail -n 100 /var/log/syslog" }
+        ],
+        diff: "Ubuntu도 동일합니다.",
+        warnings: ["로그 회전이 있는 파일은 `tail -F`가 더 안전합니다."]
+      }
+    }
+  },
+  {
+    id: "iproute",
+    category: "network",
+    title: "ip route / ip addr",
+    summary: "라우팅과 네트워크 인터페이스를 빠르게 봅니다.",
+    command: "ip addr && ip route",
+    keywords: ["route", "address", "gateway", "network interface"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "ip addr", desc: "주소와 인터페이스 확인" },
+          { flag: "ip route", desc: "기본 게이트웨이와 라우팅 테이블" },
+          { flag: "ip neigh", desc: "ARP/Neighbor 상태" },
+          { flag: "ip link", desc: "링크 상태" }
+        ],
+        examples: [
+          { label: "게이트웨이 확인", code: "ip route | grep default" },
+          { label: "인터페이스 상태", code: "ip -br a" }
+        ],
+        diff: "Rocky에서는 NetworkManager 기반 설정과 함께 보는 것이 좋습니다.",
+        warnings: ["서버 원격 작업 중 네트워크 명령은 연결 끊김을 유발할 수 있습니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "ip addr", desc: "주소와 인터페이스 확인" },
+          { flag: "ip route", desc: "기본 게이트웨이와 라우팅 테이블" },
+          { flag: "ip neigh", desc: "ARP/Neighbor 상태" },
+          { flag: "ip link", desc: "링크 상태" }
+        ],
+        examples: [
+          { label: "게이트웨이 확인", code: "ip route | grep default" },
+          { label: "인터페이스 상태", code: "ip -br a" }
+        ],
+        diff: "Ubuntu에서는 netplan 설정과 실제 ip route 결과를 같이 보는 편이 좋습니다.",
+        warnings: ["서버 원격 작업 중 네트워크 명령은 연결 끊김을 유발할 수 있습니다."]
+      }
+    }
+  },
+  {
+    id: "nmcli",
+    category: "network",
+    title: "nmcli",
+    summary: "NetworkManager 설정과 활성 연결을 다룰 때 유용합니다.",
+    command: "nmcli dev status && nmcli con show",
+    keywords: ["networkmanager", "connection", "device", "wifi", "ethernet"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "nmcli dev status", desc: "장치 상태 확인" },
+          { flag: "nmcli con show", desc: "연결 프로필 확인" },
+          { flag: "nmcli con up/down", desc: "연결 활성/비활성" },
+          { flag: "nmcli con mod", desc: "프로필 수정" }
+        ],
+        examples: [
+          { label: "활성 연결 보기", code: "nmcli -p con show --active" },
+          { label: "장치 상태 보기", code: "nmcli dev status" }
+        ],
+        diff: "Rocky는 서버에서도 nmcli를 자주 사용하고, GUI보다 이쪽이 더 실용적입니다.",
+        warnings: ["정적 IP나 DNS 수정은 원격 접속 유지 상태를 먼저 확인하세요."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "nmcli dev status", desc: "장치 상태 확인" },
+          { flag: "nmcli con show", desc: "연결 프로필 확인" },
+          { flag: "nmcli con up/down", desc: "연결 활성/비활성" },
+          { flag: "nmcli con mod", desc: "프로필 수정" }
+        ],
+        examples: [
+          { label: "활성 연결 보기", code: "nmcli -p con show --active" },
+          { label: "장치 상태 보기", code: "nmcli dev status" }
+        ],
+        diff: "Ubuntu 서버는 netplan이 상위 설정이지만 실제 링크 상태는 nmcli로 보는 경우가 많습니다.",
+        warnings: ["정적 IP나 DNS 수정은 원격 접속 유지 상태를 먼저 확인하세요."]
+      }
+    }
+  },
+  {
+    id: "lsblk",
+    category: "storage",
+    title: "lsblk / blkid",
+    summary: "디스크, 파티션, UUID를 빠르게 확인합니다.",
+    command: "lsblk -f && blkid",
+    keywords: ["block", "disk", "partition", "uuid", "filesystem"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "lsblk -f", desc: "파일시스템과 UUID 확인" },
+          { flag: "lsblk -o", desc: "출력 열 지정" },
+          { flag: "blkid", desc: "UUID와 타입 확인" },
+          { flag: "parted -l", desc: "파티션 테이블 요약" }
+        ],
+        examples: [
+          { label: "마운트 전 디스크 확인", code: "lsblk -f" },
+          { label: "UUID 찾기", code: "blkid /dev/nvme0n1p1" }
+        ],
+        diff: "Rocky는 신규 볼륨 마운트 전 UUID 기반 설정을 자주 씁니다.",
+        warnings: ["장치명을 잘못 보면 데이터가 날아갈 수 있으니 읽기 전용 확인부터 하세요."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "lsblk -f", desc: "파일시스템과 UUID 확인" },
+          { flag: "lsblk -o", desc: "출력 열 지정" },
+          { flag: "blkid", desc: "UUID와 타입 확인" },
+          { flag: "parted -l", desc: "파티션 테이블 요약" }
+        ],
+        examples: [
+          { label: "마운트 전 디스크 확인", code: "lsblk -f" },
+          { label: "UUID 찾기", code: "blkid /dev/sda1" }
+        ],
+        diff: "Ubuntu에서도 동일하지만, 클라우드 환경에서는 `/dev/nvme*` 계열 장치명이 자주 보입니다.",
+        warnings: ["장치명을 잘못 보면 데이터가 날아갈 수 있으니 읽기 전용 확인부터 하세요."]
+      }
+    }
+  },
+  {
+    id: "mount",
+    category: "storage",
+    title: "mount / umount",
+    summary: "파일시스템을 연결하거나 해제합니다.",
+    command: "mount /dev/nvme0n1p1 /data && umount /data",
+    keywords: ["filesystem", "attach", "detach", "fstab"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "mount", desc: "현재 마운트 확인" },
+          { flag: "mount -a", desc: "fstab 전체 반영" },
+          { flag: "umount", desc: "마운트 해제" },
+          { flag: "findmnt", desc: "마운트 트리 확인" }
+        ],
+        examples: [
+          { label: "임시 마운트", code: "mount /dev/nvme0n1p1 /data" },
+          { label: "fstab 반영", code: "mount -a" }
+        ],
+        diff: "Rocky는 fstab과 SELinux 컨텍스트까지 같이 보는 편이 좋습니다.",
+        warnings: ["사용 중인 디바이스를 `umount`하면 서비스가 바로 영향을 받습니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "mount", desc: "현재 마운트 확인" },
+          { flag: "mount -a", desc: "fstab 전체 반영" },
+          { flag: "umount", desc: "마운트 해제" },
+          { flag: "findmnt", desc: "마운트 트리 확인" }
+        ],
+        examples: [
+          { label: "임시 마운트", code: "mount /dev/sdb1 /data" },
+          { label: "fstab 반영", code: "mount -a" }
+        ],
+        diff: "Ubuntu도 동일하지만, cloud-init로 만들어진 디스크는 fstab 관리 방식을 확인하는 게 좋습니다.",
+        warnings: ["사용 중인 디바이스를 `umount`하면 서비스가 바로 영향을 받습니다."]
+      }
+    }
+  },
+  {
+    id: "crontab",
+    category: "services",
+    title: "crontab",
+    summary: "반복 작업을 예약할 때 쓰는 기본 도구입니다.",
+    command: "crontab -e",
+    keywords: ["schedule", "cron", "timer", "job"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "-e", desc: "크론 편집" },
+          { flag: "-l", desc: "현재 작업 목록" },
+          { flag: "-r", desc: "전체 삭제" },
+          { flag: "systemctl list-timers", desc: "systemd 타이머 확인" }
+        ],
+        examples: [
+          { label: "매일 새벽 3시", code: "0 3 * * * /usr/local/bin/backup.sh" },
+          { label: "타이머 확인", code: "systemctl list-timers --all" }
+        ],
+        diff: "Rocky에서는 crontab보다 systemd timer로 바꾸는 경우도 많습니다.",
+        warnings: ["`crontab -r`는 즉시 삭제되니 실수하지 않도록 주의하세요."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "-e", desc: "크론 편집" },
+          { flag: "-l", desc: "현재 작업 목록" },
+          { flag: "-r", desc: "전체 삭제" },
+          { flag: "systemctl list-timers", desc: "systemd 타이머 확인" }
+        ],
+        examples: [
+          { label: "매일 새벽 3시", code: "0 3 * * * /usr/local/bin/backup.sh" },
+          { label: "타이머 확인", code: "systemctl list-timers --all" }
+        ],
+        diff: "Ubuntu도 동일하지만, 주기 작업은 cron보다 systemd timer가 더 관리하기 쉬울 수 있습니다.",
+        warnings: ["`crontab -r`는 즉시 삭제되니 실수하지 않도록 주의하세요."]
+      }
+    }
+  },
+  {
+    id: "sudo",
+    category: "users",
+    title: "sudo / su / id",
+    summary: "권한 전환과 사용자 확인의 기본 명령어입니다.",
+    command: "id && sudo -l && sudo -i",
+    keywords: ["root", "privilege", "user", "group", "admin"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "id", desc: "현재 사용자와 그룹 확인" },
+          { flag: "sudo -l", desc: "허용된 sudo 권한 확인" },
+          { flag: "sudo -i", desc: "루트 셸 진입" },
+          { flag: "su -", desc: "루트 또는 다른 사용자 전환" }
+        ],
+        examples: [
+          { label: "내 권한 확인", code: "id && groups" },
+          { label: "루트 셸 진입", code: "sudo -i" }
+        ],
+        diff: "Rocky에서는 wheel 그룹이 sudo 권한의 중심입니다.",
+        warnings: ["무분별한 `sudo` 사용보다 현재 권한과 그룹을 먼저 보는 습관이 좋습니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "id", desc: "현재 사용자와 그룹 확인" },
+          { flag: "sudo -l", desc: "허용된 sudo 권한 확인" },
+          { flag: "sudo -i", desc: "루트 셸 진입" },
+          { flag: "su -", desc: "루트 또는 다른 사용자 전환" }
+        ],
+        examples: [
+          { label: "내 권한 확인", code: "id && groups" },
+          { label: "루트 셸 진입", code: "sudo -i" }
+        ],
+        diff: "Ubuntu는 sudo 그룹이 기본적으로 많이 보입니다.",
+        warnings: ["무분별한 `sudo` 사용보다 현재 권한과 그룹을 먼저 보는 습관이 좋습니다."]
+      }
+    }
+  },
+  {
+    id: "nvidia-smi",
+    category: "gpu",
+    title: "nvidia-smi",
+    summary: "NVIDIA GPU의 상태, 전력, 온도, 메모리, 클럭, MIG, 토폴로지를 확인합니다.",
+    command: "watch -n 1 nvidia-smi",
+    keywords: ["gpu", "cuda", "driver", "power", "mig", "topology"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "nvidia-smi -L", desc: "GPU 목록과 UUID 확인" },
+          { flag: "nvidia-smi -q", desc: "상세 상태/드라이버/전력/온도 정보" },
+          { flag: "--query-gpu=...", desc: "필드별 CSV 조회" },
+          { flag: "nvidia-smi dmon", desc: "실시간 사용량/전력/클럭 모니터링" },
+          { flag: "nvidia-smi pmon", desc: "프로세스별 GPU 사용률 모니터링" },
+          { flag: "nvidia-smi topo -m", desc: "GPU 간 PCIe/NVLink 토폴로지" },
+          { flag: "nvidia-smi mig -lgi", desc: "MIG 인스턴스 확인" },
+          { flag: "nvidia-smi -pm 1", desc: "Persistence Mode 활성화" },
+          { flag: "nvidia-smi -pl 350", desc: "전력 제한 설정" }
+        ],
+        examples: [
+          {
+            label: "1초마다 상태 보기",
+            code: "watch -n 1 nvidia-smi"
+          },
+          {
+            label: "운영용 주요 지표만 CSV로 보기",
+            code:
+              "nvidia-smi --query-gpu=index,name,uuid,driver_version,pstate,temperature.gpu,utilization.gpu,memory.used,memory.total,power.draw,power.limit --format=csv,noheader,nounits"
+          },
+          {
+            label: "전력/클럭/사용량 실시간 확인",
+            code: "nvidia-smi dmon -s pucvmet"
+          },
+          {
+            label: "토폴로지 확인",
+            code: "nvidia-smi topo -m"
+          }
+        ],
+        diff: "Rocky와 Ubuntu에서 nvidia-smi 명령 자체는 거의 같고, 차이는 드라이버 설치 방식과 서비스 관리 쪽에 있습니다.",
+        warnings: [
+          "전력 제한이나 persistence mode 변경은 관리자 권한이 필요합니다.",
+          "MIG 관련 변경은 실행 중인 워크로드에 영향을 줄 수 있습니다.",
+          "드라이버 버전에 따라 일부 필드나 옵션이 보이지 않을 수 있습니다."
+        ]
+      },
+      ubuntu: {
+        options: [
+          { flag: "nvidia-smi -L", desc: "GPU 목록과 UUID 확인" },
+          { flag: "nvidia-smi -q", desc: "상세 상태/드라이버/전력/온도 정보" },
+          { flag: "--query-gpu=...", desc: "필드별 CSV 조회" },
+          { flag: "nvidia-smi dmon", desc: "실시간 사용량/전력/클럭 모니터링" },
+          { flag: "nvidia-smi pmon", desc: "프로세스별 GPU 사용률 모니터링" },
+          { flag: "nvidia-smi topo -m", desc: "GPU 간 PCIe/NVLink 토폴로지" },
+          { flag: "nvidia-smi mig -lgi", desc: "MIG 인스턴스 확인" },
+          { flag: "nvidia-smi -pm 1", desc: "Persistence Mode 활성화" },
+          { flag: "nvidia-smi -pl 350", desc: "전력 제한 설정" }
+        ],
+        examples: [
+          {
+            label: "1초마다 상태 보기",
+            code: "watch -n 1 nvidia-smi"
+          },
+          {
+            label: "운영용 주요 지표만 CSV로 보기",
+            code:
+              "nvidia-smi --query-gpu=index,name,uuid,driver_version,pstate,temperature.gpu,utilization.gpu,memory.used,memory.total,power.draw,power.limit --format=csv,noheader,nounits"
+          },
+          {
+            label: "전력/클럭/사용량 실시간 확인",
+            code: "nvidia-smi dmon -s pucvmet"
+          },
+          {
+            label: "토폴로지 확인",
+            code: "nvidia-smi topo -m"
+          }
+        ],
+        diff: "Ubuntu와 Rocky 모두 명령은 거의 같고, 드라이버 배포판 패키지와 커널 모듈 관리 방식이 다릅니다.",
+        warnings: [
+          "전력 제한이나 persistence mode 변경은 관리자 권한이 필요합니다.",
+          "MIG 관련 변경은 실행 중인 워크로드에 영향을 줄 수 있습니다.",
+          "드라이버 버전에 따라 일부 필드나 옵션이 보이지 않을 수 있습니다."
+        ]
+      }
+    }
   }
 ];
 
@@ -764,6 +1194,17 @@ function getVisibleCommands() {
     const searchMatch = !term || haystack.includes(term);
     return categoryMatch && searchMatch;
   });
+}
+
+function groupVisibleCommands(commands) {
+  const groups = new Map();
+  commands.forEach((command) => {
+    if (!groups.has(command.category)) {
+      groups.set(command.category, []);
+    }
+    groups.get(command.category).push(command);
+  });
+  return groups;
 }
 
 function renderCategories() {
@@ -800,12 +1241,12 @@ function renderScenarios() {
 
 function renderCommands() {
   const visible = getVisibleCommands();
-  commandGrid.innerHTML = "";
+  commandSections.innerHTML = "";
   resultCount.textContent = `${visible.length}개`;
   listTitle.textContent = state.distro === "rocky" ? "Rocky Linux용 명령어" : "Ubuntu용 명령어";
 
   if (!visible.length) {
-    commandGrid.innerHTML = `
+    commandSections.innerHTML = `
       <div class="card command-card" style="grid-column: 1 / -1;">
         <h3>검색 결과가 없습니다</h3>
         <p class="summary">다른 표현으로 검색해 보거나 필터를 초기화해 보세요.</p>
@@ -814,64 +1255,86 @@ function renderCommands() {
     return;
   }
 
-  for (const command of visible) {
-    const variant = command.variants[state.distro];
-    const node = commandTemplate.content.cloneNode(true);
-    const card = node.querySelector(".command-card");
-    const categoryLabel = categories.find((item) => item.id === command.category)?.label || command.category;
-    node.querySelector(".pill-category").textContent = categoryLabel;
-    node.querySelector(".pill-distro").textContent = state.distro === "rocky" ? "Rocky Linux" : "Ubuntu";
-    node.querySelector("h3").textContent = command.title;
-    node.querySelector(".summary").textContent = command.summary;
-    node.querySelector(".command-line code").textContent = command.command;
+  const grouped = groupVisibleCommands(visible);
 
-    const optionList = node.querySelector(".option-list");
-    variant.options.forEach((option) => {
-      const item = document.createElement("div");
-      item.className = "option-item";
-      item.innerHTML = `<strong>${option.flag}</strong><span>${option.desc}</span>`;
-      optionList.append(item);
+  categories.forEach((category) => {
+    const items = grouped.get(category.id);
+    if (!items?.length) {
+      return;
+    }
+
+    const section = document.createElement("section");
+    section.className = "command-section card";
+
+    const sectionHead = document.createElement("div");
+    sectionHead.className = "command-section-head";
+    sectionHead.innerHTML = `
+      <div class="section-title">
+        <h3>${category.label}</h3>
+        <span class="section-meta">${items.length}개 명령어</span>
+      </div>
+      <span class="result-count">${items.length}개</span>
+    `;
+    section.append(sectionHead);
+
+    const grid = document.createElement("div");
+    grid.className = "command-section-grid";
+
+    items.forEach((command) => {
+      const variant = command.variants[state.distro];
+      const node = commandTemplate.content.cloneNode(true);
+      const card = node.querySelector(".command-card");
+      const categoryLabel = categories.find((item) => item.id === command.category)?.label || command.category;
+      node.querySelector(".pill-category").textContent = categoryLabel;
+      node.querySelector(".pill-distro").textContent = state.distro === "rocky" ? "Rocky Linux" : "Ubuntu";
+      node.querySelector("h3").textContent = command.title;
+      node.querySelector(".summary").textContent = command.summary;
+      node.querySelector(".command-line code").textContent = command.command;
+
+      const optionList = node.querySelector(".option-list");
+      variant.options.forEach((option) => {
+        const item = document.createElement("div");
+        item.className = "option-item";
+        item.innerHTML = `<strong>${option.flag}</strong><span>${option.desc}</span>`;
+        optionList.append(item);
+      });
+
+      const exampleList = node.querySelector(".example-list");
+      variant.examples.forEach((example) => {
+        const item = document.createElement("div");
+        item.className = "example-item";
+        item.innerHTML = `<strong>${example.label}</strong><code>${example.code}</code>`;
+        exampleList.append(item);
+      });
+
+      const diffRow = node.querySelector(".diff-row");
+      const diffItem = document.createElement("div");
+      diffItem.className = "diff-item";
+      diffItem.textContent = variant.diff;
+      diffRow.append(diffItem);
+
+      const warningList = node.querySelector(".warning-list");
+      variant.warnings.forEach((warning) => {
+        const li = document.createElement("li");
+        li.textContent = warning;
+        warningList.append(li);
+      });
+
+      const copyButton = node.querySelector(".copy-button");
+      copyButton.addEventListener("click", async () => {
+        await navigator.clipboard.writeText(command.command);
+        copyButton.textContent = "Copied";
+        window.setTimeout(() => {
+          copyButton.textContent = "Copy";
+        }, 1200);
+      });
+
+      grid.append(node);
     });
 
-    const exampleList = node.querySelector(".example-list");
-    variant.examples.forEach((example) => {
-      const item = document.createElement("div");
-      item.className = "example-item";
-      item.innerHTML = `<strong>${example.label}</strong><code>${example.code}</code>`;
-      exampleList.append(item);
-    });
-
-    const diffRow = node.querySelector(".diff-row");
-    const diffItem = document.createElement("div");
-    diffItem.className = "diff-item";
-    diffItem.textContent = variant.diff;
-    diffRow.append(diffItem);
-
-    const warningList = node.querySelector(".warning-list");
-    variant.warnings.forEach((warning) => {
-      const li = document.createElement("li");
-      li.textContent = warning;
-      warningList.append(li);
-    });
-
-    const copyButton = node.querySelector(".copy-button");
-    copyButton.addEventListener("click", async () => {
-      await navigator.clipboard.writeText(command.command);
-      copyButton.textContent = "Copied";
-      window.setTimeout(() => {
-        copyButton.textContent = "Copy";
-      }, 1200);
-    });
-
-    card.addEventListener("click", (event) => {
-      if (event.target.closest("button, summary, a")) {
-        return;
-      }
-      card.querySelector("details")?.setAttribute("open", "");
-    });
-
-    commandGrid.append(node);
-  }
+    section.append(grid);
+    commandSections.append(section);
+  });
 }
 
 function renderTabs() {

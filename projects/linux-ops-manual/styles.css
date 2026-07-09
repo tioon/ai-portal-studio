@@ -324,7 +324,38 @@ h2 {
   margin-bottom: 4px;
 }
 
-.command-grid {
+.command-sections {
+  display: grid;
+  gap: 16px;
+}
+
+.command-section {
+  padding: 18px;
+}
+
+.command-section-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.section-title {
+  display: grid;
+  gap: 6px;
+}
+
+.section-title h3 {
+  font-size: 1.2rem;
+}
+
+.section-meta {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.command-section-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
@@ -346,6 +377,10 @@ h2 {
 
 .summary {
   margin: 8px 0 0;
+}
+
+.command-card .summary {
+  margin-right: 10px;
 }
 
 .pill {
@@ -390,11 +425,6 @@ h2 {
   font-size: 0.9rem;
 }
 
-.option-block,
-.example-block {
-  margin-top: 14px;
-}
-
 .block-head {
   margin-bottom: 10px;
 }
@@ -433,16 +463,68 @@ h2 {
   border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.more-block {
+.command-details {
   margin-top: 14px;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
   padding-top: 12px;
 }
 
-.more-block summary {
+.command-details summary {
   cursor: pointer;
   font-weight: 800;
   color: var(--accent-2);
+  list-style: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.command-details summary::before {
+  content: "+";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 184, 107, 0.15);
+  color: var(--accent-2);
+  font-size: 0.95rem;
+}
+
+.command-details[open] summary::before {
+  content: "−";
+}
+
+.command-details summary::-webkit-details-marker {
+  display: none;
+}
+
+.details-grid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.detail-block {
+  padding: 12px 13px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.detail-wide {
+  grid-column: 1 / -1;
+}
+
+.warning-block {
+  border-color: rgba(255, 143, 143, 0.18);
+  background: rgba(255, 143, 143, 0.05);
+}
+
+.warning-block .block-head strong {
+  color: var(--danger);
 }
 
 .more-content {
@@ -498,7 +580,8 @@ h2 {
     grid-template-columns: 1fr;
   }
 
-  .command-grid {
+  .command-section-grid,
+  .details-grid {
     grid-template-columns: 1fr;
   }
 }
