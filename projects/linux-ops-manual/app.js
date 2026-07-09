@@ -1282,40 +1282,170 @@ const COMMANDS = [
     }
   },
   {
-    id: "filesystem-tools",
+    id: "tree",
     category: "filesystem",
-    title: "tree / locate / file / stat",
-    summary: "디렉토리 구조와 파일 메타정보를 빠르게 확인합니다.",
-    command: "tree -L 2 && locate nginx.conf && file item && stat item",
-    keywords: ["tree", "locate", "file type", "metadata", "inode"],
+    title: "tree",
+    summary: "디렉토리 구조를 트리 형태로 한눈에 봅니다.",
+    command: "tree -L 2 /var/www",
+    keywords: ["directory tree", "structure", "folder view", "hierarchy"],
     variants: {
       rocky: {
         options: [
-          { flag: "tree -L 2", desc: "구조 확인" },
-          { flag: "locate", desc: "인덱스 기반 빠른 검색" },
-          { flag: "file", desc: "파일 타입 확인" },
-          { flag: "stat", desc: "메타데이터 확인" }
+          { flag: "-L 2", desc: "깊이를 2단계로 제한해서 구조를 압축해 봄" },
+          { flag: "-a", desc: "숨김 파일과 디렉토리까지 함께 표시" },
+          { flag: "-d", desc: "파일은 숨기고 디렉토리만 표시" },
+          { flag: "-f", desc: "상대 경로가 아닌 전체 경로까지 표시" },
+          { flag: "-h", desc: "사람이 읽기 쉬운 크기 단위 표시" },
+          { flag: "--dirsfirst", desc: "디렉토리를 파일보다 먼저 출력" }
         ],
         examples: [
           { label: "웹 디렉토리 구조", code: "tree -L 2 /var/www" },
-          { label: "파일 타입/메타", code: "file /usr/bin/ssh && stat /usr/bin/ssh" }
+          { label: "숨김 파일 포함", code: "tree -a -L 2 ." },
+          { label: "디렉토리만 보기", code: "tree -d /etc" }
         ],
-        diff: "locate는 updatedb 이후 결과가 더 정확합니다.",
-        warnings: ["큰 디렉토리는 tree가 느릴 수 있습니다."]
+        diff: "Rocky/Ubuntu 차이는 거의 없습니다.",
+        warnings: ["큰 디렉토리는 출력이 길어지고 느려질 수 있습니다."]
       },
       ubuntu: {
         options: [
-          { flag: "tree -L 2", desc: "구조 확인" },
-          { flag: "locate", desc: "인덱스 기반 빠른 검색" },
-          { flag: "file", desc: "파일 타입 확인" },
-          { flag: "stat", desc: "메타데이터 확인" }
+          { flag: "-L 2", desc: "깊이를 2단계로 제한해서 구조를 압축해 봄" },
+          { flag: "-a", desc: "숨김 파일과 디렉토리까지 함께 표시" },
+          { flag: "-d", desc: "파일은 숨기고 디렉토리만 표시" },
+          { flag: "-f", desc: "상대 경로가 아닌 전체 경로까지 표시" },
+          { flag: "-h", desc: "사람이 읽기 쉬운 크기 단위 표시" },
+          { flag: "--dirsfirst", desc: "디렉토리를 파일보다 먼저 출력" }
         ],
         examples: [
           { label: "웹 디렉토리 구조", code: "tree -L 2 /var/www" },
-          { label: "파일 타입/메타", code: "file /usr/bin/ssh && stat /usr/bin/ssh" }
+          { label: "숨김 파일 포함", code: "tree -a -L 2 ." },
+          { label: "디렉토리만 보기", code: "tree -d /etc" }
         ],
-        diff: "locate는 updatedb 이후 결과가 더 정확합니다.",
-        warnings: ["큰 디렉토리는 tree가 느릴 수 있습니다."]
+        diff: "Rocky/Ubuntu 차이는 거의 없습니다.",
+        warnings: ["큰 디렉토리는 출력이 길어지고 느려질 수 있습니다."]
+      }
+    }
+  },
+  {
+    id: "locate",
+    category: "filesystem",
+    title: "locate / updatedb",
+    summary: "인덱스 기반으로 파일 이름을 매우 빠르게 찾습니다.",
+    command: "updatedb && locate nginx.conf",
+    keywords: ["search", "fast search", "index", "database", "file find"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "locate nginx.conf", desc: "이름이 포함된 파일을 즉시 검색" },
+          { flag: "locate -i", desc: "대소문자를 무시하고 검색" },
+          { flag: "locate -c", desc: "매칭 개수만 출력" },
+          { flag: "locate -n 10", desc: "최대 10개 결과만 표시" },
+          { flag: "locate -r", desc: "정규식으로 검색" },
+          { flag: "updatedb", desc: "locate 인덱스 데이터베이스 갱신" }
+        ],
+        examples: [
+          { label: "설정 파일 찾기", code: "locate nginx.conf" },
+          { label: "인덱스 갱신", code: "sudo updatedb" },
+          { label: "결과 개수만 확인", code: "locate -c ssl.conf" }
+        ],
+        diff: "locate는 updatedb가 오래됐으면 결과가 누락될 수 있습니다.",
+        warnings: ["권한이 제한된 경로는 locate 결과에 안 나올 수 있습니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "locate nginx.conf", desc: "이름이 포함된 파일을 즉시 검색" },
+          { flag: "locate -i", desc: "대소문자를 무시하고 검색" },
+          { flag: "locate -c", desc: "매칭 개수만 출력" },
+          { flag: "locate -n 10", desc: "최대 10개 결과만 표시" },
+          { flag: "locate -r", desc: "정규식으로 검색" },
+          { flag: "updatedb", desc: "locate 인덱스 데이터베이스 갱신" }
+        ],
+        examples: [
+          { label: "설정 파일 찾기", code: "locate nginx.conf" },
+          { label: "인덱스 갱신", code: "sudo updatedb" },
+          { label: "결과 개수만 확인", code: "locate -c ssl.conf" }
+        ],
+        diff: "locate는 updatedb가 오래됐으면 결과가 누락될 수 있습니다.",
+        warnings: ["권한이 제한된 경로는 locate 결과에 안 나올 수 있습니다."]
+      }
+    }
+  },
+  {
+    id: "file",
+    category: "filesystem",
+    title: "file",
+    summary: "파일이 텍스트인지 바이너리인지, 어떤 타입인지 확인합니다.",
+    command: "file /path/to/item",
+    keywords: ["type", "mime", "binary", "text", "magic"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "-i", desc: "MIME 타입과 문자셋까지 함께 표시" },
+          { flag: "-b", desc: "파일명 없이 결과만 깔끔하게 출력" },
+          { flag: "-L", desc: "심볼릭 링크를 따라 실제 대상 파일을 확인" },
+          { flag: "-s", desc: "특수 파일이나 블록 디바이스도 검사" }
+        ],
+        examples: [
+          { label: "파일 타입 확인", code: "file /usr/bin/ssh" },
+          { label: "MIME 정보 확인", code: "file -i app.log" },
+          { label: "링크 대상 확인", code: "file -L /usr/bin/python3" }
+        ],
+        diff: "Rocky/Ubuntu 차이는 거의 없습니다.",
+        warnings: ["확장자만 믿지 말고 file 결과를 먼저 보는 습관이 좋습니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "-i", desc: "MIME 타입과 문자셋까지 함께 표시" },
+          { flag: "-b", desc: "파일명 없이 결과만 깔끔하게 출력" },
+          { flag: "-L", desc: "심볼릭 링크를 따라 실제 대상 파일을 확인" },
+          { flag: "-s", desc: "특수 파일이나 블록 디바이스도 검사" }
+        ],
+        examples: [
+          { label: "파일 타입 확인", code: "file /usr/bin/ssh" },
+          { label: "MIME 정보 확인", code: "file -i app.log" },
+          { label: "링크 대상 확인", code: "file -L /usr/bin/python3" }
+        ],
+        diff: "Rocky/Ubuntu 차이는 거의 없습니다.",
+        warnings: ["확장자만 믿지 말고 file 결과를 먼저 보는 습관이 좋습니다."]
+      }
+    }
+  },
+  {
+    id: "stat",
+    category: "filesystem",
+    title: "stat",
+    summary: "파일의 타임스탬프, 권한, inode, 소유자를 자세히 봅니다.",
+    command: "stat file",
+    keywords: ["inode", "mtime", "ctime", "atime", "metadata", "owner"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "-c", desc: "출력 형식을 직접 지정해서 필요한 항목만 뽑음" },
+          { flag: "-f", desc: "파일시스템 전체 정보 확인" },
+          { flag: "-t", desc: "짧은 형식으로 한 줄 출력" },
+          { flag: "-L", desc: "심볼릭 링크가 가리키는 실제 파일을 확인" }
+        ],
+        examples: [
+          { label: "메타데이터 확인", code: "stat /etc/hosts" },
+          { label: "수정시간만 출력", code: "stat -c '%y %n' /var/log/messages" },
+          { label: "파일시스템 정보", code: "stat -f /var" }
+        ],
+        diff: "Rocky/Ubuntu 차이는 거의 없습니다.",
+        warnings: ["mtime, ctime, atime의 의미를 헷갈리지 않도록 주의하세요."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "-c", desc: "출력 형식을 직접 지정해서 필요한 항목만 뽑음" },
+          { flag: "-f", desc: "파일시스템 전체 정보 확인" },
+          { flag: "-t", desc: "짧은 형식으로 한 줄 출력" },
+          { flag: "-L", desc: "심볼릭 링크가 가리키는 실제 파일을 확인" }
+        ],
+        examples: [
+          { label: "메타데이터 확인", code: "stat /etc/hosts" },
+          { label: "수정시간만 출력", code: "stat -c '%y %n' /var/log/syslog" },
+          { label: "파일시스템 정보", code: "stat -f /var" }
+        ],
+        diff: "Rocky/Ubuntu 차이는 거의 없습니다.",
+        warnings: ["mtime, ctime, atime의 의미를 헷갈리지 않도록 주의하세요."]
       }
     }
   },
