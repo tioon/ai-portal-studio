@@ -174,7 +174,7 @@
     <h2>1. GPU 메모리는 어디에 쓰이는가 <span class="tag">개요</span></h2>
     <p class="sub">vLLM 프로세스가 GPU 한 장에서 점유하는 메모리는 크게 4가지로 나뉩니다.</p>
     <div class="cards">
-      <div class="card"><h3><span class="dot" style="background:#ff7a3d"></span>모델 가중치</h3><p>파라미터 수 × dtype 바이트 수. Tensor Parallelism(TP)으로 GPU 수만큼 분할되고, 양자화(AWQ/GPTQ/FP8/INT4)로 크게 줄일 수 있습니다.</p></div>
+      <div class="card"><h3><span class="dot" style="background:#ff7a3d"></span>모델 가중치</h3><p>실제 체크포인트 파일 총합. Tensor Parallelism(TP)으로 GPU 수만큼 분할되고, 양자화(AWQ/GPTQ/FP8/INT4)로 바뀌는 경우엔 해당 체크포인트 자체의 크기를 기준으로 다시 계산해야 합니다.</p></div>
       <div class="card"><h3><span class="dot" style="background:#4dabf7"></span>KV 캐시</h3><p>PagedAttention이 블록 단위로 관리하는 어텐션 캐시. <code>gpu_memory_utilization</code>이 정한 여유 메모리의 대부분을 차지하며, 동시 처리 가능한 요청 수를 결정합니다.</p></div>
       <div class="card"><h3><span class="dot" style="background:#d29922"></span>CUDA Graph / 활성화 버퍼</h3><p>추론 속도를 위해 캡처하는 CUDA Graph, 그리고 forward pass 중간 활성화 값. <code>enforce_eager=True</code>로 끄면 줄어들지만 속도가 느려집니다.</p></div>
       <div class="card"><h3><span class="dot" style="background:#8b98a5"></span>프레임워크 오버헤드</h3><p>PyTorch/CUDA 컨텍스트, NCCL 통신 버퍼(TP 사용 시) 등 vLLM이 직접 제어하지 않는 고정 오버헤드.</p></div>
@@ -205,6 +205,7 @@
           <select id="modelPreset"></select>
           <div class="hint" id="modelCount"></div>
           <div class="hint" id="modelNote"></div>
+          <div class="hint" id="weightNote"></div>
         </div>
         <div class="row2">
           <div class="field">
@@ -314,6 +315,7 @@
               <option value="0.5_gptq">GPTQ INT4 (0.5B)</option>
               <option value="0.35">GGUF Q3_K (~0.35B)</option>
             </select>
+            <div class="hint">이 선택은 배포 명령어의 dtype / quantization 플래그에만 반영되고, 가중치 메모리는 실제 체크포인트 파일 크기로 계산합니다.</div>
           </div>
           <div class="field">
             <label>KV 캐시 dtype</label>
@@ -366,7 +368,7 @@
         <div class="barwrap" id="barwrap"></div>
         <div class="legend" id="legend"></div>
         <div class="hint" style="margin-top:8px; line-height:1.9;">
-          <div><b style="color:#ff7a3d;">모델 가중치</b>: 파라미터 수 × dtype 바이트 ÷ (TP×PP)로 GPU당 배분된 가중치 크기.</div>
+          <div><b style="color:#ff7a3d;">모델 가중치</b>: 실제 체크포인트 파일 총합을 기준으로 GPU당 배분된 가중치 크기.</div>
           <div><b style="color:#4dabf7;">KV 캐시</b>: gpu_memory_utilization으로 확보한 메모리 중 가중치·오버헤드를 뺀 나머지로, 값이 클수록 더 많은 요청을 동시에 처리 가능.</div>
           <div><b style="color:#d29922;">CUDA Graph/활성화</b>: 추론 속도를 위한 CUDA Graph 캡처 + forward pass 중간 계산값 버퍼(배치 크기에 비례하는 근사치).</div>
           <div><b style="color:#8b98a5;">프레임워크 오버헤드</b>: PyTorch/CUDA 컨텍스트, NCCL 통신 버퍼 등 고정 비용.</div>
@@ -396,7 +398,7 @@
       <div class="stat-grid" style="margin-top:0; margin-bottom:16px;">
         <div class="stat"><div class="label">총 GPU 수</div><div class="value" id="c_gpus">-</div></div>
         <div class="stat"><div class="label">클러스터 총 VRAM</div><div class="value" id="c_vram">-</div></div>
-        <div class="stat"><div class="label">모델 가중치 총합(전체 GPU)</div><div class="value small" id="c_weights">-</div></div>
+        <div class="stat"><div class="label">체크포인트 총합</div><div class="value small" id="c_weights">-</div></div>
         <div class="stat"><div class="label">KV 캐시 총합(전체 GPU)</div><div class="value small" id="c_kv">-</div></div>
       </div>
       <div id="gpuGrid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:10px;"></div>
@@ -521,7 +523,7 @@
 </main>
 
 <footer>
-  근사 추정 기반 교육용 계산기입니다. 실제 값은 vLLM 버전, CUDA 커널, 모델 아키텍처에 따라 달라질 수 있으니 배포 전 <code>nvidia-smi</code> 및 vLLM 로그로 검증하세요.<br>
+  가중치 메모리는 실제 체크포인트 파일 총합을 기준으로 계산하고, KV 캐시·오버헤드·호스트 RAM은 근사 추정입니다. 실제 값은 vLLM 버전, CUDA 커널, 모델 아키텍처에 따라 달라질 수 있으니 배포 전 <code>nvidia-smi</code> 및 vLLM 로그로 검증하세요.<br>
   참고: <a href="https://docs.vllm.ai/en/stable/configuration/optimization/" target="_blank">vLLM Optimization &amp; Tuning</a> ·
   <a href="https://docs.vllm.ai/en/stable/configuration/engine_args/" target="_blank">Engine Arguments</a> ·
   <a href="https://docs.vllm.ai/en/latest/design/paged_attention/" target="_blank">PagedAttention Design</a> ·
@@ -630,7 +632,7 @@ function modelBucket(params){
 
 function modelOptionLabel(m){
   const p = Number.isFinite(m.params) ? (Number.isInteger(m.params) ? String(m.params) : m.params.toFixed(1).replace(/\.0$/, "")) : "?";
-  return `${m.name} · ${p}B · ${m.hfId}`;
+  return `${m.name} · ${p}B · ${fmtWeightGB(m.weightBytes) || "est."}`;
 }
 
 async function loadModelPresets(){
@@ -741,6 +743,10 @@ function fmtGB(x){
   if (x < 0) return "0.00 GB";
   return x.toFixed(2) + " GB";
 }
+function fmtWeightGB(bytes){
+  if (!Number.isFinite(bytes) || bytes <= 0) return null;
+  return fmtGB(bytes / 1e9);
+}
 function fmtNum(x){
   return Math.max(0, Math.floor(x)).toLocaleString('ko-KR');
 }
@@ -824,18 +830,17 @@ function nextPow2Within(v, allowed){
   return sorted[0];
 }
 
-// vLLM의 호스트 메모리에는 모델 로딩 시 필요한 체크포인트 공간과
+// vLLM의 호스트 메모리에는 실제 체크포인트 로딩 공간과
 // cpu_offload_gb / swap_space 같은 CPU-side 버퍼, 그리고 런타임 여유분이 함께 필요하다.
-function estimateHostMemoryGB({paramsB, wBytes, tp, pp, cpuOffloadGB, swapGB, maxbatch, maxseqs}){
-  const totalWeightGB = paramsB * wBytes;
+function estimateHostMemoryGB({weightGB, tp, pp, cpuOffloadGB, swapGB, maxbatch, maxseqs}){
   const runtimeBaseGB = 12 + 1.5 * Math.max(0, tp - 1) + 0.75 * Math.max(0, pp - 1)
     + (maxbatch / 4096) * 1.5 + (maxseqs / 256) * 0.75;
-  const checkpointPeakGB = totalWeightGB + runtimeBaseGB;
+  const checkpointPeakGB = weightGB + runtimeBaseGB;
   const offloadWorkingSetGB = (cpuOffloadGB + swapGB) * tp;
   const steadyStateGB = runtimeBaseGB + offloadWorkingSetGB;
   const recommendedGB = Math.ceil(Math.max(checkpointPeakGB, steadyStateGB));
   return {
-    totalWeightGB,
+    weightGB,
     runtimeBaseGB,
     checkpointPeakGB,
     offloadWorkingSetGB,
@@ -884,8 +889,9 @@ function recommendPlannerSettings(){
   let swapGB = workload.swap;
 
   // 모델이 큰데 현재 GPU 구성상 여유가 적으면 최소한의 offload 여유를 자동 제안
-  const wBytes = parseWDtype(el('wdtype').value);
-  const totalWeightGB = (model.params * 1e9 * wBytes) / 1e9;
+  const totalWeightGB = Number.isFinite(model?.weightBytes) && model.weightBytes > 0
+    ? model.weightBytes / 1e9
+    : model.params * parseWDtype(el('wdtype').value);
   const weightPerGpuGB = totalWeightGB / totalGpus;
   const fixedEstimateGB = 0.6 + 0.15*(+el('tp').value - 1) + 0.05*(+el('pp').value - 1) + 0.12 + (maxbatch/4096)*0.35 + (maxseqs/512)*0.15;
   const availableForEverythingGB = +el('vramInput').value * util;
@@ -895,8 +901,7 @@ function recommendPlannerSettings(){
   }
 
   const hostEstimate = estimateHostMemoryGB({
-    paramsB: model.params,
-    wBytes,
+    weightGB: totalWeightGB,
     tp: +el('tp').value,
     pp: +el('pp').value,
     cpuOffloadGB,
@@ -941,13 +946,12 @@ function applyPlannerRecommendations(){
   compute();
 }
 
-function renderGpuCluster(segments, vram, tp, pp){
+function renderGpuCluster(segments, vram, tp, pp, totalWeightGB){
   const totalGpus = tp * pp;
   el('c_gpus').textContent = totalGpus + ' 개';
   el('c_vram').textContent = fmtGB(vram * totalGpus);
-  const weightSeg = segments.find(s=>s.label==='모델 가중치').value;
   const kvSeg = segments.find(s=>s.label==='KV 캐시').value;
-  el('c_weights').textContent = fmtGB(weightSeg * totalGpus);
+  el('c_weights').textContent = fmtGB(totalWeightGB);
   el('c_kv').textContent = fmtGB(kvSeg * totalGpus);
   el('clusterTag').textContent = `TP=${tp} × PP=${pp}`;
 
@@ -1011,6 +1015,7 @@ function compute(){
   const paramsB = +el('params').value;
   const kvheads = +el('kvheads').value;
   const headdim = +el('headdim').value;
+  const model = MODEL_PRESETS[+el('modelPreset').value] || MODEL_PRESETS[0];
 
   const vram = +el('vramInput').value;
   const tp = +el('tp').value;
@@ -1024,7 +1029,6 @@ function compute(){
   const maxseqs = +el('maxseqs').value;
   const maxbatch = +el('maxbatch').value;
   const blockSize = +el('blocksize').value;
-  const wBytes = parseWDtype(el('wdtype').value);
   const kvBytes = parseFloat(el('kvdtype').value);
   const eager = el('enforceEager').checked;
   const cpuOffloadGB = +el('cpuoffload').value;
@@ -1051,9 +1055,13 @@ function compute(){
   el('v_users').textContent = (+el('concurrentUsers').value || 1) + ' 명';
   el('gpuCountHint').textContent = `총 사용 GPU 수 = tensor_parallel_size(${tp}) × pipeline_parallel_size(${pp}) = ${totalGpus}개`;
 
+  const totalWeightBytes = Number.isFinite(model?.weightBytes) && model.weightBytes > 0
+    ? model.weightBytes
+    : paramsB * 1e9 * parseWDtype(el('wdtype').value);
+  const totalWeightGB = totalWeightBytes / 1e9;
+
   // 1) 모델 가중치 (GPU당: TP × PP로 균등 분할한다고 가정)
-  const totalWeightBytes = paramsB * 1e9 * wBytes;
-  let weightPerGpuGB = (totalWeightBytes / totalGpus) / 1e9;
+  let weightPerGpuGB = totalWeightGB / totalGpus;
   weightPerGpuGB = Math.max(0, weightPerGpuGB - cpuOffloadGB);
 
   // 2) 고정 오버헤드 (활성화 버퍼 + CUDA Graph + 프레임워크) - 근사치
@@ -1093,8 +1101,7 @@ function compute(){
   const concurrentWithSwap = Math.max(0, Math.min(Math.floor((maxTokens+swapTokens)/effectiveLen || 0), maxseqs));
 
   const hostEstimate = estimateHostMemoryGB({
-    paramsB,
-    wBytes,
+    weightGB: totalWeightGB,
     tp,
     pp,
     cpuOffloadGB,
@@ -1148,7 +1155,7 @@ function compute(){
   ];
   updateChart(segments, vram);
   renderBarAndLegend(segments, vram, 'barwrap', 'legend');
-  renderGpuCluster(segments, vram, tp, pp);
+  renderGpuCluster(segments, vram, tp, pp, totalWeightGB);
 
   // stats
   el('s_weights').textContent = fmtGB(weightPerGpuGB);
@@ -1502,6 +1509,9 @@ function applyModelPreset(){
   el('kvheads').value = m.kvheads;
   el('headdim').value = m.headdim;
   el('modelNote').textContent = m.note || '';
+  el('weightNote').textContent = Number.isFinite(m.weightBytes)
+    ? `실제 체크포인트 가중치: ${fmtWeightGB(m.weightBytes)} (${m.hfId})`
+    : '직접 입력 모델은 가중치 크기를 추정합니다.';
   if (el('hfModelId') && m.hfId) el('hfModelId').value = m.hfId;
   compute();
 }
