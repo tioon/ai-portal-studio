@@ -261,6 +261,234 @@ const COMMANDS = [
     related: ["describe", "logs", "get-events", "top-pods"]
   }),
   C({
+    id: "get-deployments",
+    category: "workload",
+    title: "kubectl get deployments",
+    command: "kubectl get deploy -A -o wide",
+    summary: "Deployment 목록과 replica 상태를 확인합니다.",
+    risk: "read",
+    keywords: ["deployment", "deploy", "replica", "rollout"],
+    options: [
+      { flag: "-A", desc: "모든 네임스페이스" },
+      { flag: "-o wide", desc: "추가 열 표시" },
+      { flag: "--show-labels", desc: "라벨 표시" },
+      { flag: "--sort-by", desc: "정렬 기준 지정" }
+    ],
+    examples: [
+      { label: "Deployment 목록", code: "kubectl get deploy -A -o wide" },
+      { label: "특정 네임스페이스", code: "kubectl get deploy -n prod" }
+    ],
+    warnings: ["Deployment는 rollout과 함께 봐야 실제 배포 상태를 알 수 있습니다."],
+    related: ["describe-deployment", "rollout-status", "scale", "set-image"]
+  }),
+  C({
+    id: "get-statefulsets",
+    category: "workload",
+    title: "kubectl get statefulsets",
+    command: "kubectl get sts -A -o wide",
+    summary: "StatefulSet 목록과 순번, replica 상태를 확인합니다.",
+    risk: "read",
+    keywords: ["statefulset", "sts", "ordered", "persistent"],
+    options: [
+      { flag: "-A", desc: "모든 네임스페이스" },
+      { flag: "-o wide", desc: "추가 열 표시" },
+      { flag: "--show-labels", desc: "라벨 표시" },
+      { flag: "--sort-by", desc: "정렬 기준 지정" }
+    ],
+    examples: [
+      { label: "StatefulSet 목록", code: "kubectl get sts -A -o wide" },
+      { label: "특정 네임스페이스", code: "kubectl get sts -n prod" }
+    ],
+    warnings: ["StatefulSet은 순서와 PVC가 중요해서 pod만 보지 말고 함께 확인해야 합니다."],
+    related: ["describe-statefulset", "get-pods", "get-events", "storageclass"]
+  }),
+  C({
+    id: "get-daemonsets",
+    category: "workload",
+    title: "kubectl get daemonsets",
+    command: "kubectl get ds -A -o wide",
+    summary: "DaemonSet이 각 노드에 정상적으로 붙었는지 확인합니다.",
+    risk: "read",
+    keywords: ["daemonset", "ds", "node", "agent"],
+    options: [
+      { flag: "-A", desc: "모든 네임스페이스" },
+      { flag: "-o wide", desc: "추가 열 표시" },
+      { flag: "--show-labels", desc: "라벨 표시" },
+      { flag: "--sort-by", desc: "정렬 기준 지정" }
+    ],
+    examples: [
+      { label: "DaemonSet 목록", code: "kubectl get ds -A -o wide" },
+      { label: "특정 네임스페이스", code: "kubectl get ds -n kube-system" }
+    ],
+    warnings: ["DaemonSet은 노드별 에이전트 성격이라 Desired와 Current 수치 차이를 꼭 봐야 합니다."],
+    related: ["describe-daemonset", "get-nodes", "get-pods", "get-events"]
+  }),
+  C({
+    id: "get-replicasets",
+    category: "workload",
+    title: "kubectl get replicasets",
+    command: "kubectl get rs -A -o wide",
+    summary: "ReplicaSet 목록과 실제 파드 생성 상태를 확인합니다.",
+    risk: "read",
+    keywords: ["replicaset", "rs", "owner", "deployment"],
+    options: [
+      { flag: "-A", desc: "모든 네임스페이스" },
+      { flag: "-o wide", desc: "추가 열 표시" },
+      { flag: "--show-labels", desc: "라벨 표시" },
+      { flag: "--sort-by", desc: "정렬 기준 지정" }
+    ],
+    examples: [
+      { label: "ReplicaSet 목록", code: "kubectl get rs -A -o wide" },
+      { label: "특정 네임스페이스", code: "kubectl get rs -n prod" }
+    ],
+    warnings: ["Deployment 문제를 볼 때 ReplicaSet도 같이 보면 롤아웃 히스토리가 보입니다."],
+    related: ["describe-replicaset", "get-deployments", "get-pods", "rollout-history"]
+  }),
+  C({
+    id: "get-jobs",
+    category: "workload",
+    title: "kubectl get jobs",
+    command: "kubectl get jobs -A -o wide",
+    summary: "Job 실행 완료 여부와 실패 횟수를 확인합니다.",
+    risk: "read",
+    keywords: ["job", "batch", "completion", "backoff"],
+    options: [
+      { flag: "-A", desc: "모든 네임스페이스" },
+      { flag: "-o wide", desc: "추가 열 표시" },
+      { flag: "--show-labels", desc: "라벨 표시" },
+      { flag: "--sort-by", desc: "정렬 기준 지정" }
+    ],
+    examples: [
+      { label: "Job 목록", code: "kubectl get jobs -A -o wide" },
+      { label: "특정 네임스페이스", code: "kubectl get jobs -n prod" }
+    ],
+    warnings: ["완료되지 않는 Job은 Pod 로그와 backoff 횟수를 같이 봐야 합니다."],
+    related: ["describe-job", "get-pods", "get-events"]
+  }),
+  C({
+    id: "get-cronjobs",
+    category: "workload",
+    title: "kubectl get cronjobs",
+    command: "kubectl get cronjobs -A -o wide",
+    summary: "CronJob 스케줄과 다음 실행 시점을 확인합니다.",
+    risk: "read",
+    keywords: ["cronjob", "schedule", "batch", "job"],
+    options: [
+      { flag: "-A", desc: "모든 네임스페이스" },
+      { flag: "-o wide", desc: "추가 열 표시" },
+      { flag: "--show-labels", desc: "라벨 표시" },
+      { flag: "--sort-by", desc: "정렬 기준 지정" }
+    ],
+    examples: [
+      { label: "CronJob 목록", code: "kubectl get cronjobs -A -o wide" },
+      { label: "특정 네임스페이스", code: "kubectl get cronjobs -n prod" }
+    ],
+    warnings: ["스케줄이 맞아도 Job이 실패하면 실제 작업은 수행되지 않습니다."],
+    related: ["describe-cronjob", "get-jobs", "get-events"]
+  }),
+  C({
+    id: "describe-deployment",
+    category: "debug",
+    title: "kubectl describe deployment",
+    command: "kubectl describe deployment <name>",
+    summary: "Deployment의 rollout 설정, 이벤트, replica 상태를 자세히 봅니다.",
+    risk: "read",
+    keywords: ["deployment", "describe", "rollout", "strategy"],
+    options: [
+      { flag: "-n", desc: "네임스페이스 지정" }
+    ],
+    examples: [
+      { label: "Deployment 상세", code: "kubectl describe deployment myapp -n prod" }
+    ],
+    warnings: ["ReplicaSet 생성 실패나 이미지 pull 실패는 events에서 같이 확인해야 합니다."],
+    related: ["get-deployments", "rollout-status", "get-events"]
+  }),
+  C({
+    id: "describe-statefulset",
+    category: "debug",
+    title: "kubectl describe statefulset",
+    command: "kubectl describe statefulset <name>",
+    summary: "StatefulSet의 순서, volumeClaimTemplate, 이벤트를 자세히 봅니다.",
+    risk: "read",
+    keywords: ["statefulset", "describe", "pvc", "ordinal"],
+    options: [
+      { flag: "-n", desc: "네임스페이스 지정" }
+    ],
+    examples: [
+      { label: "StatefulSet 상세", code: "kubectl describe statefulset mysql -n prod" }
+    ],
+    warnings: ["StatefulSet은 PVC 결합 상태를 같이 봐야 원인을 놓치지 않습니다."],
+    related: ["get-statefulsets", "get-pods", "get-events", "pvc"]
+  }),
+  C({
+    id: "describe-daemonset",
+    category: "debug",
+    title: "kubectl describe daemonset",
+    command: "kubectl describe daemonset <name>",
+    summary: "DaemonSet의 노드 배치, 업데이트 전략, 이벤트를 봅니다.",
+    risk: "read",
+    keywords: ["daemonset", "describe", "node", "agent"],
+    options: [
+      { flag: "-n", desc: "네임스페이스 지정" }
+    ],
+    examples: [
+      { label: "DaemonSet 상세", code: "kubectl describe daemonset fluent-bit -n kube-system" }
+    ],
+    warnings: ["일부 노드에만 안 붙는 경우 노드 taint와 toleration을 같이 확인하세요."],
+    related: ["get-daemonsets", "get-nodes", "get-events"]
+  }),
+  C({
+    id: "describe-replicaset",
+    category: "debug",
+    title: "kubectl describe replicaset",
+    command: "kubectl describe replicaset <name>",
+    summary: "ReplicaSet이 어떤 Pod를 만들고 있는지 자세히 봅니다.",
+    risk: "read",
+    keywords: ["replicaset", "describe", "owner", "pod"],
+    options: [
+      { flag: "-n", desc: "네임스페이스 지정" }
+    ],
+    examples: [
+      { label: "ReplicaSet 상세", code: "kubectl describe replicaset myapp-6d7f8d9b7b -n prod" }
+    ],
+    warnings: ["ReplicaSet은 보통 Deployment가 관리하므로 원인 분석 시 상위 리소스도 같이 봐야 합니다."],
+    related: ["get-replicasets", "get-deployments", "get-pods"]
+  }),
+  C({
+    id: "describe-job",
+    category: "debug",
+    title: "kubectl describe job",
+    command: "kubectl describe job <name>",
+    summary: "Job의 완료/실패 원인과 생성된 Pod 이벤트를 봅니다.",
+    risk: "read",
+    keywords: ["job", "describe", "batch", "backoff"],
+    options: [
+      { flag: "-n", desc: "네임스페이스 지정" }
+    ],
+    examples: [
+      { label: "Job 상세", code: "kubectl describe job backup-daily -n prod" }
+    ],
+    warnings: ["Job 실패는 Pod 로그와 함께 봐야 정확합니다."],
+    related: ["get-jobs", "get-pods", "get-events"]
+  }),
+  C({
+    id: "describe-cronjob",
+    category: "debug",
+    title: "kubectl describe cronjob",
+    command: "kubectl describe cronjob <name>",
+    summary: "CronJob 스케줄, 마지막 실행, 생성 규칙을 자세히 봅니다.",
+    risk: "read",
+    keywords: ["cronjob", "describe", "schedule", "job"],
+    options: [
+      { flag: "-n", desc: "네임스페이스 지정" }
+    ],
+    examples: [
+      { label: "CronJob 상세", code: "kubectl describe cronjob backup-daily -n prod" }
+    ],
+    warnings: ["시간대와 스케줄 표현식을 같이 확인해야 실제 실행 시점을 놓치지 않습니다."],
+    related: ["get-cronjobs", "get-jobs", "get-events"]
+  }),
+  C({
     id: "describe",
     category: "debug",
     title: "kubectl describe",
