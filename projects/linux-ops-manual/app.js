@@ -43,29 +43,454 @@ const scenarios = [
 
 const categories = [
   { id: "all", label: "전체" },
-  { id: "system", label: "시스템" },
+  { id: "system", label: "시스템 정보" },
   { id: "filesystem", label: "파일/디렉토리" },
+  { id: "search", label: "검색" },
   { id: "permissions", label: "권한" },
   { id: "process", label: "프로세스" },
   { id: "logs", label: "로그" },
   { id: "services", label: "서비스" },
+  { id: "systemd", label: "systemd" },
+  { id: "packages", label: "패키지 관리" },
   { id: "network", label: "네트워크" },
-  { id: "packages", label: "패키지" },
+  { id: "network-firewall", label: "방화벽" },
+  { id: "network-diagnostics", label: "네트워크 진단" },
   { id: "backup", label: "압축/백업" },
   { id: "text", label: "텍스트 처리" },
-  { id: "storage", label: "디스크/마운트" },
-  { id: "users", label: "사용자/접근" },
+  { id: "storage", label: "스토리지" },
+  { id: "lvm", label: "LVM/스왑" },
+  { id: "users", label: "사용자" },
   { id: "remote", label: "SSH/원격" },
   { id: "containers", label: "컨테이너" },
-  { id: "gpu", label: "GPU/하드웨어" },
+  { id: "gpu", label: "GPU" },
   { id: "security", label: "보안" },
-  { id: "lvm", label: "LVM" },
   { id: "diagnostics", label: "진단" },
   { id: "time", label: "시간" },
   { id: "performance", label: "성능" },
-  { id: "systemd", label: "systemd" },
   { id: "troubleshoot", label: "트러블슈팅" }
 ];
+
+const topicByCommandId = {
+  uname: "system",
+  ls: "filesystem",
+  find: "search",
+  disk: "storage",
+  chmod: "permissions",
+  ps: "process",
+  free: "process",
+  journalctl: "logs",
+  tailgrep: "logs",
+  systemctl: "services",
+  packages: "packages",
+  firewall: "network-firewall",
+  ss: "network",
+  scp: "remote",
+  tar: "backup",
+  text: "text",
+  k8s: "containers",
+  trouble: "troubleshoot",
+  grep: "text",
+  less: "logs",
+  headtail: "logs",
+  iproute: "network",
+  nmcli: "network",
+  lsblk: "storage",
+  mount: "storage",
+  crontab: "services",
+  sudo: "users",
+  "nvidia-smi": "gpu",
+  "top-htop": "process",
+  "proc-control": "process",
+  "service-check": "services",
+  tree: "filesystem",
+  locate: "search",
+  file: "filesystem",
+  stat: "filesystem",
+  "storage-advanced": "storage",
+  "net-tools": "network-diagnostics",
+  "package-tools": "packages",
+  "users-acl": "users",
+  "archive-tools": "backup",
+  "text-pipe": "text",
+  "ssh-transfer": "remote",
+  "security-tools": "security",
+  lsof: "process",
+  watch: "troubleshoot",
+  "env-printenv": "system",
+  "which-whereis": "system",
+  dmesg: "diagnostics",
+  sysctl: "diagnostics",
+  logrotate: "diagnostics",
+  nc: "network-diagnostics",
+  tcpdump: "network-diagnostics",
+  mtr: "network-diagnostics",
+  podman: "containers",
+  useradd: "users",
+  usermod: "users",
+  passwd: "users",
+  groupadd: "users",
+  visudo: "users",
+  restorecon: "security",
+  semanage: "security",
+  chcon: "security",
+  timedatectl: "time",
+  chronyc: "time",
+  iostat: "performance",
+  iotop: "performance",
+  sar: "performance",
+  "systemd-analyze": "systemd",
+  "systemctl-edit": "systemd",
+  pvs: "lvm",
+  vgs: "lvm",
+  lvs: "lvm",
+  pvcreate: "lvm",
+  vgcreate: "lvm",
+  lvcreate: "lvm",
+  lvextend: "lvm",
+  fsck: "lvm",
+  mkswap: "lvm",
+  swapon: "lvm",
+  swapoff: "lvm"
+};
+
+const displayOverrides = {
+  packages: {
+    rocky: {
+      title: "패키지 관리",
+      command: "dnf update && dnf install nginx && rpm -qa | grep nginx"
+    },
+    ubuntu: {
+      title: "패키지 관리",
+      command: "apt update && apt install -y nginx && dpkg -l | grep nginx"
+    }
+  },
+  firewall: {
+    rocky: {
+      title: "방화벽",
+      command: "firewall-cmd --list-all"
+    },
+    ubuntu: {
+      title: "방화벽",
+      command: "ufw status verbose"
+    }
+  },
+  uname: {
+    rocky: { title: "시스템 정보", command: "uname -a && hostnamectl" },
+    ubuntu: { title: "시스템 정보", command: "uname -a && hostnamectl" }
+  },
+  ls: {
+    rocky: { title: "파일 목록", command: "ls -alh" },
+    ubuntu: { title: "파일 목록", command: "ls -alh" }
+  },
+  find: {
+    rocky: { title: "파일 검색", command: "find /var/log -type f -name '*.log'" },
+    ubuntu: { title: "파일 검색", command: "find /var/log -type f -name '*.log'" }
+  },
+  disk: {
+    rocky: { title: "디스크 사용량", command: "df -h && du -sh /var/log/*" },
+    ubuntu: { title: "디스크 사용량", command: "df -h && du -sh /var/log/*" }
+  },
+  chmod: {
+    rocky: { title: "권한 변경", command: "chmod 640 file && chown user:group file" },
+    ubuntu: { title: "권한 변경", command: "chmod 640 file && chown user:group file" }
+  },
+  ps: {
+    rocky: { title: "프로세스 관리", command: "ps aux | grep nginx && pgrep -af nginx && kill -TERM <pid>" },
+    ubuntu: { title: "프로세스 관리", command: "ps aux | grep nginx && pgrep -af nginx && kill -TERM <pid>" }
+  },
+  free: {
+    rocky: { title: "메모리 점검", command: "free -h && vmstat 1 5" },
+    ubuntu: { title: "메모리 점검", command: "free -h && vmstat 1 5" }
+  },
+  journalctl: {
+    rocky: { title: "로그 추적", command: "journalctl -u nginx -f" },
+    ubuntu: { title: "로그 추적", command: "journalctl -u nginx -f" }
+  },
+  systemctl: {
+    rocky: { title: "서비스 관리", command: "systemctl status nginx && systemctl restart nginx" },
+    ubuntu: { title: "서비스 관리", command: "systemctl status nginx && systemctl restart nginx" }
+  },
+  firewall: {
+    rocky: { title: "방화벽", command: "firewall-cmd --list-all" },
+    ubuntu: { title: "방화벽", command: "ufw status verbose" }
+  },
+  ss: {
+    rocky: { title: "네트워크 확인", command: "ss -tulnp && ip a && curl -I https://example.com" },
+    ubuntu: { title: "네트워크 확인", command: "ss -tulnp && ip a && curl -I https://example.com" }
+  },
+  scp: {
+    rocky: { title: "SSH 전송", command: "ssh user@host && scp file user@host:/tmp/" },
+    ubuntu: { title: "SSH 전송", command: "ssh user@host && scp file user@host:/tmp/" }
+  },
+  tar: {
+    rocky: { title: "압축/동기화", command: "tar -czf backup.tar.gz /data && rsync -avh /src/ user@host:/dst/" },
+    ubuntu: { title: "압축/동기화", command: "tar -czf backup.tar.gz /data && rsync -avh /src/ user@host:/dst/" }
+  },
+  text: {
+    rocky: { title: "텍스트 처리", command: "grep ERROR app.log | awk '{print $2}' | sort | uniq -c | sort -nr" },
+    ubuntu: { title: "텍스트 처리", command: "grep ERROR app.log | awk '{print $2}' | sort | uniq -c | sort -nr" }
+  },
+  k8s: {
+    rocky: { title: "컨테이너", command: "podman ps && kubectl get pods -A && crictl ps" },
+    ubuntu: { title: "컨테이너", command: "docker ps && kubectl get pods -A && crictl ps" }
+  },
+  trouble: {
+    rocky: { title: "트러블슈팅", command: "uptime && free -h && df -h && ss -tulnp" },
+    ubuntu: { title: "트러블슈팅", command: "uptime && free -h && df -h && ss -tulnp" }
+  },
+  grep: {
+    rocky: { title: "패턴 검색", command: "grep -Rni ERROR /var/log" },
+    ubuntu: { title: "패턴 검색", command: "grep -Rni ERROR /var/log" }
+  },
+  less: {
+    rocky: { title: "로그 뷰어", command: "less +F /var/log/messages" },
+    ubuntu: { title: "로그 뷰어", command: "less +F /var/log/syslog" }
+  },
+  headtail: {
+    rocky: { title: "파일 미리보기", command: "head -n 20 file && tail -n 50 file" },
+    ubuntu: { title: "파일 미리보기", command: "head -n 20 file && tail -n 50 file" }
+  },
+  iproute: {
+    rocky: { title: "라우팅/주소", command: "ip addr && ip route" },
+    ubuntu: { title: "라우팅/주소", command: "ip addr && ip route" }
+  },
+  lsblk: {
+    rocky: { title: "블록 장치", command: "lsblk -f && blkid" },
+    ubuntu: { title: "블록 장치", command: "lsblk -f && blkid" }
+  },
+  mount: {
+    rocky: { title: "마운트/해제", command: "mount /dev/nvme0n1p1 /data && umount /data" },
+    ubuntu: { title: "마운트/해제", command: "mount /dev/nvme0n1p1 /data && umount /data" }
+  },
+  sudo: {
+    rocky: { title: "권한 전환", command: "id && sudo -l && sudo -i" },
+    ubuntu: { title: "권한 전환", command: "id && sudo -l && sudo -i" }
+  },
+  "top-htop": {
+    rocky: { title: "실시간 프로세스", command: "top && htop" },
+    ubuntu: { title: "실시간 프로세스", command: "top && htop" }
+  },
+  "proc-control": {
+    rocky: { title: "프로세스 제어", command: "pkill nginx && nice -n 10 job && renice 5 -p <pid>" },
+    ubuntu: { title: "프로세스 제어", command: "pkill nginx && nice -n 10 job && renice 5 -p <pid>" }
+  },
+  locate: {
+    rocky: { title: "빠른 검색", command: "updatedb && locate nginx.conf" },
+    ubuntu: { title: "빠른 검색", command: "updatedb && locate nginx.conf" }
+  },
+  "storage-advanced": {
+    rocky: { title: "디스크/파티션", command: "du -xh --max-depth=1 /var && df -Th && lsblk -f && fdisk -l" },
+    ubuntu: { title: "디스크/파티션", command: "du -xh --max-depth=1 /var && df -Th && lsblk -f && fdisk -l" }
+  },
+  "package-tools": {
+    rocky: { title: "패키지 심화", command: "dnf history && dnf autoremove" },
+    ubuntu: { title: "패키지 심화", command: "apt autoremove && apt-mark hold pkg" }
+  },
+  "users-acl": {
+    rocky: { title: "사용자/ACL", command: "whoami && who && last && getfacl file" },
+    ubuntu: { title: "사용자/ACL", command: "whoami && who && last && getfacl file" }
+  },
+  "archive-tools": {
+    rocky: { title: "압축 도구", command: "tar -czf backup.tar.gz data/ && zip -r backup.zip data/" },
+    ubuntu: { title: "압축 도구", command: "tar -czf backup.tar.gz data/ && zip -r backup.zip data/" }
+  },
+  "text-pipe": {
+    rocky: { title: "텍스트 파이프라인", command: "cut -d: -f1 file | sort | uniq -c | xargs" },
+    ubuntu: { title: "텍스트 파이프라인", command: "cut -d: -f1 file | sort | uniq -c | xargs" }
+  },
+  "ssh-transfer": {
+    rocky: { title: "SSH 전송", command: "ssh-keygen -t ed25519 && ssh-copy-id user@host && scp -P 2222 file user@host:/tmp/" },
+    ubuntu: { title: "SSH 전송", command: "ssh-keygen -t ed25519 && ssh-copy-id user@host && scp -P 2222 file user@host:/tmp/" }
+  },
+  "env-printenv": {
+    rocky: { title: "환경 변수", command: "env | sort && printenv PATH" },
+    ubuntu: { title: "환경 변수", command: "env | sort && printenv PATH" }
+  },
+  "which-whereis": {
+    rocky: { title: "명령 위치", command: "which python3 && whereis nginx" },
+    ubuntu: { title: "명령 위치", command: "which python3 && whereis nginx" }
+  },
+  "security-tools": {
+    rocky: {
+      title: "SELinux / firewalld",
+      command: "getenforce && firewall-cmd --state"
+    },
+    ubuntu: {
+      title: "AppArmor / ufw",
+      command: "aa-status && ufw status verbose"
+    }
+  },
+  k8s: {
+    rocky: {
+      title: "컨테이너",
+      command: "podman ps && kubectl get pods -A && crictl ps"
+    },
+    ubuntu: {
+      title: "컨테이너",
+      command: "docker ps && kubectl get pods -A && crictl ps"
+    }
+  },
+  tailgrep: {
+    rocky: {
+      title: "로그 추적",
+      command: "tail -f /var/log/messages | grep --line-buffered ERROR"
+    },
+    ubuntu: {
+      title: "로그 추적",
+      command: "tail -f /var/log/syslog | grep --line-buffered ERROR"
+    }
+  },
+  headtail: {
+    rocky: {
+      title: "파일 미리보기",
+      command: "head -n 20 file && tail -n 50 file"
+    },
+    ubuntu: {
+      title: "파일 미리보기",
+      command: "head -n 20 file && tail -n 50 file"
+    }
+  },
+  ss: {
+    rocky: {
+      title: "네트워크 점검",
+      command: "ss -tulnp && ip a && curl -I https://example.com"
+    },
+    ubuntu: {
+      title: "네트워크 점검",
+      command: "ss -tulnp && ip a && curl -I https://example.com"
+    }
+  },
+  iproute: {
+    rocky: {
+      title: "라우팅/주소",
+      command: "ip addr && ip route"
+    },
+    ubuntu: {
+      title: "라우팅/주소",
+      command: "ip addr && ip route"
+    }
+  },
+  nmcli: {
+    rocky: {
+      title: "NetworkManager",
+      command: "nmcli dev status && nmcli con show"
+    },
+    ubuntu: {
+      title: "NetworkManager",
+      command: "nmcli dev status && nmcli con show"
+    }
+  },
+  "net-tools": {
+    rocky: {
+      title: "네트워크 진단",
+      command: "ping -c 4 host && traceroute host && nslookup host && ss -ltnp"
+    },
+    ubuntu: {
+      title: "네트워크 진단",
+      command: "ping -c 4 host && traceroute host && nslookup host && ss -ltnp"
+    }
+  },
+  nc: {
+    rocky: {
+      title: "포트 테스트",
+      command: "nc -vz host 443"
+    },
+    ubuntu: {
+      title: "포트 테스트",
+      command: "nc -vz host 443"
+    }
+  },
+  tcpdump: {
+    rocky: {
+      title: "패킷 캡처",
+      command: "tcpdump -i eth0 port 443"
+    },
+    ubuntu: {
+      title: "패킷 캡처",
+      command: "tcpdump -i eth0 port 443"
+    }
+  },
+  mtr: {
+    rocky: {
+      title: "경로 진단",
+      command: "mtr -rw 8.8.8.8"
+    },
+    ubuntu: {
+      title: "경로 진단",
+      command: "mtr -rw 8.8.8.8"
+    }
+  },
+  "package-tools": {
+    rocky: {
+      title: "패키지 심화",
+      command: "dnf history && dnf autoremove"
+    },
+    ubuntu: {
+      title: "패키지 심화",
+      command: "apt autoremove && apt-mark hold pkg"
+    }
+  },
+  "env-printenv": {
+    rocky: {
+      title: "환경 변수",
+      command: "env | sort && printenv PATH"
+    },
+    ubuntu: {
+      title: "환경 변수",
+      command: "env | sort && printenv PATH"
+    }
+  },
+  "which-whereis": {
+    rocky: {
+      title: "명령 위치",
+      command: "which python3 && whereis nginx"
+    },
+    ubuntu: {
+      title: "명령 위치",
+      command: "which python3 && whereis nginx"
+    }
+  },
+  dmesg: {
+    rocky: {
+      title: "커널 로그",
+      command: "dmesg -T | tail -n 50"
+    },
+    ubuntu: {
+      title: "커널 로그",
+      command: "dmesg -T | tail -n 50"
+    }
+  },
+  sysctl: {
+    rocky: {
+      title: "커널 튜닝",
+      command: "sysctl -a | grep vm.swappiness && sysctl -w net.ipv4.ip_forward=1"
+    },
+    ubuntu: {
+      title: "커널 튜닝",
+      command: "sysctl -a | grep vm.swappiness && sysctl -w net.ipv4.ip_forward=1"
+    }
+  },
+  logrotate: {
+    rocky: {
+      title: "로그 회전",
+      command: "logrotate -d /etc/logrotate.conf"
+    },
+    ubuntu: {
+      title: "로그 회전",
+      command: "logrotate -d /etc/logrotate.conf"
+    }
+  },
+  podman: {
+    rocky: {
+      title: "컨테이너",
+      command: "podman ps"
+    },
+    ubuntu: {
+      title: "컨테이너",
+      command: "podman ps"
+    }
+  }
+};
 
 const COMMANDS = [
   {
@@ -3488,53 +3913,31 @@ function normalizeText(value) {
   return String(value).toLowerCase();
 }
 
-function expandCommand(command) {
-  const parts = command.title
-    .split(" / ")
-    .map((part) => part.trim())
-    .filter(Boolean);
+function getCommandTopic(command) {
+  return topicByCommandId[command.id] || command.category;
+}
 
-  if (parts.length <= 1) {
-    return [
-      {
-        ...command,
-        displayTitle: command.title,
-        familyTitle: null
-      }
-    ];
-  }
-
-  const clauses = command.command
-    .split(/\s*&&\s*/)
-    .map((part) => part.trim())
-    .filter(Boolean);
-
-  return parts.map((part, index) => ({
-    ...command,
-    title: part,
-    displayTitle: part,
-    familyTitle: command.title,
-    command: clauses[index] || command.command,
-    keywords: Array.from(new Set([...(command.keywords || []), part.toLowerCase()]))
-  }));
+function getCommandDisplay(command, distro) {
+  const override = displayOverrides[command.id]?.[distro];
+  return {
+    title: override?.title || command.title,
+    command: override?.command || command.command
+  };
 }
 
 function getVisibleCommands() {
   const term = normalizeText(state.search).trim();
   const matched = COMMANDS.filter((command) => {
-    const categoryMatch = state.category === "all" || command.category === state.category;
+    const categoryMatch = state.category === "all" || getCommandTopic(command) === state.category;
     const variant = command.variants[state.distro];
-    const expandedTitles = command.title
-      .split(" / ")
-      .map((part) => part.trim())
-      .filter(Boolean);
+    const display = getCommandDisplay(command, state.distro);
     const haystack = [
-      command.title,
+      display.title,
       command.summary,
-      command.command,
+      display.command,
       command.category,
+      getCommandTopic(command),
       ...(command.keywords || []),
-      ...expandedTitles,
       variant.diff,
       ...(variant.options || []).map((item) => `${item.flag} ${item.desc}`),
       ...(variant.examples || []).map((item) => `${item.label} ${item.code}`),
@@ -3547,16 +3950,17 @@ function getVisibleCommands() {
     return categoryMatch && searchMatch;
   });
 
-  return matched.flatMap((command) => expandCommand(command));
+  return matched;
 }
 
 function groupVisibleCommands(commands) {
   const groups = new Map();
   commands.forEach((command) => {
-    if (!groups.has(command.category)) {
-      groups.set(command.category, []);
+    const topic = getCommandTopic(command);
+    if (!groups.has(topic)) {
+      groups.set(topic, []);
     }
-    groups.get(command.category).push(command);
+    groups.get(topic).push(command);
   });
   return groups;
 }
@@ -3597,7 +4001,7 @@ function renderCommands() {
   const visible = getVisibleCommands();
   commandSections.innerHTML = "";
   resultCount.textContent = `${visible.length}개`;
-  listTitle.textContent = state.distro === "rocky" ? "Rocky Linux용 명령어" : "Ubuntu용 명령어";
+  listTitle.textContent = state.distro === "rocky" ? "Rocky Linux 전용 보기" : "Ubuntu 전용 보기";
 
   if (!visible.length) {
     commandSections.innerHTML = `
@@ -3636,14 +4040,15 @@ function renderCommands() {
 
     items.forEach((command) => {
       const variant = command.variants[state.distro];
+      const display = getCommandDisplay(command, state.distro);
       const node = commandTemplate.content.cloneNode(true);
       const card = node.querySelector(".command-card");
-      const categoryLabel = categories.find((item) => item.id === command.category)?.label || command.category;
+      const categoryLabel = categories.find((item) => item.id === getCommandTopic(command))?.label || command.category;
       node.querySelector(".pill-category").textContent = categoryLabel;
-      node.querySelector(".pill-distro").textContent = state.distro === "rocky" ? "Rocky Linux" : "Ubuntu";
-      node.querySelector("h3").textContent = command.displayTitle || command.title;
+      node.querySelector(".pill-distro").textContent = state.distro === "rocky" ? "Rocky Linux only" : "Ubuntu only";
+      node.querySelector("h3").textContent = display.title;
       node.querySelector(".summary").textContent = command.summary;
-      node.querySelector(".command-line code").textContent = command.command;
+      node.querySelector(".command-line code").textContent = display.command;
 
       const optionList = node.querySelector(".option-list");
       variant.options.forEach((option) => {
@@ -3676,7 +4081,7 @@ function renderCommands() {
 
       const copyButton = node.querySelector(".copy-button");
       copyButton.addEventListener("click", async () => {
-        await navigator.clipboard.writeText(command.command);
+        await navigator.clipboard.writeText(display.command);
         copyButton.textContent = "Copied";
         window.setTimeout(() => {
           copyButton.textContent = "Copy";
