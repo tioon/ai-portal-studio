@@ -133,7 +133,7 @@
 
 <header>
   <h1>🧠 vLLM 메모리 사용량 인터랙티브 가이드</h1>
-  <p>GPU 위에서 vLLM으로 LLM을 서빙할 때, <code>gpu_memory_utilization</code>·<code>max_model_len</code>·<code>tensor_parallel_size</code>·양자화 등 설정값에 따라 <b>모델 가중치 / KV 캐시 / 실행 오버헤드</b>가 어떻게 배분되는지 직접 확인할 수 있고, 이제는 실제 용도와 동시 사용자 수를 넣으면 추천값도 자동으로 채워집니다.</p>
+  <p>GPU 위에서 vLLM으로 LLM을 서빙할 때, <code>gpu_memory_utilization</code>·<code>max_model_len</code>·<code>tensor_parallel_size</code>·양자화 등 설정값에 따라 <b>모델 가중치 / KV 캐시 / 실행 오버헤드 / 호스트 RAM</b>이 어떻게 배분되는지 직접 확인할 수 있고, 이제는 실제 용도와 동시 사용자 수를 넣으면 추천값도 자동으로 채워집니다.</p>
 </header>
 
 <main>
@@ -165,6 +165,7 @@
             <option value="throughput">처리량 우선</option>
           </select>
         </div>
+        <div class="planner-summary" id="plannerSummary"></div>
       </div>
     </div>
   </section>
@@ -312,7 +313,7 @@
 
         <div class="row2">
           <div class="field">
-            <label>cpu_offload_gb (TP 그룹 전체 기준) <span class="val" id="v_cpuoffload"></span></label>
+            <label>cpu_offload_gb (GPU당) <span class="val" id="v_cpuoffload"></span></label>
             <input type="range" id="cpuoffload" min="0" max="80" step="1" value="0">
           </div>
           <div class="field">
@@ -320,7 +321,13 @@
             <input type="range" id="swap" min="0" max="64" step="1" value="4">
           </div>
         </div>
-        <div class="hint">cpu_offload_gb는 vLLM CLI 플래그 값 그대로 <b>TP 랭크 전체 합산 기준</b>입니다(GPU당 실제 절감량 = 이 값 ÷ TP). swap_space는 GPU당 값이며, 부족할 때 KV 캐시를 CPU로 대피시킬 여유 공간입니다(둘 다 속도 저하 트레이드오프 있음).</div>
+        <div class="hint">공식 vLLM 문서 기준 <code>cpu_offload_gb</code>는 <b>GPU당</b> 값입니다. 즉 TP=4면 총 호스트 RAM 오프로드 버퍼는 대략 4배가 됩니다. <code>swap_space</code>도 GPU당 값이며, 부족할 때 KV 캐시를 CPU로 대피시킬 여유 공간입니다(둘 다 속도 저하 트레이드오프 있음).</div>
+
+        <div class="field" style="margin-top:14px;">
+          <label>실제 보유 RAM (GB) <span class="val" id="v_hostram"></span></label>
+          <input type="number" id="hostramInput" min="4" max="4096" step="1" value="64">
+          <div class="hint" id="hostRamHint">호스트 RAM 권장값은 아래에서 계산됩니다.</div>
+        </div>
 
         <div class="divider"></div>
 
@@ -354,6 +361,7 @@
         </div>
 
         <div id="banner" class="banner"></div>
+        <div id="hostBanner" class="banner"></div>
 
         <div class="stat-grid">
           <div class="stat"><div class="label">GPU당 모델 가중치</div><div class="value" id="s_weights">-</div></div>
@@ -363,6 +371,8 @@
           <div class="stat"><div class="label">캐시 가능 최대 토큰 수</div><div class="value" id="s_maxtokens">-</div></div>
           <div class="stat"><div class="label">동시 처리 가능 시퀀스(추정)</div><div class="value" id="s_concurrent">-</div></div>
           <div class="stat"><div class="label">swap_space 포함 시 최대 시퀀스</div><div class="value small" id="s_concurrentSwap">-</div></div>
+          <div class="stat"><div class="label">호스트 RAM 권장값</div><div class="value" id="s_hostram">-</div></div>
+          <div class="stat"><div class="label">호스트 RAM 여유</div><div class="value small" id="s_hostmargin">-</div></div>
         </div>
       </div>
     </div>
@@ -545,8 +555,9 @@ const TABLE_ROWS = [
   ["quantization (AWQ/GPTQ/FP8/INT4/GGUF)","<span class='impact down'>가중치↓</span>","가중치를 저정밀도로 저장해 메모리를 1/2~1/6로 절감. 절감된 만큼 KV 캐시나 배치 크기를 늘릴 수 있음."],
   ["kv_cache_dtype (fp8)","<span class='impact down'>KV/토큰↓</span>","KV 캐시를 FP8로 양자화하면 토큰당 캐시 크기가 절반이 되어 같은 메모리로 2배 더 긴 컨텍스트/더 많은 요청 처리 가능."],
   ["block_size","<span class='impact mix'>혼합</span>","PagedAttention 블록 크기(기본 16). 크면 블록 테이블 오버헤드는 줄지만 시퀀스 길이가 블록 단위로 올림 처리되어 내부 단편화(fragmentation)는 증가."],
-  ["cpu_offload_gb","<span class='impact down'>GPU 가중치↓</span>","지정한 GB만큼 가중치를 CPU RAM에 두고 필요할 때 전송. GPU 메모리는 아끼지만 레이어 전송 지연으로 속도가 느려짐."],
-  ["swap_space","<span class='impact mix'>CPU 오프로드</span>","GPU 메모리가 부족할 때 KV 캐시를 CPU RAM으로 스왑할 여유 공간(GiB). GPU 메모리 자체는 늘리지 않지만 OOM 대신 지연시간 증가로 대응하고, 유효 캐시 용량을 확장."],
+  ["cpu_offload_gb","<span class='impact down'>GPU 가중치↓ / CPU RAM↑</span>","GPU당 지정한 GB만큼 가중치를 CPU RAM으로 오프로드합니다. vLLM 문서 기준 GPU당 값이므로 TP가 커질수록 총 호스트 RAM 요구량은 TP 배수로 커집니다."],
+  ["swap_space","<span class='impact mix'>CPU 오프로드</span>","GPU 메모리가 부족할 때 KV 캐시를 CPU RAM으로 스왑할 여유 공간(GiB). GPU 메모리 자체는 늘리지 않지만 OOM 대신 지연시간 증가로 대응하고, 유효 캐시 용량을 확장합니다."],
+  ["host_ram_recommendation","<span class='impact mix'>호스트 RAM</span>","이 계산기는 체크포인트 로딩 피크와 CPU offload / swap buffer / 런타임 여유를 합쳐 권장 호스트 RAM을 추정합니다."],
   ["enforce_eager","<span class='impact down'>오버헤드↓</span>","CUDA Graph 캡처를 생략해 그래프용 메모리를 절약하지만 추론 속도가 느려짐."],
   ["kv_cache_memory_bytes","<span class='impact mix'>수동 지정</span>","gpu_memory_utilization 대신 KV 캐시 크기를 바이트 단위로 직접 지정해 더 세밀하게 제어."],
 ];
@@ -661,6 +672,26 @@ function nextPow2Within(v, allowed){
   return sorted[0];
 }
 
+// vLLM의 호스트 메모리에는 모델 로딩 시 필요한 체크포인트 공간과
+// cpu_offload_gb / swap_space 같은 CPU-side 버퍼, 그리고 런타임 여유분이 함께 필요하다.
+function estimateHostMemoryGB({paramsB, wBytes, tp, pp, cpuOffloadGB, swapGB, maxbatch, maxseqs}){
+  const totalWeightGB = paramsB * wBytes;
+  const runtimeBaseGB = 12 + 1.5 * Math.max(0, tp - 1) + 0.75 * Math.max(0, pp - 1)
+    + (maxbatch / 4096) * 1.5 + (maxseqs / 256) * 0.75;
+  const checkpointPeakGB = totalWeightGB + runtimeBaseGB;
+  const offloadWorkingSetGB = (cpuOffloadGB + swapGB) * tp;
+  const steadyStateGB = runtimeBaseGB + offloadWorkingSetGB;
+  const recommendedGB = Math.ceil(Math.max(checkpointPeakGB, steadyStateGB));
+  return {
+    totalWeightGB,
+    runtimeBaseGB,
+    checkpointPeakGB,
+    offloadWorkingSetGB,
+    steadyStateGB,
+    recommendedGB,
+  };
+}
+
 function getPlannerState(){
   const workloadIdx = +el('workloadPreset').value;
   const workload = WORKLOAD_PRESETS[workloadIdx] || WORKLOAD_PRESETS[0];
@@ -708,8 +739,19 @@ function recommendPlannerSettings(){
   const availableForEverythingGB = +el('vramInput').value * util;
   if (weightPerGpuGB + fixedEstimateGB > availableForEverythingGB){
     const shortageGB = weightPerGpuGB + fixedEstimateGB - availableForEverythingGB;
-    cpuOffloadGB = clamp(roundTo(shortageGB * totalGpus, 1), 0, 80);
+    cpuOffloadGB = clamp(roundTo(shortageGB, 1), 0, 80);
   }
+
+  const hostEstimate = estimateHostMemoryGB({
+    paramsB: model.params,
+    wBytes,
+    tp: +el('tp').value,
+    pp: +el('pp').value,
+    cpuOffloadGB,
+    swapGB,
+    maxbatch,
+    maxseqs,
+  });
 
   const recommendedGpuNote = interconnect === 'nvlink'
     ? `NVLink/NVSwitch 도메인(${gpuPreset.nvlinkDomain}장) 안에서 현재 GPU 구성(${totalGpus}장)을 유지합니다.`
@@ -725,14 +767,16 @@ function recommendPlannerSettings(){
     eager,
     cpuOffloadGB,
     swapGB,
-    summary: `${workload.name} · ${users}명 동시 사용 · ${speed.label} 기준으로 자동 추천했습니다. ${recommendedGpuNote}`,
-    detail: `max_model_len=${maxlen.toLocaleString()}, max_num_seqs=${maxseqs}, max_num_batched_tokens=${maxbatch.toLocaleString()}, block_size=${blockSize}, gpu_memory_utilization=${util.toFixed(2)}, kv_cache_dtype=${kvdtype === '1' ? 'FP8' : 'FP16/BF16'}, swap_space=${swapGB}GB`,
+    hostRamGB: hostEstimate.recommendedGB,
+    summary: `${workload.name} · ${users}명 동시 사용 · ${speed.label} 기준으로 자동 추천했습니다. 호스트 RAM 권장치는 ${fmtGB(hostEstimate.recommendedGB)}입니다. ${recommendedGpuNote}`,
+    detail: `max_model_len=${maxlen.toLocaleString()}, max_num_seqs=${maxseqs}, max_num_batched_tokens=${maxbatch.toLocaleString()}, block_size=${blockSize}, gpu_memory_utilization=${util.toFixed(2)}, kv_cache_dtype=${kvdtype === '1' ? 'FP8' : 'FP16/BF16'}, swap_space=${swapGB}GB, host_ram=${hostEstimate.recommendedGB}GB`,
   };
 }
 
 function applyPlannerRecommendations(){
   const rec = recommendPlannerSettings();
   el('v_users').textContent = (+el('concurrentUsers').value || 1) + ' 명';
+  el('plannerSummary').innerHTML = `<b>추천 요약</b> ${rec.summary}<br><b>세부값</b> ${rec.detail}`;
   el('util').value = rec.util;
   el('maxlen').value = rec.maxlen;
   el('maxseqs').value = rec.maxseqs;
@@ -833,6 +877,7 @@ function compute(){
   const eager = el('enforceEager').checked;
   const cpuOffloadGB = +el('cpuoffload').value;
   const swapGB = +el('swap').value;
+  const hostRamGB = +el('hostramInput').value;
   const kvOverrideOn = el('kvOverrideEnabled').checked;
   const kvOverrideGB = +el('kvOverrideGB').value;
 
@@ -850,15 +895,14 @@ function compute(){
   el('v_blocksize').textContent = blockSize;
   el('v_cpuoffload').textContent = cpuOffloadGB + ' GB';
   el('v_swap').textContent = swapGB + ' GB';
+  el('v_hostram').textContent = hostRamGB + ' GB';
   el('v_users').textContent = (+el('concurrentUsers').value || 1) + ' 명';
   el('gpuCountHint').textContent = `총 사용 GPU 수 = tensor_parallel_size(${tp}) × pipeline_parallel_size(${pp}) = ${totalGpus}개`;
 
   // 1) 모델 가중치 (GPU당: TP × PP로 균등 분할한다고 가정)
-  // cpu_offload_gb는 vLLM 실제 동작상 "TP 랭크 전체 합산" 값이므로, GPU 1장이 절감하는 양은 이 값 ÷ TP
   const totalWeightBytes = paramsB * 1e9 * wBytes;
   let weightPerGpuGB = (totalWeightBytes / totalGpus) / 1e9;
-  const cpuOffloadPerGpuGB = cpuOffloadGB / tp;
-  weightPerGpuGB = Math.max(0, weightPerGpuGB - cpuOffloadPerGpuGB);
+  weightPerGpuGB = Math.max(0, weightPerGpuGB - cpuOffloadGB);
 
   // 2) 고정 오버헤드 (활성화 버퍼 + CUDA Graph + 프레임워크) - 근사치
   const frameworkOverheadGB = 0.6 + 0.15*(tp-1) + 0.05*(pp-1); // NCCL/파이프라인 통신 버퍼 근사
@@ -896,6 +940,18 @@ function compute(){
   const swapTokens = bytesPerToken > 0 ? (swapGB*1e9) / bytesPerToken : 0;
   const concurrentWithSwap = Math.max(0, Math.min(Math.floor((maxTokens+swapTokens)/effectiveLen || 0), maxseqs));
 
+  const hostEstimate = estimateHostMemoryGB({
+    paramsB,
+    wBytes,
+    tp,
+    pp,
+    cpuOffloadGB,
+    swapGB,
+    maxbatch,
+    maxseqs,
+  });
+  const hostMarginGB = hostRamGB - hostEstimate.recommendedGB;
+
   // status banner
   let bannerClass = 'ok', bannerText = `✅ 설정이 GPU ${vram}GB × ${totalGpus}장(TP${tp}×PP${pp}) 안에서 안정적으로 동작할 것으로 추정됩니다.`;
   if (overCapacity){
@@ -911,6 +967,18 @@ function compute(){
   const banner = el('banner');
   banner.className = 'banner show ' + bannerClass;
   banner.textContent = bannerText;
+
+  const hostBanner = el('hostBanner');
+  if (hostMarginGB < 0){
+    hostBanner.className = 'banner show bad';
+    hostBanner.textContent = `🚫 호스트 RAM 권장값(${fmtGB(hostEstimate.recommendedGB)})보다 실제 RAM(${fmtGB(hostRamGB)})이 부족합니다. cpu_offload_gb / swap_space / TP / 배치 크기를 줄이거나 RAM을 늘리세요.`;
+  } else if (hostMarginGB < Math.max(8, hostEstimate.recommendedGB * 0.15)){
+    hostBanner.className = 'banner show warn';
+    hostBanner.textContent = `⚠️ 호스트 RAM 권장값(${fmtGB(hostEstimate.recommendedGB)}) 대비 여유가 ${fmtGB(hostMarginGB)}뿐입니다. 모델 로딩 피크와 OS 여유를 고려하면 조금 더 확보하는 편이 안전합니다.`;
+  } else {
+    hostBanner.className = 'banner show ok';
+    hostBanner.textContent = `✅ 호스트 RAM 추천치는 ${fmtGB(hostEstimate.recommendedGB)}입니다. 현재 입력된 RAM(${fmtGB(hostRamGB)})이면 여유가 충분한 편입니다.`;
+  }
 
   // GPU 간 통신 병목 진단
   const interDiag = assessInterconnect(tp, pp, interconnect, nvlinkDomain);
@@ -938,6 +1006,9 @@ function compute(){
   el('s_maxtokens').textContent = fmtNum(maxTokens) + ' 토큰';
   el('s_concurrent').textContent = fmtNum(concurrent) + ' 개';
   el('s_concurrentSwap').textContent = fmtNum(concurrentWithSwap) + ' 개 (swap ' + swapGB + 'GB 포함)';
+  el('s_hostram').textContent = fmtGB(hostEstimate.recommendedGB);
+  el('s_hostmargin').textContent = (hostMarginGB >= 0 ? '+' : '') + fmtGB(Math.abs(hostMarginGB));
+  el('hostRamHint').textContent = `권장 호스트 RAM: ${fmtGB(hostEstimate.recommendedGB)} = max(체크포인트 피크 ${fmtGB(hostEstimate.checkpointPeakGB)}, CPU offload+swap 피크 ${fmtGB(hostEstimate.steadyStateGB)}).`;
 
   // 배포 명령어도 함께 갱신
   if (el('hfModelId')){
@@ -1313,7 +1384,7 @@ function init(){
   ['tp','pp','blocksize','wdtype','kvdtype','interconnect'].forEach(id=> el(id).addEventListener('change', compute));
 
   ['vramInput','util','maxlen','maxseqs','maxbatch',
-   'enforceEager','cpuoffload','swap','kvOverrideGB','layers','params','kvheads','headdim']
+   'enforceEager','cpuoffload','swap','hostramInput','kvOverrideGB','layers','params','kvheads','headdim']
     .forEach(id=> el(id).addEventListener('input', compute));
 
   // 배포 명령어 탭 전환
