@@ -1627,6 +1627,150 @@ const COMMANDS = [
         warnings: ["완화 설정은 장애 해결 후 반드시 원복하세요."]
       }
     }
+  },
+  {
+    id: "lsof",
+    category: "process",
+    title: "lsof",
+    summary: "열린 파일, 점유 포트, 프로세스가 잡고 있는 리소스를 확인합니다.",
+    command: "lsof -i :8080 && lsof /var/log/messages",
+    keywords: ["open file", "port owner", "file descriptor", "socket"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "-i", desc: "네트워크 소켓 확인" },
+          { flag: "-p", desc: "특정 PID 확인" },
+          { flag: "-u", desc: "사용자 기준 확인" },
+          { flag: "+D", desc: "디렉토리 하위 모두 확인" }
+        ],
+        examples: [
+          { label: "포트 점유 확인", code: "lsof -i :8080" },
+          { label: "로그 파일 점유", code: "lsof /var/log/messages" }
+        ],
+        diff: "포트가 열리지 않을 때 `ss`와 함께 가장 먼저 보는 도구입니다.",
+        warnings: ["출력이 많아질 수 있으니 범위를 좁혀서 사용하세요."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "-i", desc: "네트워크 소켓 확인" },
+          { flag: "-p", desc: "특정 PID 확인" },
+          { flag: "-u", desc: "사용자 기준 확인" },
+          { flag: "+D", desc: "디렉토리 하위 모두 확인" }
+        ],
+        examples: [
+          { label: "포트 점유 확인", code: "lsof -i :8080" },
+          { label: "로그 파일 점유", code: "lsof /var/log/syslog" }
+        ],
+        diff: "포트가 열리지 않을 때 `ss`와 함께 가장 먼저 보는 도구입니다.",
+        warnings: ["출력이 많아질 수 있으니 범위를 좁혀서 사용하세요."]
+      }
+    }
+  },
+  {
+    id: "watch",
+    category: "troubleshoot",
+    title: "watch",
+    summary: "명령을 주기적으로 반복 실행해 변화를 관찰합니다.",
+    command: "watch -n 1 nvidia-smi",
+    keywords: ["repeat", "refresh", "monitor", "interval"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "-n", desc: "초 단위 반복 간격" },
+          { flag: "-d", desc: "변경 부분 강조" },
+          { flag: "-t", desc: "헤더 숨김" }
+        ],
+        examples: [
+          { label: "GPU 감시", code: "watch -n 1 nvidia-smi" },
+          { label: "디스크 감시", code: "watch -n 2 df -h" }
+        ],
+        diff: "공통입니다.",
+        warnings: ["반복 명령은 시스템 부하가 큰 명령과 함께 쓰지 마세요."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "-n", desc: "초 단위 반복 간격" },
+          { flag: "-d", desc: "변경 부분 강조" },
+          { flag: "-t", desc: "헤더 숨김" }
+        ],
+        examples: [
+          { label: "GPU 감시", code: "watch -n 1 nvidia-smi" },
+          { label: "디스크 감시", code: "watch -n 2 df -h" }
+        ],
+        diff: "공통입니다.",
+        warnings: ["반복 명령은 시스템 부하가 큰 명령과 함께 쓰지 마세요."]
+      }
+    }
+  },
+  {
+    id: "env-printenv",
+    category: "system",
+    title: "env / printenv",
+    summary: "환경 변수를 확인하고 정렬해서 봅니다.",
+    command: "env | sort && printenv PATH",
+    keywords: ["environment", "variables", "shell", "path"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "env", desc: "환경 변수 전체" },
+          { flag: "printenv", desc: "특정 변수 확인" },
+          { flag: "sort", desc: "정렬해서 보기" }
+        ],
+        examples: [
+          { label: "전체 환경", code: "env | sort" },
+          { label: "PATH 확인", code: "printenv PATH" }
+        ],
+        diff: "공통입니다.",
+        warnings: ["서비스 환경과 로그인 셸 환경이 다를 수 있습니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "env", desc: "환경 변수 전체" },
+          { flag: "printenv", desc: "특정 변수 확인" },
+          { flag: "sort", desc: "정렬해서 보기" }
+        ],
+        examples: [
+          { label: "전체 환경", code: "env | sort" },
+          { label: "PATH 확인", code: "printenv PATH" }
+        ],
+        diff: "공통입니다.",
+        warnings: ["서비스 환경과 로그인 셸 환경이 다를 수 있습니다."]
+      }
+    }
+  },
+  {
+    id: "which-whereis",
+    category: "system",
+    title: "which / whereis",
+    summary: "명령어 바이너리 위치를 빠르게 찾습니다.",
+    command: "which python3 && whereis nginx",
+    keywords: ["binary", "path", "command lookup"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "which", desc: "PATH에서 실행 파일 찾기" },
+          { flag: "whereis", desc: "바이너리/소스/매뉴얼 위치" }
+        ],
+        examples: [
+          { label: "python 위치", code: "which python3" },
+          { label: "nginx 위치", code: "whereis nginx" }
+        ],
+        diff: "공통입니다.",
+        warnings: ["alias가 있으면 which와 실제 실행 파일이 다를 수 있습니다."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "which", desc: "PATH에서 실행 파일 찾기" },
+          { flag: "whereis", desc: "바이너리/소스/매뉴얼 위치" }
+        ],
+        examples: [
+          { label: "python 위치", code: "which python3" },
+          { label: "nginx 위치", code: "whereis nginx" }
+        ],
+        diff: "공통입니다.",
+        warnings: ["alias가 있으면 which와 실제 실행 파일이 다를 수 있습니다."]
+      }
+    }
   }
 ];
 
