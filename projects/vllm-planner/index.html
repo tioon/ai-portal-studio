@@ -190,7 +190,20 @@
       <div class="panel">
         <div class="field">
           <label>모델 프리셋</label>
+          <div class="row2" style="grid-template-columns:1.5fr 0.9fr; gap:8px; margin-bottom:8px;">
+            <input type="search" id="modelSearch" placeholder="모델명, provider, HF id 검색">
+            <select id="modelCategory">
+              <option value="all" selected>전체 카테고리</option>
+              <option value="0-1">0-1B</option>
+              <option value="1-3">1-3B</option>
+              <option value="3-7">3-7B</option>
+              <option value="7-14">7-14B</option>
+              <option value="14-30">14-30B</option>
+              <option value="30+">30B+</option>
+            </select>
+          </div>
           <select id="modelPreset"></select>
+          <div class="hint" id="modelCount"></div>
           <div class="hint" id="modelNote"></div>
         </div>
         <div class="row2">
@@ -517,6 +530,7 @@
 
 <script>
 // 2026년 기준 vLLM으로 자주 배포되는 최신 모델 스펙 (HuggingFace config.json 기준 근사치)
+/* legacy preset block replaced by runtime loader
 const MODEL_PRESETS = [
   {name:"Qwen3-8B (기본값)", layers:36, kvheads:8, headdim:128, params:8.2, note:"", hfId:"Qwen/Qwen3-8B"},
   {name:"Qwen3-14B", layers:40, kvheads:8, headdim:128, params:14.8, note:"", hfId:"Qwen/Qwen3-14B"},
@@ -594,6 +608,80 @@ const MODEL_PRESETS = [
   {name:"Qwen3.5-122B-A10B", layers:48, kvheads:2, headdim:256, params:122, note:"MoE model: total parameters are used for weight memory. Linear attention; KV cache estimate is approximate.", hfId:"Qwen/Qwen3.5-122B-A10B"},
   {name:"Step 3.5 Flash", layers:45, kvheads:8, headdim:128, params:196.81, note:"MoE model: total parameters are used for weight memory.", hfId:"stepfun-ai/Step-3.5-Flash"},
 ];
+*/
+let MODEL_PRESETS = [];
+const MODEL_PRESET_GROUPS = [
+  {key:"0-1", label:"0-1B"},
+  {key:"1-3", label:"1-3B"},
+  {key:"3-7", label:"3-7B"},
+  {key:"7-14", label:"7-14B"},
+  {key:"14-30", label:"14-30B"},
+  {key:"30+", label:"30B+"},
+];
+
+function modelBucket(params){
+  if (params < 1) return "0-1";
+  if (params < 3) return "1-3";
+  if (params < 7) return "3-7";
+  if (params < 14) return "7-14";
+  if (params < 30) return "14-30";
+  return "30+";
+}
+
+function modelOptionLabel(m){
+  const p = Number.isFinite(m.params) ? (Number.isInteger(m.params) ? String(m.params) : m.params.toFixed(1).replace(/\.0$/, "")) : "?";
+  return `${m.name} · ${p}B · ${m.hfId}`;
+}
+
+async function loadModelPresets(){
+  const res = await fetch('./model-presets.json', {cache:'no-cache'});
+  if (!res.ok) throw new Error(`모델 프리셋 파일을 불러오지 못했습니다: ${res.status}`);
+  MODEL_PRESETS = await res.json();
+}
+
+function filteredModelIndices(){
+  const q = (el('modelSearch')?.value || '').trim().toLowerCase();
+  const cat = el('modelCategory')?.value || 'all';
+  return MODEL_PRESETS.map((m, idx) => ({m, idx})).filter(({m})=>{
+    if (cat !== 'all' && modelBucket(m.params) !== cat) return false;
+    if (!q) return true;
+    const hay = `${m.name} ${m.hfId} ${m.note || ''}`.toLowerCase();
+    return hay.includes(q);
+  }).map(({idx})=>idx);
+}
+
+function renderModelPresetOptions(){
+  const sel = el('modelPreset');
+  if (!sel) return;
+  const current = Number(sel.value);
+  const indices = filteredModelIndices();
+  const groups = new Map();
+  indices.forEach(idx=>{
+    const m = MODEL_PRESETS[idx];
+    const key = modelBucket(m.params);
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push({idx, m});
+  });
+  const sortedGroups = MODEL_PRESET_GROUPS.map(g=>[g.key, groups.get(g.key) || []]).filter(([,items])=>items.length);
+  sel.innerHTML = sortedGroups.map(([key, items])=>{
+    const label = MODEL_PRESET_GROUPS.find(g=>g.key===key)?.label || key;
+    const opts = items.map(({idx, m})=>`<option value="${idx}"${idx === current ? ' selected' : ''}>${modelOptionLabel(m)}</option>`).join('');
+    return `<optgroup label="${label}">${opts}</optgroup>`;
+  }).join('') || '<option value="" disabled selected>검색 결과가 없습니다</option>';
+  const currentVisible = indices.includes(current);
+  if (!currentVisible && indices.length){
+    sel.value = String(indices[0]);
+  } else if (!currentVisible) {
+    sel.value = '';
+  }
+  const count = indices.length;
+  if (el('modelCount')) el('modelCount').textContent = `${count}개 오픈소스 모델`;
+}
+
+function syncModelPresetSelection(){
+  renderModelPresetOptions();
+  applyModelPreset();
+}
 
 // nvlinkDomain: NVLink/NVSwitch로 직접 묶일 수 있는 최대 GPU 대수 (이 범위를 넘는 TP는 노드 간 통신이 필요해짐)
 const GPU_PRESETS = [
@@ -1407,7 +1495,8 @@ function currentTabCode(){
 
 function applyModelPreset(){
   const idx = +el('modelPreset').value;
-  const m = MODEL_PRESETS[idx];
+  const m = MODEL_PRESETS[idx] || MODEL_PRESETS[0];
+  if (!m) return;
   el('layers').value = m.layers;
   el('params').value = m.params;
   el('kvheads').value = m.kvheads;
@@ -1427,10 +1516,15 @@ function buildTable(){
   el('tblBody').innerHTML = TABLE_ROWS.map(r=>`<tr><td class="param">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('');
 }
 
-function init(){
-  populateSelect(el('modelPreset'), MODEL_PRESETS, m=>m.name);
+async function init(){
+  await loadModelPresets();
   populateSelect(el('gpuPreset'), GPU_PRESETS, g=>g.name);
   populateSelect(el('workloadPreset'), WORKLOAD_PRESETS, w=>w.name);
+
+  const defaultModelIdx = MODEL_PRESETS.findIndex(m => m.hfId === 'Qwen/Qwen3.5-4B');
+  if (defaultModelIdx >= 0) el('modelPreset').value = String(defaultModelIdx);
+  renderModelPresetOptions();
+
   const defaultGpuIdx = GPU_PRESETS.findIndex(g=>g.name.includes('H100 80GB'));
   el('gpuPreset').value = defaultGpuIdx >= 0 ? defaultGpuIdx : 0;
   el('vramInput').value = GPU_PRESETS[+el('gpuPreset').value].vram;
@@ -1443,6 +1537,10 @@ function init(){
     compute();
   });
 
+  ['modelSearch','modelCategory'].forEach(id=>{
+    const ev = id === 'modelSearch' ? 'input' : 'change';
+    el(id).addEventListener(ev, ()=>{ renderModelPresetOptions(); applyModelPreset(); });
+  });
   el('modelPreset').addEventListener('change', applyModelPreset);
   el('gpuPreset').addEventListener('change', applyGpuPreset);
   ['tp','pp','blocksize','wdtype','kvdtype','interconnect'].forEach(id=> el(id).addEventListener('change', compute));
