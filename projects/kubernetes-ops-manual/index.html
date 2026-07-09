@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kubernetes Ops Manual</title>
+    <meta
+      name="description"
+      content="쿠버네티스 운영에 자주 쓰는 명령어를 상황별로 빠르게 찾는 실전형 매뉴얼."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero card">
+        <div class="hero-copy">
+          <div class="eyebrow">Kubernetes Ops Manual</div>
+          <h1>쿠버네티스 운영 명령을 10초 안에 찾는 매뉴얼</h1>
+          <p class="lede">
+            Pod, Node, Service, Storage, Helm, Kustomize, Runtime, etcd까지 운영자가 실제로
+            찾는 명령을 상황별로 정리한 실전형 레퍼런스입니다.
+          </p>
+
+          <div class="hero-actions">
+            <button class="button button-primary" data-scenario="crashloop">Pod 오류</button>
+            <button class="button button-secondary" data-scenario="node">Node 점검</button>
+            <button class="button button-secondary" data-scenario="pvc">PVC Pending</button>
+            <button class="button button-secondary" data-scenario="ingress">Ingress 404</button>
+            <button class="button button-secondary" data-scenario="rbac">권한 확인</button>
+          </div>
+
+          <div class="hero-chips">
+            <span class="chip">kubectl</span>
+            <span class="chip">helm</span>
+            <span class="chip">kustomize</span>
+            <span class="chip">crictl</span>
+            <span class="chip">etcdctl</span>
+          </div>
+        </div>
+
+        <div class="hero-panel">
+          <div class="panel-top">
+            <div>
+              <div class="panel-label">Quick search</div>
+              <h2>바로 찾기</h2>
+            </div>
+            <span class="panel-badge">Live</span>
+          </div>
+
+          <label class="search">
+            <span class="sr-only">명령어 검색</span>
+            <input
+              id="searchInput"
+              type="search"
+              placeholder="예: CrashLoopBackOff, PVC Pending, Ingress 404, etcd snapshot"
+              autocomplete="off"
+            />
+          </label>
+
+          <div class="keyword-strip">
+            <span>get / describe</span>
+            <span>apply / rollout</span>
+            <span>logs / exec</span>
+            <span>helm / kustomize</span>
+          </div>
+
+          <div class="panel-note">
+            조회와 변경, 위험 명령을 구분해서 보여주고, 각 카드 안에서 옵션과 예시를 바로
+            확인할 수 있습니다.
+          </div>
+        </div>
+      </section>
+
+      <section class="section card">
+        <div class="section-head">
+          <div>
+            <div class="section-label">Categories</div>
+            <h2>운영 흐름별 탐색</h2>
+          </div>
+          <span id="resultCount" class="result-count"></span>
+        </div>
+        <div id="categoryRow" class="category-row"></div>
+      </section>
+
+      <section class="section">
+        <div class="section-head compact">
+          <div>
+            <div class="section-label">Commands</div>
+            <h2 id="listTitle">쿠버네티스 운영 명령어</h2>
+          </div>
+          <button id="clearFilters" class="button button-secondary small">필터 초기화</button>
+        </div>
+        <div id="scenarioGrid" class="scenario-grid"></div>
+        <div id="commandSections" class="command-sections"></div>
+      </section>
+    </main>
+
+    <template id="commandTemplate">
+      <article class="command-card card">
+        <div class="card-head">
+          <div>
+            <div class="meta-row">
+              <span class="pill pill-category"></span>
+              <span class="pill pill-risk"></span>
+            </div>
+            <h3></h3>
+            <p class="summary"></p>
+          </div>
+          <button class="copy-button" type="button">Copy</button>
+        </div>
+
+        <div class="command-line">
+          <code></code>
+        </div>
+
+        <details class="command-details">
+          <summary>상세 정보 보기</summary>
+          <div class="details-grid">
+            <div class="detail-block">
+              <div class="block-head">
+                <strong>자주 쓰는 옵션</strong>
+                <span>운영에서 실제로 보는 옵션</span>
+              </div>
+              <div class="option-list"></div>
+            </div>
+
+            <div class="detail-block">
+              <div class="block-head">
+                <strong>실전 예시</strong>
+                <span>복사해서 바로 쓰는 패턴</span>
+              </div>
+              <div class="example-list"></div>
+            </div>
+
+            <div class="detail-block detail-wide warning-block">
+              <div class="block-head">
+                <strong>주의점</strong>
+                <span>운영 중 특히 조심할 부분</span>
+              </div>
+              <ul class="warning-list"></ul>
+            </div>
+
+            <div class="detail-block detail-wide">
+              <div class="block-head">
+                <strong>관련 명령</strong>
+                <span>같이 보면 좋은 명령</span>
+              </div>
+              <div class="related-row"></div>
+            </div>
+          </div>
+        </details>
+      </article>
+    </template>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

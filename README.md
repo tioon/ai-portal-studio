@@ -12,6 +12,8 @@ AI Portal Studio is a small collection of interactive tools and simulations.
   - Request generator for on-prem AI server needs.
 - [CKA Concept Atlas](https://tioon.github.io/ai-portal-studio/projects/cka-lab/)
   - Visual concept map for understanding Kubernetes fundamentals, workloads, networking, storage, and security.
+- [Kubernetes Ops Manual](https://tioon.github.io/ai-portal-studio/projects/kubernetes-ops-manual/)
+  - Operational Kubernetes command manual focused on fast lookup for kubectl, Helm, Kustomize, runtime, and etcd tasks.
 - [Linux Ops Manual](https://tioon.github.io/ai-portal-studio/projects/linux-ops-manual/)
   - Rocky Linux and Ubuntu command cheat sheet for server development and operations.
 
@@ -41,3 +43,17 @@ It focuses on:
 - Fast search for operational situations like disk pressure, service restarts, port checks, and log tracing
 
 The project lives at `projects/linux-ops-manual/` and is deployed as a static page inside the portal.
+
+## Kubernetes Ops Manual
+
+The Kubernetes Ops Manual project is an operations-focused command reference for everyday cluster work.
+
+It focuses on:
+
+- `kubectl` discovery, workloads, scheduling, networking, storage, config, and security
+- Helm and Kustomize workflows
+- Runtime inspection with `crictl` and `ctr`
+- `etcdctl` health checks and snapshots
+- Local cluster workflows for `kind` and `minikube`
+
+The project lives at `projects/kubernetes-ops-manual/` and is deployed as a static page inside the portal.
