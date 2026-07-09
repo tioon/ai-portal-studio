@@ -653,6 +653,27 @@ const VENDORS = [
   },
   {
     vendor: "Dell",
+    model: "PowerEdge R750",
+    badge: "proven baseline",
+    summary: "Dell 2U 범용 서버의 대표격으로, 안정적인 PCIe GPU 구성을 보기 좋습니다.",
+    fit: ["RTX6000Ada", "L4", "L40", "L40S", "A10", "A40", "A100"],
+    platforms: ["PCIe"],
+    capacityLevel: 2,
+    slotCapacity: 4,
+    powerBudget: "2 x 1600W",
+    powerBudgetW: 3200,
+    profileSupport: { lowProfile: true, fullHeight: true },
+    accent: ["#ffd27d", "#3a2610"],
+    specs: {
+      formFactor: "2U dual-socket",
+      pcie: "PCIe Gen4/Gen5 balanced expansion",
+      gpuClass: "general-purpose inference / mixed",
+      power: "Stable baseline for classic enterprise deployments",
+      serverNeed: "Good default 2U chassis for mainstream GPU builds"
+    }
+  },
+  {
+    vendor: "Dell",
     model: "PowerEdge R7615",
     badge: "AMD scale-out",
     summary: "GPU를 여러 대 붙이는 쪽으로 조금 더 확장성 있게 보는 AMD 2U 라인입니다.",
