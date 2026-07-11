@@ -95,6 +95,7 @@ const topicByCommandId = {
   free: "process",
   journalctl: "logs",
   tailgrep: "logs",
+  "vi-vim": "text",
   systemctl: "services",
   packages: "packages",
   firewall: "network-firewall",
@@ -879,6 +880,64 @@ const COMMANDS = [
     }
   },
   {
+    id: "vi-vim",
+    category: "text",
+    title: "vi / vim",
+    summary: "운영 서버에서 가장 자주 여는 편집기. 저장, 검색, 치환, 복구까지 한 번에 익혀두면 편합니다.",
+    command: "vi /etc/ssh/sshd_config",
+    keywords: ["vi", "vim", "editor", "save", "quit", "search", "replace", "config"],
+    variants: {
+      rocky: {
+        options: [
+          { flag: "i / a / o", desc: "삽입 모드로 진입, 현재 위치 뒤/다음 줄에 입력" },
+          { flag: "Esc", desc: "명령 모드로 복귀" },
+          { flag: ":wq", desc: "저장 후 종료" },
+          { flag: ":q!", desc: "저장하지 않고 종료" },
+          { flag: "/pattern", desc: "문자열 검색" },
+          { flag: ":%s/old/new/gc", desc: "전체 치환, 확인 후 적용" },
+          { flag: ":set number", desc: "줄 번호 표시" },
+          { flag: "u / Ctrl-r", desc: "되돌리기 / 다시 실행" }
+        ],
+        examples: [
+          { label: "설정 파일 열기", code: "vi /etc/ssh/sshd_config" },
+          { label: "특정 문자열 검색", code: "/PermitRootLogin" },
+          { label: "전체 치환", code: ":%s/old_value/new_value/gc" },
+          { label: "줄 번호 켜기", code: ":set number" }
+        ],
+        diff: "Rocky는 vim-minimal 또는 vim-enhanced 조합을 쓰는 경우가 많아, `vi`가 생각보다 심플할 수 있습니다.",
+        warnings: [
+          "명령 모드와 입력 모드를 헷갈리면 저장이 안 되거나 엉뚱한 문자가 들어갑니다.",
+          "원격 서버에서 설정 파일을 바꿀 때는 `:q!`로 빠져나올 수 있는지 먼저 익혀두세요.",
+          "대형 파일은 `vi`보다 `less`로 먼저 훑고 수정 범위를 좁히는 편이 안전합니다."
+        ]
+      },
+      ubuntu: {
+        options: [
+          { flag: "i / a / o", desc: "삽입 모드로 진입, 현재 위치 뒤/다음 줄에 입력" },
+          { flag: "Esc", desc: "명령 모드로 복귀" },
+          { flag: ":wq", desc: "저장 후 종료" },
+          { flag: ":q!", desc: "저장하지 않고 종료" },
+          { flag: "/pattern", desc: "문자열 검색" },
+          { flag: ":%s/old/new/gc", desc: "전체 치환, 확인 후 적용" },
+          { flag: ":set number", desc: "줄 번호 표시" },
+          { flag: "u / Ctrl-r", desc: "되돌리기 / 다시 실행" }
+        ],
+        examples: [
+          { label: "설정 파일 열기", code: "vi /etc/ssh/sshd_config" },
+          { label: "특정 문자열 검색", code: "/PasswordAuthentication" },
+          { label: "전체 치환", code: ":%s/old_value/new_value/gc" },
+          { label: "줄 번호 켜기", code: ":set number" }
+        ],
+        diff: "Ubuntu에서는 `vi`가 `vim-tiny` 또는 `vim` 링크인 경우가 많아, 배포판 기본 설정에 따라 기능 차이가 납니다.",
+        warnings: [
+          "명령 모드와 입력 모드를 헷갈리면 저장이 안 되거나 엉뚱한 문자가 들어갑니다.",
+          "원격 서버에서 설정 파일을 바꿀 때는 `:q!`로 빠져나올 수 있는지 먼저 익혀두세요.",
+          "대형 파일은 `vi`보다 `less`로 먼저 훑고 수정 범위를 좁히는 편이 안전합니다."
+        ]
+      }
+    }
+  },
+  {
     id: "systemctl",
     category: "services",
     title: "systemctl",
@@ -1650,37 +1709,59 @@ const COMMANDS = [
     id: "top-htop",
     category: "process",
     title: "top / htop",
-    summary: "실시간 CPU, 메모리, 프로세스 점검의 기본 조합입니다.",
+    summary: "실시간 CPU, 메모리, 스레드, 프로세스 정렬을 빠르게 바꾸는 모니터링 조합입니다.",
     command: "top && htop",
     keywords: ["cpu", "memory", "process", "live", "interactive"],
     variants: {
       rocky: {
         options: [
+          { flag: "top", desc: "실시간 보기" },
           { flag: "top -o %MEM", desc: "메모리 순 정렬" },
           { flag: "top -o %CPU", desc: "CPU 순 정렬" },
+          { flag: "top -u nginx", desc: "특정 사용자 프로세스만 보기" },
+          { flag: "top -p <pid>", desc: "지정 PID만 추적" },
+          { flag: "top -b -n 1", desc: "배치 모드로 한 번만 출력" },
           { flag: "htop F5", desc: "트리 보기" },
+          { flag: "htop F6", desc: "정렬 기준 변경" },
           { flag: "htop F9", desc: "프로세스 종료" }
         ],
         examples: [
           { label: "메모리 높은 프로세스", code: "top -o %MEM" },
+          { label: "CPU 높은 프로세스", code: "top -o %CPU" },
+          { label: "특정 프로세스만 보기", code: "top -p 1234" },
           { label: "트리 형태 보기", code: "htop" }
         ],
-        diff: "Rocky는 htop이 기본 설치가 아닐 수 있습니다.",
-        warnings: ["배치형 점검은 `ps`와 함께 보는 편이 더 정확할 수 있습니다."]
+        diff: "Rocky는 htop이 기본 설치가 아닐 수 있어서 `dnf install htop` 또는 EPEL 추가가 필요할 수 있습니다.",
+        warnings: [
+          "`top` 화면에서는 `P`로 CPU 정렬, `M`으로 메모리 정렬, `H`로 스레드 표시를 즉시 바꿀 수 있습니다.",
+          "배치형 점검은 `top -b -n 1 | head -n 30`처럼 잘라서 보는 편이 로그 스크립트에 더 적합합니다.",
+          "프로세스 종료는 `k`를 누르면 되지만, 운영 중에는 `systemctl`로 서비스 단위부터 확인하는 게 안전합니다."
+        ]
       },
       ubuntu: {
         options: [
+          { flag: "top", desc: "실시간 보기" },
           { flag: "top -o %MEM", desc: "메모리 순 정렬" },
           { flag: "top -o %CPU", desc: "CPU 순 정렬" },
+          { flag: "top -u nginx", desc: "특정 사용자 프로세스만 보기" },
+          { flag: "top -p <pid>", desc: "지정 PID만 추적" },
+          { flag: "top -b -n 1", desc: "배치 모드로 한 번만 출력" },
           { flag: "htop F5", desc: "트리 보기" },
+          { flag: "htop F6", desc: "정렬 기준 변경" },
           { flag: "htop F9", desc: "프로세스 종료" }
         ],
         examples: [
           { label: "메모리 높은 프로세스", code: "top -o %MEM" },
+          { label: "CPU 높은 프로세스", code: "top -o %CPU" },
+          { label: "특정 프로세스만 보기", code: "top -p 1234" },
           { label: "트리 형태 보기", code: "htop" }
         ],
-        diff: "Ubuntu는 htop 설치가 비교적 간단합니다.",
-        warnings: ["배치형 점검은 `ps`와 함께 보는 편이 더 정확할 수 있습니다."]
+        diff: "Ubuntu는 htop 설치가 비교적 간단하고, 서버 에디션에서도 인터랙티브 진단에 많이 씁니다.",
+        warnings: [
+          "`top` 화면에서는 `P`로 CPU 정렬, `M`으로 메모리 정렬, `H`로 스레드 표시를 즉시 바꿀 수 있습니다.",
+          "배치형 점검은 `top -b -n 1 | head -n 30`처럼 잘라서 보는 편이 로그 스크립트에 더 적합합니다.",
+          "프로세스 종료는 `k`를 누르면 되지만, 운영 중에는 `systemctl`로 서비스 단위부터 확인하는 게 안전합니다."
+        ]
       }
     }
   },
