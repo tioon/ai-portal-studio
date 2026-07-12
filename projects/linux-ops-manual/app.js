@@ -5518,7 +5518,8 @@ function getCommandTopic(command) {
 function getCommandDisplay(command, distro) {
   const override = displayOverrides[command.id]?.[distro];
   return {
-    title: override?.title || command.title,
+    title: command.title,
+    searchTitle: override?.title || command.title,
     command: override?.command || command.command
   };
 }
@@ -5531,6 +5532,7 @@ function getVisibleCommands() {
     const display = getCommandDisplay(command, state.distro);
     const haystack = [
       display.title,
+      display.searchTitle,
       command.summary,
       display.command,
       command.category,
