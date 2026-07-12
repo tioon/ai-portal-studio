@@ -761,6 +761,17 @@ function selectedWeightGB(model){
   return baseWeightGB * quantizationWeightFactor(el('wdtype')?.value);
 }
 
+function selectedModelPreset(){
+  return MODEL_PRESETS[+el('modelPreset').value] || MODEL_PRESETS[0];
+}
+
+function selectedModelId(){
+  const presetId = selectedModelPreset()?.hfId?.trim();
+  const manualId = el('hfModelId')?.value.trim();
+  if (manualId && presetId && manualId !== presetId) return manualId;
+  return presetId || manualId || 'Qwen/Qwen3-8B';
+}
+
 async function loadModelPresets(){
   const res = await fetch('./model-presets.json', {cache:'no-cache'});
   if (!res.ok) throw new Error(`모델 프리셋 파일을 불러오지 못했습니다: ${res.status}`);
@@ -1296,14 +1307,17 @@ function compute(){
   if (el('hfModelId')){
     lastDeployCfg = {tp, pp, totalGpus, vram, nvlinkDomain, util, maxlen, maxseqs, maxbatch,
       blockSize, wdtypeRaw: el('wdtype').value, kvdtypeRaw: el('kvdtype').value, eager, cpuOffloadGB, swapGB,
-      kvOverrideOn, kvOverrideGB};
+      kvOverrideOn, kvOverrideGB, modelId: selectedModelId()};
     updateDeployCommands(lastDeployCfg);
   }
 }
 
 let lastDeployCfg = null;
 function refreshDeployOnly(){
-  if (lastDeployCfg) updateDeployCommands(lastDeployCfg);
+  if (lastDeployCfg){
+    lastDeployCfg.modelId = selectedModelId();
+    updateDeployCommands(lastDeployCfg);
+  }
 }
 
 // ---------- 배포 명령어(vLLM CLI / Docker / Kubernetes) 자동 생성 ----------
@@ -1349,7 +1363,7 @@ function isGatedModel(modelId){
 }
 
 function buildCliCommand(cfg){
-  const model = el('hfModelId').value.trim() || 'Qwen/Qwen3-8B';
+  const model = cfg.modelId || selectedModelId();
   const version = el('vllmVersion').value;
   const port = +el('servePort').value || 8000;
   const flags = buildEngineArgFlags(cfg);
@@ -1386,7 +1400,7 @@ function buildCliCommand(cfg){
 }
 
 function buildDockerCommand(cfg){
-  const model = el('hfModelId').value.trim() || 'Qwen/Qwen3-8B';
+  const model = cfg.modelId || selectedModelId();
   const version = el('vllmVersion').value;
   const port = +el('servePort').value || 8000;
   const format = el('dockerFormat').value;
@@ -1452,7 +1466,7 @@ function buildDockerCommand(cfg){
 }
 
 function buildK8sManifest(cfg){
-  const model = el('hfModelId').value.trim() || 'Qwen/Qwen3-8B';
+  const model = cfg.modelId || selectedModelId();
   const version = el('vllmVersion').value;
   const port = +el('servePort').value || 8000;
   const format = el('k8sFormat').value;
@@ -1639,6 +1653,10 @@ function applyModelPreset(){
     ? '프리셋 기본 가중치를 넣었습니다. 양자화 dtype을 바꾸면 VRAM 계산용 가중치도 함께 보정됩니다.'
     : '직접 입력 모델은 가중치를 직접 넣어야 합니다. 양자화 dtype을 바꾸면 VRAM 계산용 가중치도 함께 보정됩니다.';
   if (el('hfModelId') && m.hfId) el('hfModelId').value = m.hfId;
+  if (lastDeployCfg){
+    lastDeployCfg.modelId = selectedModelId();
+    updateDeployCommands(lastDeployCfg);
+  }
   compute();
 }
 
