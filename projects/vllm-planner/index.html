@@ -242,8 +242,7 @@
             </summary>
             <div class="accordion-body">
               <div class="field">
-                <div class="row2" style="grid-template-columns:1.5fr 0.9fr; gap:8px; margin-bottom:8px;">
-                  <input type="search" id="modelSearch" placeholder="모델명, provider, HF id 검색">
+                <div class="row2" style="grid-template-columns:1fr 0.9fr; gap:8px; margin-bottom:8px;">
                   <select id="modelCategory">
                     <option value="all" selected>전체 카테고리</option>
                     <option value="0-1">0-1B</option>
@@ -762,13 +761,10 @@ async function loadModelPresets(){
 }
 
 function filteredModelIndices(){
-  const q = (el('modelSearch')?.value || '').trim().toLowerCase();
   const cat = el('modelCategory')?.value || 'all';
   return MODEL_PRESETS.map((m, idx) => ({m, idx})).filter(({m})=>{
     if (cat !== 'all' && modelBucket(m.params) !== cat) return false;
-    if (!q) return true;
-    const hay = `${m.name} ${m.hfId} ${m.note || ''}`.toLowerCase();
-    return hay.includes(q);
+    return true;
   }).map(({idx})=>idx);
 }
 
@@ -1670,9 +1666,9 @@ async function init(){
     compute();
   });
 
-  ['modelSearch','modelCategory'].forEach(id=>{
-    const ev = id === 'modelSearch' ? 'input' : 'change';
-    el(id).addEventListener(ev, ()=>{
+  ['modelCategory'].forEach(id=>{
+    const ev = 'change';
+      el(id).addEventListener(ev, ()=>{
       const prev = el('modelPreset').value;
       renderModelPresetOptions();
       if (el('modelPreset').value !== prev) applyModelPreset();
