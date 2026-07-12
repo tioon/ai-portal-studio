@@ -605,6 +605,184 @@ const viCommonWarnings = [
   "`vi`가 너무 빈약하면 `vim-minimal`, `vim-enhanced`, `vim-tiny` 설치 상태를 같이 확인하세요."
 ];
 
+const fileBasicOptions = [
+  { flag: "cp", desc: "파일/디렉토리 복사" },
+  { flag: "mv", desc: "파일 이동 또는 이름 변경" },
+  { flag: "rm", desc: "파일 삭제" },
+  { flag: "mkdir", desc: "디렉토리 생성" },
+  { flag: "rmdir", desc: "빈 디렉토리 삭제" },
+  { flag: "touch", desc: "빈 파일 생성 또는 타임스탬프 갱신" }
+];
+
+const fileBasicExamples = [
+  { label: "파일 복사", code: "cp -av src/ dst/" },
+  { label: "이름 변경", code: "mv old.conf new.conf" },
+  { label: "안전 삭제", code: "rm -i file.txt" },
+  { label: "디렉토리 생성", code: "mkdir -p /tmp/demo/cache" },
+  { label: "빈 파일 생성", code: "touch app.log" }
+];
+
+const fileMetaOptions = [
+  { flag: "cat", desc: "파일 내용 출력" },
+  { flag: "pwd", desc: "현재 작업 디렉토리 출력" },
+  { flag: "ln -s", desc: "심볼릭 링크 생성" },
+  { flag: "chgrp", desc: "그룹 소유권 변경" }
+];
+
+const fileMetaExamples = [
+  { label: "파일 내용 보기", code: "cat /etc/os-release" },
+  { label: "현재 위치 확인", code: "pwd" },
+  { label: "링크 생성", code: "ln -s /var/log/messages latest.log" },
+  { label: "그룹 변경", code: "chgrp wheel file.txt" }
+];
+
+const shellHelpOptions = [
+  { flag: "man", desc: "매뉴얼 페이지 보기" },
+  { flag: "history", desc: "명령 기록 확인" },
+  { flag: "alias", desc: "명령 별칭 등록" },
+  { flag: "type", desc: "명령 종류와 위치 확인" },
+  { flag: "apropos", desc: "키워드로 man 검색" },
+  { flag: "help", desc: "셸 내장 명령 도움말" },
+  { flag: "printf", desc: "형식화된 문자열 출력" }
+];
+
+const shellHelpExamples = [
+  { label: "ls 매뉴얼", code: "man ls" },
+  { label: "최근 기록", code: "history | tail" },
+  { label: "별칭 등록", code: "alias ll='ls -alh'" },
+  { label: "명령 종류 확인", code: "type -a ls" },
+  { label: "키워드 검색", code: "apropos ssh" },
+  { label: "셸 도움말", code: "help cd" }
+];
+
+const textEditOptions = [
+  { flag: "diff -u", desc: "두 파일 차이 비교" },
+  { flag: "patch", desc: "패치 파일 적용" },
+  { flag: "tee", desc: "화면과 파일에 동시에 출력" },
+  { flag: "tr", desc: "문자 단위 변환/삭제" },
+  { flag: "nl", desc: "줄 번호 추가" },
+  { flag: "paste", desc: "열 단위로 합치기" },
+  { flag: "split", desc: "파일 분할" },
+  { flag: "join", desc: "공통 키 기준 병합" },
+  { flag: "comm", desc: "정렬된 두 파일 비교" }
+];
+
+const textEditExamples = [
+  { label: "차이 확인", code: "diff -u old.conf new.conf" },
+  { label: "패치 적용", code: "patch -p1 < fix.patch" },
+  { label: "출력 저장", code: "make 2>&1 | tee build.log" },
+  { label: "문자 변환", code: "tr '[:lower:]' '[:upper:]'" },
+  { label: "줄 번호 추가", code: "nl -ba file.txt" },
+  { label: "열 합치기", code: "paste file1 file2" },
+  { label: "파일 분할", code: "split -l 100 bigfile" },
+  { label: "파일 병합", code: "join -t: file1 file2" },
+  { label: "차집합 비교", code: "comm -3 file1 file2" }
+];
+
+const networkLegacyOptions = [
+  { flag: "ifconfig", desc: "인터페이스 설정 확인" },
+  { flag: "netstat", desc: "소켓/포트 상태 확인" },
+  { flag: "route", desc: "라우팅 테이블 확인" },
+  { flag: "arp", desc: "ARP 캐시 확인" },
+  { flag: "host", desc: "DNS 조회" },
+  { flag: "telnet", desc: "포트 연결 테스트" },
+  { flag: "iperf3", desc: "대역폭 측정" }
+];
+
+const networkLegacyExamples = [
+  { label: "인터페이스 확인", code: "ifconfig -a" },
+  { label: "포트 목록", code: "netstat -tulnp" },
+  { label: "라우팅 확인", code: "route -n" },
+  { label: "ARP 확인", code: "arp -a" },
+  { label: "DNS 확인", code: "host example.com" },
+  { label: "포트 점검", code: "telnet host 443" },
+  { label: "대역폭 측정", code: "iperf3 -c server" }
+];
+
+const firewallLegacyOptions = [
+  { flag: "iptables", desc: "기존 리눅스 방화벽 규칙" },
+  { flag: "nft", desc: "차세대 방화벽 규칙" }
+];
+
+const firewallLegacyExamples = [
+  { label: "iptables 규칙", code: "iptables -L -n -v" },
+  { label: "nft 규칙", code: "nft list ruleset" }
+];
+
+const packageLegacyOptions = [
+  { flag: "yum", desc: "RHEL 계열 구 패키지 도구" },
+  { flag: "apt-get", desc: "APT 저수준 패키지 도구" },
+  { flag: "apt list", desc: "패키지 목록 조회" },
+  { flag: "rpm -q", desc: "RPM 패키지 조회" },
+  { flag: "dpkg -S", desc: "파일이 속한 패키지 조회" },
+  { flag: "zypper", desc: "SUSE 패키지 도구" },
+  { flag: "pacman", desc: "Arch 패키지 도구" },
+  { flag: "snap", desc: "Snap 패키지 관리" },
+  { flag: "flatpak", desc: "Flatpak 애플리케이션 관리" }
+];
+
+const packageLegacyExamples = [
+  { label: "YUM 설치", code: "yum install pkg" },
+  { label: "APT 설치", code: "apt-get update && apt-get install -y pkg" },
+  { label: "설치 목록", code: "apt list --installed" },
+  { label: "RPM 조회", code: "rpm -q nginx" },
+  { label: "파일 소유 패키지", code: "dpkg -S /usr/bin/ls" },
+  { label: "zypper 검색", code: "zypper search nginx" },
+  { label: "pacman 검색", code: "pacman -Ss nginx" },
+  { label: "snap 목록", code: "snap list" },
+  { label: "flatpak 목록", code: "flatpak list" }
+];
+
+const serviceLegacyOptions = [
+  { flag: "service", desc: "SysV 스타일 서비스 관리" },
+  { flag: "chkconfig", desc: "부팅 자동 시작 관리" },
+  { flag: "logger", desc: "syslog에 메시지 기록" },
+  { flag: "sestatus", desc: "SELinux 상태 확인" },
+  { flag: "setenforce", desc: "SELinux 강제 모드 전환" }
+];
+
+const serviceLegacyExamples = [
+  { label: "서비스 상태", code: "service nginx status" },
+  { label: "자동 시작", code: "chkconfig nginx on" },
+  { label: "로그 기록", code: "logger 'deploy finished'" },
+  { label: "SELinux 상태", code: "sestatus" },
+  { label: "SELinux 완화", code: "setenforce 0" }
+];
+
+const processLegacyOptions = [
+  { flag: "pidof", desc: "프로세스 PID 조회" },
+  { flag: "pstree", desc: "프로세스 트리 확인" },
+  { flag: "perf", desc: "성능 카운터/프로파일링" },
+  { flag: "ltrace", desc: "라이브러리 호출 추적" }
+];
+
+const processLegacyExamples = [
+  { label: "PID 찾기", code: "pidof nginx" },
+  { label: "트리 보기", code: "pstree -ap" },
+  { label: "성능 샘플링", code: "perf top" },
+  { label: "라이브러리 추적", code: "ltrace -p <pid>" }
+];
+
+const fsLegacyOptions = [
+  { flag: "tune2fs", desc: "ext2/3/4 파일시스템 튜닝" },
+  { flag: "xfs_info", desc: "XFS 정보 확인" },
+  { flag: "xfs_admin", desc: "XFS 관리자 작업" },
+  { flag: "mdadm", desc: "RAID 어레이 관리" },
+  { flag: "btrfs", desc: "Btrfs 관리" },
+  { flag: "fstrim", desc: "SSD/TRIM 실행" },
+  { flag: "blkdiscard", desc: "블록 장치 데이터 폐기" }
+];
+
+const fsLegacyExamples = [
+  { label: "ext4 튜닝", code: "tune2fs -l /dev/sda1" },
+  { label: "XFS 정보", code: "xfs_info /dev/sda1" },
+  { label: "XFS 관리자", code: "xfs_admin -u /dev/sda1" },
+  { label: "RAID 확인", code: "mdadm --detail /dev/md0" },
+  { label: "Btrfs 확인", code: "btrfs filesystem show" },
+  { label: "TRIM 실행", code: "fstrim -av" },
+  { label: "장치 폐기", code: "blkdiscard /dev/nvme0n1" }
+];
+
 const COMMANDS = [
   {
     id: "uname",
@@ -5544,6 +5722,236 @@ const COMMANDS = [
         ],
         diff: "Ubuntu에서도 동일합니다.",
         warnings: ["출력은 검증되지 않으므로 신뢰할 수 있는 채널로 비교해야 합니다."]
+      }
+    }
+  },
+  {
+    id: "file-basic",
+    category: "filesystem",
+    title: "cp / mv / rm / mkdir / rmdir / touch",
+    summary: "파일과 디렉토리를 만들고, 옮기고, 지우는 가장 기본적인 작업들입니다.",
+    command: "cp -av src/ dst/ && mv old new && rm -i file",
+    keywords: ["copy", "move", "remove", "create directory", "touch", "file ops"],
+    variants: {
+      rocky: {
+        options: fileBasicOptions,
+        examples: fileBasicExamples,
+        diff: "공통 명령이지만 `rm`은 특히 운영 서버에서 조심해서 써야 합니다.",
+        warnings: ["`rm`은 기본적으로 되돌리기 어렵습니다. 중요한 파일은 삭제 전에 반드시 확인하세요."]
+      },
+      ubuntu: {
+        options: fileBasicOptions,
+        examples: fileBasicExamples,
+        diff: "Ubuntu에서도 동일하지만, `rm -i`처럼 확인 프롬프트를 붙이는 습관이 안전합니다.",
+        warnings: ["`rm`은 기본적으로 되돌리기 어렵습니다. 중요한 파일은 삭제 전에 반드시 확인하세요."]
+      }
+    }
+  },
+  {
+    id: "file-meta",
+    category: "filesystem",
+    title: "cat / pwd / ln / chgrp",
+    summary: "파일 내용을 보고 현재 위치를 확인하고 링크와 그룹을 다룹니다.",
+    command: "cat /etc/os-release && pwd",
+    keywords: ["cat", "pwd", "link", "chgrp", "metadata"],
+    variants: {
+      rocky: {
+        options: fileMetaOptions,
+        examples: fileMetaExamples,
+        diff: "링크와 그룹 변경은 권한과 소유권을 같이 보면서 다루는 게 좋습니다.",
+        warnings: ["`cat`으로 큰 파일을 한 번에 열면 터미널이 금방 지저분해질 수 있습니다."]
+      },
+      ubuntu: {
+        options: fileMetaOptions,
+        examples: fileMetaExamples,
+        diff: "Ubuntu에서도 동일합니다.",
+        warnings: ["`cat`으로 큰 파일을 한 번에 열면 터미널이 금방 지저분해질 수 있습니다."]
+      }
+    }
+  },
+  {
+    id: "shell-help",
+    category: "system",
+    title: "man / history / alias / type / apropos / help / printf",
+    summary: "셸과 기본 도구를 빠르게 배우고 찾고 반복할 때 필요한 보조 명령들입니다.",
+    command: "man ls && history | tail",
+    keywords: ["manual", "history", "alias", "builtin", "help", "apropos", "printf"],
+    variants: {
+      rocky: {
+        options: shellHelpOptions,
+        examples: shellHelpExamples,
+        diff: "도구 이름을 잘 모를 때는 `apropos`가 특히 유용합니다.",
+        warnings: ["`help`는 셸 내장 명령에만 적용됩니다. 외부 명령은 `man`을 먼저 보세요."]
+      },
+      ubuntu: {
+        options: shellHelpOptions,
+        examples: shellHelpExamples,
+        diff: "Ubuntu도 동일하지만, 일부 패키지는 `man`이 따로 설치돼 있어야 합니다.",
+        warnings: ["`help`는 셸 내장 명령에만 적용됩니다. 외부 명령은 `man`을 먼저 보세요."]
+      }
+    }
+  },
+  {
+    id: "text-edit",
+    category: "text",
+    title: "diff / patch / tee / tr / nl / paste / split / join / comm",
+    summary: "파일 비교, 패치 적용, 출력 분기, 문자 변환, 파일 합치기와 분할을 다룹니다.",
+    command: "diff -u old.conf new.conf && patch -p1 < fix.patch",
+    keywords: ["compare", "patch", "tee", "tr", "paste", "split", "join", "comm"],
+    variants: {
+      rocky: {
+        options: textEditOptions,
+        examples: textEditExamples,
+        diff: "로그와 설정 파일을 다룰 때 가장 자주 조합하는 텍스트 도구들입니다.",
+        warnings: ["`patch`는 파일 경로와 패치 레벨이 맞지 않으면 실패하니 적용 전에 꼭 확인하세요."]
+      },
+      ubuntu: {
+        options: textEditOptions,
+        examples: textEditExamples,
+        diff: "Ubuntu도 동일합니다.",
+        warnings: ["`patch`는 파일 경로와 패치 레벨이 맞지 않으면 실패하니 적용 전에 꼭 확인하세요."]
+      }
+    }
+  },
+  {
+    id: "network-legacy",
+    category: "network-diagnostics",
+    title: "ifconfig / netstat / route / arp / host / telnet / iperf3",
+    summary: "구형 네트워크 도구와 대역폭 측정 도구를 함께 정리합니다.",
+    command: "ifconfig -a && netstat -tulnp && route -n",
+    keywords: ["ifconfig", "netstat", "route", "arp", "host", "telnet", "iperf3"],
+    variants: {
+      rocky: {
+        options: networkLegacyOptions,
+        examples: networkLegacyExamples,
+        diff: "Rocky에서는 `net-tools` 패키지가 없으면 `ifconfig`와 `netstat`가 안 보일 수 있습니다.",
+        warnings: ["새 시스템에서는 `ip`, `ss` 조합이 더 표준적입니다."]
+      },
+      ubuntu: {
+        options: networkLegacyOptions,
+        examples: networkLegacyExamples,
+        diff: "Ubuntu도 기본 설치에서는 일부 도구가 빠져 있을 수 있습니다.",
+        warnings: ["새 시스템에서는 `ip`, `ss` 조합이 더 표준적입니다."]
+      }
+    }
+  },
+  {
+    id: "firewall-legacy",
+    category: "network-firewall",
+    title: "iptables / nft",
+    summary: "전통적인 커널 방화벽 규칙과 nftables 규칙을 확인합니다.",
+    command: "iptables -L -n -v && nft list ruleset",
+    keywords: ["iptables", "nft", "firewall", "rules", "filter"],
+    variants: {
+      rocky: {
+        options: firewallLegacyOptions,
+        examples: firewallLegacyExamples,
+        diff: "Rocky 계열은 `firewalld` 뒤에서 `iptables`/`nft`가 어떻게 연결되는지 같이 봐야 합니다.",
+        warnings: ["규칙을 바꾸기 전에 현재 정책을 저장해 두는 게 안전합니다."]
+      },
+      ubuntu: {
+        options: firewallLegacyOptions,
+        examples: firewallLegacyExamples,
+        diff: "Ubuntu에서도 `ufw` 뒤에 실제로는 `nft`가 동작할 수 있습니다.",
+        warnings: ["규칙을 바꾸기 전에 현재 정책을 저장해 두는 게 안전합니다."]
+      }
+    }
+  },
+  {
+    id: "package-legacy",
+    category: "packages",
+    title: "yum / apt-get / apt list / rpm -q / dpkg -S / zypper / pacman / snap / flatpak",
+    summary: "배포판별 패키지 조회와 설치, 파일 소유 패키지 확인까지 넓게 정리합니다.",
+    command: "yum install pkg && apt-get install -y pkg && rpm -q nginx",
+    keywords: ["yum", "apt-get", "rpm", "dpkg", "zypper", "pacman", "snap", "flatpak"],
+    variants: {
+      rocky: {
+        options: packageLegacyOptions,
+        examples: packageLegacyExamples,
+        diff: "Rocky에서는 `dnf`가 기본이지만 `yum` 호환 습관도 여전히 많이 남아 있습니다.",
+        warnings: ["패키지 도구는 배포판마다 다릅니다. 한 번에 여러 문법을 섞어 쓰면 헷갈리기 쉽습니다."]
+      },
+      ubuntu: {
+        options: packageLegacyOptions,
+        examples: packageLegacyExamples,
+        diff: "Ubuntu는 `apt`/`apt-get` 중심이고, `rpm`/`yum`은 일반적으로 쓰지 않습니다.",
+        warnings: ["패키지 도구는 배포판마다 다릅니다. 한 번에 여러 문법을 섞어 쓰면 헷갈리기 쉽습니다."]
+      }
+    }
+  },
+  {
+    id: "service-legacy",
+    category: "services",
+    title: "service / chkconfig / logger / sestatus / setenforce",
+    summary: "구형 서비스 관리와 시스템 로그 기록, SELinux 상태 전환을 묶어서 봅니다.",
+    command: "service nginx status && logger 'deploy finished'",
+    keywords: ["service", "chkconfig", "logger", "sestatus", "setenforce", "selinux"],
+    variants: {
+      rocky: {
+        options: serviceLegacyOptions,
+        examples: serviceLegacyExamples,
+        diff: "Rocky는 `service`와 `chkconfig`가 아직도 설명 자료에서 자주 보입니다.",
+        warnings: ["`setenforce`는 정책을 바꾸는 명령이므로 임시 완화 후 원복 여부를 꼭 기억하세요."]
+      },
+      ubuntu: {
+        options: [
+          { flag: "service", desc: "서비스 상태/재시작 확인" },
+          { flag: "logger", desc: "syslog에 메시지 기록" },
+          { flag: "systemctl", desc: "서비스 관리 표준 명령" },
+          { flag: "aa-status", desc: "AppArmor 상태 확인" }
+        ],
+        examples: [
+          { label: "서비스 상태", code: "service nginx status" },
+          { label: "로그 기록", code: "logger 'deploy finished'" },
+          { label: "서비스 재시작", code: "systemctl restart nginx" },
+          { label: "AppArmor 상태", code: "aa-status" }
+        ],
+        diff: "Ubuntu에서는 `chkconfig`/`sestatus`/`setenforce`보다 `systemctl`과 AppArmor 계열을 더 자주 봅니다.",
+        warnings: ["Ubuntu에서는 SELinux 관련 명령이 기본값이 아닐 수 있습니다."]
+      }
+    }
+  },
+  {
+    id: "process-legacy",
+    category: "process",
+    title: "pidof / pstree / perf / ltrace",
+    summary: "프로세스 PID, 트리 구조, 성능 프로파일링, 라이브러리 호출 추적을 다룹니다.",
+    command: "pidof nginx && pstree -ap",
+    keywords: ["pid", "tree", "profile", "trace", "perf", "ltrace"],
+    variants: {
+      rocky: {
+        options: processLegacyOptions,
+        examples: processLegacyExamples,
+        diff: "문제 프로세스를 찾고 성능이나 호출 흐름을 더 파고들 때 유용합니다.",
+        warnings: ["`perf`와 `ltrace`는 권한과 커널 설정에 따라 제약이 있을 수 있습니다."]
+      },
+      ubuntu: {
+        options: processLegacyOptions,
+        examples: processLegacyExamples,
+        diff: "Ubuntu도 동일하지만 프로파일링 도구는 별도 패키지 설치가 필요할 수 있습니다.",
+        warnings: ["`perf`와 `ltrace`는 권한과 커널 설정에 따라 제약이 있을 수 있습니다."]
+      }
+    }
+  },
+  {
+    id: "fs-legacy",
+    category: "filesystem-advanced",
+    title: "tune2fs / xfs_info / xfs_admin / mdadm / btrfs / fstrim / blkdiscard",
+    summary: "파일시스템 상세 설정, RAID, Btrfs, SSD TRIM, 블록 폐기까지 묶어서 봅니다.",
+    command: "tune2fs -l /dev/sda1 && xfs_info /dev/sda1 && fstrim -av",
+    keywords: ["tune2fs", "xfs_info", "xfs_admin", "mdadm", "btrfs", "fstrim", "blkdiscard"],
+    variants: {
+      rocky: {
+        options: fsLegacyOptions,
+        examples: fsLegacyExamples,
+        diff: "XFS와 ext4가 많이 섞이는 환경에서 디스크 유지보수용으로 유용합니다.",
+        warnings: ["디스크 관련 명령은 대상 장치를 반드시 다시 확인하세요."]
+      },
+      ubuntu: {
+        options: fsLegacyOptions,
+        examples: fsLegacyExamples,
+        diff: "Ubuntu에서도 동일하지만, 설치 상태에 따라 일부 도구는 따로 패키지를 넣어야 할 수 있습니다.",
+        warnings: ["디스크 관련 명령은 대상 장치를 반드시 다시 확인하세요."]
       }
     }
   }
