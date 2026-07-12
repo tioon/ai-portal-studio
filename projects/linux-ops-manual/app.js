@@ -5553,6 +5553,14 @@ function normalizeText(value) {
   return String(value).toLowerCase();
 }
 
+function normalizeSearchText(value) {
+  return String(value)
+    .toLowerCase()
+    .replace(/[^a-z0-9가-힣]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function getCommandTopic(command) {
   return topicByCommandId[command.id] || command.category;
 }
@@ -5567,12 +5575,12 @@ function getCommandDisplay(command, distro) {
 }
 
 function getVisibleCommands() {
-  const term = normalizeText(state.search).trim();
+  const terms = normalizeSearchText(state.search).split(" ").filter(Boolean);
   const matched = COMMANDS.filter((command) => {
     const categoryMatch = state.category === "all" || getCommandTopic(command) === state.category;
     const variant = command.variants[state.distro];
     const display = getCommandDisplay(command, state.distro);
-    const haystack = [
+    const haystack = normalizeSearchText([
       display.title,
       display.searchTitle,
       command.summary,
@@ -5584,11 +5592,9 @@ function getVisibleCommands() {
       ...(variant.options || []).map((item) => `${item.flag} ${item.desc}`),
       ...(variant.examples || []).map((item) => `${item.label} ${item.code}`),
       ...(variant.warnings || [])
-    ]
-      .join(" ")
-      .toLowerCase();
+    ].join(" "));
 
-    const searchMatch = !term || haystack.includes(term);
+    const searchMatch = !terms.length || terms.every((term) => haystack.includes(term));
     return categoryMatch && searchMatch;
   });
 
