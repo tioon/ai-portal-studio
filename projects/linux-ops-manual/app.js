@@ -783,6 +783,59 @@ const fsLegacyExamples = [
   { label: "장치 폐기", code: "blkdiscard /dev/nvme0n1" }
 ];
 
+const topCommonOptions = [
+  { flag: "top", desc: "실시간 보기" },
+  { flag: "top -o %MEM", desc: "메모리 순 정렬" },
+  { flag: "top -o %CPU", desc: "CPU 순 정렬" },
+  { flag: "top -H", desc: "스레드까지 표시" },
+  { flag: "top -u user", desc: "특정 사용자 프로세스만 보기" },
+  { flag: "top -p <pid>", desc: "지정 PID만 추적" },
+  { flag: "top -d 1", desc: "1초 간격으로 갱신" },
+  { flag: "top -b -n 1", desc: "배치 모드로 한 번만 출력" },
+  { flag: "top -c", desc: "전체 명령행 표시" },
+  { flag: "P / M / T / 1", desc: "CPU / 메모리 / 시간 / 코어별 보기 전환" },
+  { flag: "k / r / f / o", desc: "프로세스 종료 / niceness 조정 / 필드 / 정렬" }
+];
+
+const topCommonExamples = [
+  { label: "메모리 높은 프로세스", code: "top -o %MEM" },
+  { label: "CPU 높은 프로세스", code: "top -o %CPU" },
+  { label: "특정 프로세스만 보기", code: "top -p 1234" },
+  { label: "스레드까지 보기", code: "top -H" },
+  { label: "배치 출력", code: "top -b -n 1 | head -n 30" },
+  { label: "명령행까지 보기", code: "top -c" }
+];
+
+const htopCommonOptions = [
+  { flag: "F1", desc: "도움말" },
+  { flag: "F2", desc: "설정" },
+  { flag: "F3", desc: "검색" },
+  { flag: "F4", desc: "필터" },
+  { flag: "F5", desc: "트리 보기" },
+  { flag: "F6", desc: "정렬 기준 변경" },
+  { flag: "F7 / F8", desc: "nice 값 낮춤 / 높임" },
+  { flag: "F9", desc: "프로세스 종료" },
+  { flag: "F10", desc: "종료" },
+  { flag: "u", desc: "사용자 기준 필터" },
+  { flag: "H", desc: "스레드 표시 전환" }
+];
+
+const htopCommonExamples = [
+  { label: "트리 형태 보기", code: "htop" },
+  { label: "검색", code: "F3" },
+  { label: "필터", code: "F4 nginx" },
+  { label: "트리 보기", code: "F5" },
+  { label: "정렬 바꾸기", code: "F6" },
+  { label: "프로세스 종료", code: "F9" }
+];
+
+const topCommonWarnings = [
+  "`top` 화면에서는 `P`로 CPU 정렬, `M`으로 메모리 정렬, `H`로 스레드 표시를 즉시 바꿀 수 있습니다.",
+  "배치형 점검은 `top -b -n 1 | head -n 30`처럼 잘라서 보는 편이 로그 스크립트에 더 적합합니다.",
+  "프로세스 종료는 `k`를 누르면 되지만, 운영 중에는 `systemctl`로 서비스 단위부터 확인하는 게 안전합니다.",
+  "`htop`은 기본 설치가 아닐 수 있어서 별도 패키지 설치가 필요할 수 있습니다."
+];
+
 const COMMANDS = [
   {
     id: "uname",
@@ -1931,57 +1984,19 @@ const COMMANDS = [
     title: "top / htop",
     summary: "실시간 CPU, 메모리, 스레드, 프로세스 정렬을 빠르게 바꾸는 모니터링 조합입니다.",
     command: "top && htop",
-    keywords: ["cpu", "memory", "process", "live", "interactive"],
+    keywords: ["cpu", "memory", "process", "live", "interactive", "load average", "thread", "nice"],
     variants: {
       rocky: {
-        options: [
-          { flag: "top", desc: "실시간 보기" },
-          { flag: "top -o %MEM", desc: "메모리 순 정렬" },
-          { flag: "top -o %CPU", desc: "CPU 순 정렬" },
-          { flag: "top -u nginx", desc: "특정 사용자 프로세스만 보기" },
-          { flag: "top -p <pid>", desc: "지정 PID만 추적" },
-          { flag: "top -b -n 1", desc: "배치 모드로 한 번만 출력" },
-          { flag: "htop F5", desc: "트리 보기" },
-          { flag: "htop F6", desc: "정렬 기준 변경" },
-          { flag: "htop F9", desc: "프로세스 종료" }
-        ],
-        examples: [
-          { label: "메모리 높은 프로세스", code: "top -o %MEM" },
-          { label: "CPU 높은 프로세스", code: "top -o %CPU" },
-          { label: "특정 프로세스만 보기", code: "top -p 1234" },
-          { label: "트리 형태 보기", code: "htop" }
-        ],
+        options: [...topCommonOptions, ...htopCommonOptions],
+        examples: [...topCommonExamples, ...htopCommonExamples],
         diff: "Rocky는 htop이 기본 설치가 아닐 수 있어서 `dnf install htop` 또는 EPEL 추가가 필요할 수 있습니다.",
-        warnings: [
-          "`top` 화면에서는 `P`로 CPU 정렬, `M`으로 메모리 정렬, `H`로 스레드 표시를 즉시 바꿀 수 있습니다.",
-          "배치형 점검은 `top -b -n 1 | head -n 30`처럼 잘라서 보는 편이 로그 스크립트에 더 적합합니다.",
-          "프로세스 종료는 `k`를 누르면 되지만, 운영 중에는 `systemctl`로 서비스 단위부터 확인하는 게 안전합니다."
-        ]
+        warnings: topCommonWarnings
       },
       ubuntu: {
-        options: [
-          { flag: "top", desc: "실시간 보기" },
-          { flag: "top -o %MEM", desc: "메모리 순 정렬" },
-          { flag: "top -o %CPU", desc: "CPU 순 정렬" },
-          { flag: "top -u nginx", desc: "특정 사용자 프로세스만 보기" },
-          { flag: "top -p <pid>", desc: "지정 PID만 추적" },
-          { flag: "top -b -n 1", desc: "배치 모드로 한 번만 출력" },
-          { flag: "htop F5", desc: "트리 보기" },
-          { flag: "htop F6", desc: "정렬 기준 변경" },
-          { flag: "htop F9", desc: "프로세스 종료" }
-        ],
-        examples: [
-          { label: "메모리 높은 프로세스", code: "top -o %MEM" },
-          { label: "CPU 높은 프로세스", code: "top -o %CPU" },
-          { label: "특정 프로세스만 보기", code: "top -p 1234" },
-          { label: "트리 형태 보기", code: "htop" }
-        ],
+        options: [...topCommonOptions, ...htopCommonOptions],
+        examples: [...topCommonExamples, ...htopCommonExamples],
         diff: "Ubuntu는 htop 설치가 비교적 간단하고, 서버 에디션에서도 인터랙티브 진단에 많이 씁니다.",
-        warnings: [
-          "`top` 화면에서는 `P`로 CPU 정렬, `M`으로 메모리 정렬, `H`로 스레드 표시를 즉시 바꿀 수 있습니다.",
-          "배치형 점검은 `top -b -n 1 | head -n 30`처럼 잘라서 보는 편이 로그 스크립트에 더 적합합니다.",
-          "프로세스 종료는 `k`를 누르면 되지만, 운영 중에는 `systemctl`로 서비스 단위부터 확인하는 게 안전합니다."
-        ]
+        warnings: topCommonWarnings
       }
     }
   },
