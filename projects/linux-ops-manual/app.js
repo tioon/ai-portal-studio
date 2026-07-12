@@ -1103,18 +1103,25 @@ const COMMANDS = [
     title: "journalctl",
     summary: "systemd 기반 로그를 날짜/서비스/레벨 단위로 추적합니다.",
     command: "journalctl -u nginx -f",
-    keywords: ["journal", "log", "systemd", "tail"],
+    keywords: ["journal", "log", "systemd", "tail", "boot", "priority", "identifier", "follow"],
     variants: {
       rocky: {
         options: [
           { flag: "-u nginx", desc: "특정 서비스 로그만 보기" },
           { flag: "-xe", desc: "에러 중심으로 보기" },
           { flag: "--since today", desc: "오늘 로그만 보기" },
+          { flag: "--since '1 hour ago'", desc: "최근 1시간 로그만 보기" },
+          { flag: "--until", desc: "종료 시각 지정" },
+          { flag: "-p err", desc: "에러 우선순위만 보기" },
+          { flag: "-t nginx", desc: "SYSLOG_IDENTIFIER 기준으로 보기" },
+          { flag: "-n 50", desc: "마지막 50줄만 보기" },
           { flag: "-f", desc: "실시간 추적" }
         ],
         examples: [
           { label: "최근 서비스 에러", code: "journalctl -u nginx --since today -p err" },
-          { label: "부팅 이후 전체", code: "journalctl -b" }
+          { label: "부팅 이후 전체", code: "journalctl -b" },
+          { label: "최근 1시간만", code: "journalctl -u nginx --since '1 hour ago'" },
+          { label: "식별자 기준", code: "journalctl -t nginx -n 50" }
         ],
         diff: "Rocky는 systemd/journalctl 조합이 장애 분석의 시작점입니다.",
         warnings: ["로그가 없다면 service 이름이 맞는지부터 확인하세요."]
@@ -1124,11 +1131,18 @@ const COMMANDS = [
           { flag: "-u nginx", desc: "특정 서비스 로그만 보기" },
           { flag: "-xe", desc: "에러 중심으로 보기" },
           { flag: "--since today", desc: "오늘 로그만 보기" },
+          { flag: "--since '1 hour ago'", desc: "최근 1시간 로그만 보기" },
+          { flag: "--until", desc: "종료 시각 지정" },
+          { flag: "-p err", desc: "에러 우선순위만 보기" },
+          { flag: "-t nginx", desc: "SYSLOG_IDENTIFIER 기준으로 보기" },
+          { flag: "-n 50", desc: "마지막 50줄만 보기" },
           { flag: "-f", desc: "실시간 추적" }
         ],
         examples: [
           { label: "최근 서비스 에러", code: "journalctl -u nginx --since today -p err" },
-          { label: "부팅 이후 전체", code: "journalctl -b" }
+          { label: "부팅 이후 전체", code: "journalctl -b" },
+          { label: "최근 1시간만", code: "journalctl -u nginx --since '1 hour ago'" },
+          { label: "식별자 기준", code: "journalctl -t nginx -n 50" }
         ],
         diff: "Ubuntu도 동일하지만, 서비스가 snap/unit 이름으로 등록될 수 있습니다.",
         warnings: ["로그가 없다면 service 이름이 맞는지부터 확인하세요."]
@@ -2857,7 +2871,7 @@ const COMMANDS = [
     title: "tcpdump",
     summary: "패킷을 캡처해서 네트워크 문제를 분석합니다.",
     command: "tcpdump -i eth0 port 443",
-    keywords: ["packet", "capture", "pcap", "traffic", "sniff"],
+    keywords: ["packet", "capture", "pcap", "traffic", "sniff", "host", "src", "dst", "server"],
     variants: {
       rocky: {
         options: [
@@ -2865,11 +2879,20 @@ const COMMANDS = [
           { flag: "-nn", desc: "호스트명/포트명 해석 없이 숫자로 표시" },
           { flag: "-s 0", desc: "패킷 전체 길이 캡처" },
           { flag: "-w", desc: "pcap 파일로 저장" },
-          { flag: "-A", desc: "ASCII로 payload 출력" }
+          { flag: "-A", desc: "ASCII로 payload 출력" },
+          { flag: "host 10.0.0.23", desc: "특정 서버와 주고받는 패킷만 보기" },
+          { flag: "src host / dst host", desc: "송신 / 수신 방향으로 필터링" },
+          { flag: "port 443", desc: "특정 포트만 보기" },
+          { flag: "src port / dst port", desc: "송신 / 수신 포트로 필터링" },
+          { flag: "tcp and port 443", desc: "TCP 443만 보기" }
         ],
         examples: [
           { label: "HTTPS 트래픽 캡처", code: "tcpdump -i eth0 port 443" },
-          { label: "파일로 저장", code: "tcpdump -i eth0 -w /tmp/capture.pcap" }
+          { label: "파일로 저장", code: "tcpdump -i eth0 -w /tmp/capture.pcap" },
+          { label: "다른 서버 요청 보기", code: "tcpdump -i eth0 host 10.0.0.23" },
+          { label: "특정 서버의 443 포트 요청", code: "tcpdump -i eth0 host 10.0.0.23 and port 443" },
+          { label: "송신 요청만 보기", code: "tcpdump -i eth0 src host 10.0.0.23" },
+          { label: "수신 응답만 보기", code: "tcpdump -i eth0 dst host 10.0.0.23" }
         ],
         diff: "Rocky는 방화벽/SELinux와 함께 보며, root 권한이 필요합니다.",
         warnings: ["민감한 데이터가 노출될 수 있으니 캡처 파일 관리를 조심하세요."]
@@ -2880,11 +2903,20 @@ const COMMANDS = [
           { flag: "-nn", desc: "호스트명/포트명 해석 없이 숫자로 표시" },
           { flag: "-s 0", desc: "패킷 전체 길이 캡처" },
           { flag: "-w", desc: "pcap 파일로 저장" },
-          { flag: "-A", desc: "ASCII로 payload 출력" }
+          { flag: "-A", desc: "ASCII로 payload 출력" },
+          { flag: "host 10.0.0.23", desc: "특정 서버와 주고받는 패킷만 보기" },
+          { flag: "src host / dst host", desc: "송신 / 수신 방향으로 필터링" },
+          { flag: "port 443", desc: "특정 포트만 보기" },
+          { flag: "src port / dst port", desc: "송신 / 수신 포트로 필터링" },
+          { flag: "tcp and port 443", desc: "TCP 443만 보기" }
         ],
         examples: [
           { label: "HTTPS 트래픽 캡처", code: "tcpdump -i eth0 port 443" },
-          { label: "파일로 저장", code: "tcpdump -i eth0 -w /tmp/capture.pcap" }
+          { label: "파일로 저장", code: "tcpdump -i eth0 -w /tmp/capture.pcap" },
+          { label: "다른 서버 요청 보기", code: "tcpdump -i eth0 host 10.0.0.23" },
+          { label: "특정 서버의 443 포트 요청", code: "tcpdump -i eth0 host 10.0.0.23 and port 443" },
+          { label: "송신 요청만 보기", code: "tcpdump -i eth0 src host 10.0.0.23" },
+          { label: "수신 응답만 보기", code: "tcpdump -i eth0 dst host 10.0.0.23" }
         ],
         diff: "Ubuntu도 동일하지만 AppArmor/권한을 같이 고려해야 합니다.",
         warnings: ["민감한 데이터가 노출될 수 있으니 캡처 파일 관리를 조심하세요."]
