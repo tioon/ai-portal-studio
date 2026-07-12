@@ -542,6 +542,69 @@ const displayOverrides = {
   }
 };
 
+const viCommonOptions = [
+  { flag: "h / j / k / l", desc: "좌/아래/위/우 기본 이동" },
+  { flag: "w / b / e", desc: "단어 단위로 앞으로/뒤로/끝으로 이동" },
+  { flag: "0 / ^ / $", desc: "줄 맨앞 / 첫 글자 / 줄 맨뒤" },
+  { flag: "gg / G", desc: "파일 맨위 / 맨아래" },
+  { flag: "Ctrl-d / Ctrl-u", desc: "반 페이지 아래 / 위로 이동" },
+  { flag: "Ctrl-f / Ctrl-b", desc: "한 페이지 아래 / 위로 이동" },
+  { flag: "i / a / o / O", desc: "삽입 모드, 뒤에 추가, 다음 줄/이전 줄에 삽입" },
+  { flag: "Esc", desc: "명령 모드로 복귀" },
+  { flag: "x / X", desc: "커서 아래/왼쪽 문자 삭제" },
+  { flag: "dd / D", desc: "한 줄 삭제 / 커서부터 줄 끝까지 삭제" },
+  { flag: "yy / p / P", desc: "한 줄 복사 / 아래에 붙여넣기 / 위에 붙여넣기" },
+  { flag: "cc / C / S", desc: "한 줄 또는 줄 끝까지 바꾸고 입력 모드 진입" },
+  { flag: "r / R", desc: "한 글자 교체 / 덮어쓰기 모드" },
+  { flag: "u / Ctrl-r", desc: "되돌리기 / 다시 실행" },
+  { flag: ".", desc: "직전 편집 명령 반복" },
+  { flag: "v / V / Ctrl-v", desc: "문자 / 줄 / 블록 비주얼 선택" },
+  { flag: "/pattern / ?pattern", desc: "정방향 / 역방향 검색" },
+  { flag: "n / N", desc: "다음 / 이전 검색 결과" },
+  { flag: "%", desc: "괄호 짝이나 매칭 위치로 이동" },
+  { flag: ":%s/old/new/gc", desc: "전체 치환, 확인 후 적용" },
+  { flag: ":g/pattern/cmd", desc: "패턴에 맞는 줄만 대상으로 명령 실행" },
+  { flag: ":v/pattern/cmd", desc: "패턴에 맞지 않는 줄만 대상으로 명령 실행" },
+  { flag: ":w / :wq / ZZ / :q!", desc: "저장 / 저장 후 종료 / 저장하고 종료 / 강제 종료" },
+  { flag: ":e file / :r file", desc: "다른 파일 열기 / 파일 내용을 현재 버퍼에 읽기" },
+  { flag: ":set number / relativenumber", desc: "절대 / 상대 줄 번호 표시" },
+  { flag: ":set hlsearch / nohlsearch", desc: "검색 강조 켜기 / 끄기" },
+  { flag: ":noh", desc: "현재 검색 강조만 즉시 해제" },
+  { flag: ":set ic / noic", desc: "대소문자 구분 완화 / 복원" },
+  { flag: ":split / :vsplit", desc: "가로 / 세로 분할창 열기" },
+  { flag: "Ctrl-w w / Ctrl-w s / Ctrl-w v", desc: "창 전환 / 가로 분할 / 세로 분할" },
+  { flag: ":bn / :bp / :ls / :bd", desc: "다음 버퍼 / 이전 버퍼 / 버퍼 목록 / 버퍼 닫기" },
+  { flag: ":tabnew / gt / gT", desc: "새 탭 / 다음 탭 / 이전 탭" },
+  { flag: ":help / :h", desc: "내장 도움말 열기" },
+  { flag: ":syntax on", desc: "문법 강조 켜기" },
+  { flag: ":set wrap / nowrap", desc: "줄바꿈 표시 켜기 / 끄기" },
+  { flag: ":set paste", desc: "붙여넣기 모드로 자동 들여쓰기 방지" }
+];
+
+const viCommonExamples = [
+  { label: "설정 파일 열기", code: "vi /etc/ssh/sshd_config" },
+  { label: "검색 후 이동", code: "/PermitRootLogin" },
+  { label: "전체 치환", code: ":%s/old_value/new_value/gc" },
+  { label: "주석 있는 줄만 처리", code: ":g/^#/d" },
+  { label: "다른 파일 붙여넣기", code: ":r /etc/hosts" },
+  { label: "분할창 열기", code: ":vsplit" },
+  { label: "도움말 바로 열기", code: ":help :wq" }
+];
+
+const viRockyExamples = [...viCommonExamples];
+const viUbuntuExamples = [
+  ...viCommonExamples.slice(0, 4),
+  { label: "대소문자 설정 확인", code: ":set ic? hlsearch?" },
+  ...viCommonExamples.slice(4)
+];
+
+const viCommonWarnings = [
+  "명령 모드와 입력 모드를 헷갈리면 저장이 안 되거나 엉뚱한 문자가 들어갑니다.",
+  "원격 서버에서 설정 파일을 바꿀 때는 `:q!`로 빠져나올 수 있는지 먼저 익혀두세요.",
+  "대형 파일은 `vi`보다 `less`로 먼저 훑고 수정 범위를 좁히는 편이 안전합니다.",
+  "`vi`가 너무 빈약하면 `vim-minimal`, `vim-enhanced`, `vim-tiny` 설치 상태를 같이 확인하세요."
+];
+
 const COMMANDS = [
   {
     id: "uname",
@@ -883,57 +946,36 @@ const COMMANDS = [
     id: "vi-vim",
     category: "text",
     title: "vi / vim",
-    summary: "운영 서버에서 가장 자주 여는 편집기. 저장, 검색, 치환, 복구까지 한 번에 익혀두면 편합니다.",
+    summary: "운영 서버에서 자주 쓰는 vi/vim 내부 명령을 이동, 편집, 검색, 저장, 분할창까지 한 번에 모았습니다.",
     command: "vi /etc/ssh/sshd_config",
-    keywords: ["vi", "vim", "editor", "save", "quit", "search", "replace", "config"],
+    keywords: [
+      "vi",
+      "vim",
+      "editor",
+      "save",
+      "quit",
+      "search",
+      "replace",
+      "config",
+      "normal mode",
+      "insert mode",
+      "visual mode",
+      "split",
+      "buffer",
+      "tab"
+    ],
     variants: {
       rocky: {
-        options: [
-          { flag: "i / a / o", desc: "삽입 모드로 진입, 현재 위치 뒤/다음 줄에 입력" },
-          { flag: "Esc", desc: "명령 모드로 복귀" },
-          { flag: ":wq", desc: "저장 후 종료" },
-          { flag: ":q!", desc: "저장하지 않고 종료" },
-          { flag: "/pattern", desc: "문자열 검색" },
-          { flag: ":%s/old/new/gc", desc: "전체 치환, 확인 후 적용" },
-          { flag: ":set number", desc: "줄 번호 표시" },
-          { flag: "u / Ctrl-r", desc: "되돌리기 / 다시 실행" }
-        ],
-        examples: [
-          { label: "설정 파일 열기", code: "vi /etc/ssh/sshd_config" },
-          { label: "특정 문자열 검색", code: "/PermitRootLogin" },
-          { label: "전체 치환", code: ":%s/old_value/new_value/gc" },
-          { label: "줄 번호 켜기", code: ":set number" }
-        ],
+        options: viCommonOptions,
+        examples: viRockyExamples,
         diff: "Rocky는 vim-minimal 또는 vim-enhanced 조합을 쓰는 경우가 많아, `vi`가 생각보다 심플할 수 있습니다.",
-        warnings: [
-          "명령 모드와 입력 모드를 헷갈리면 저장이 안 되거나 엉뚱한 문자가 들어갑니다.",
-          "원격 서버에서 설정 파일을 바꿀 때는 `:q!`로 빠져나올 수 있는지 먼저 익혀두세요.",
-          "대형 파일은 `vi`보다 `less`로 먼저 훑고 수정 범위를 좁히는 편이 안전합니다."
-        ]
+        warnings: viCommonWarnings
       },
       ubuntu: {
-        options: [
-          { flag: "i / a / o", desc: "삽입 모드로 진입, 현재 위치 뒤/다음 줄에 입력" },
-          { flag: "Esc", desc: "명령 모드로 복귀" },
-          { flag: ":wq", desc: "저장 후 종료" },
-          { flag: ":q!", desc: "저장하지 않고 종료" },
-          { flag: "/pattern", desc: "문자열 검색" },
-          { flag: ":%s/old/new/gc", desc: "전체 치환, 확인 후 적용" },
-          { flag: ":set number", desc: "줄 번호 표시" },
-          { flag: "u / Ctrl-r", desc: "되돌리기 / 다시 실행" }
-        ],
-        examples: [
-          { label: "설정 파일 열기", code: "vi /etc/ssh/sshd_config" },
-          { label: "특정 문자열 검색", code: "/PasswordAuthentication" },
-          { label: "전체 치환", code: ":%s/old_value/new_value/gc" },
-          { label: "줄 번호 켜기", code: ":set number" }
-        ],
+        options: viCommonOptions,
+        examples: viUbuntuExamples,
         diff: "Ubuntu에서는 `vi`가 `vim-tiny` 또는 `vim` 링크인 경우가 많아, 배포판 기본 설정에 따라 기능 차이가 납니다.",
-        warnings: [
-          "명령 모드와 입력 모드를 헷갈리면 저장이 안 되거나 엉뚱한 문자가 들어갑니다.",
-          "원격 서버에서 설정 파일을 바꿀 때는 `:q!`로 빠져나올 수 있는지 먼저 익혀두세요.",
-          "대형 파일은 `vi`보다 `less`로 먼저 훑고 수정 범위를 좁히는 편이 안전합니다."
-        ]
+        warnings: viCommonWarnings
       }
     }
   },
