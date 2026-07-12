@@ -20,6 +20,15 @@
     "hfId": "Qwen/Qwen3.5-4B"
   },
   {
+    "name": "Gemma 3 4B",
+    "layers": 32,
+    "kvheads": 4,
+    "headdim": 256,
+    "params": 4,
+    "note": "Official Gemma 3 family dense model.",
+    "hfId": "google/gemma-3-4b-it"
+  },
+  {
     "name": "Qwen3.5-9B",
     "layers": 32,
     "kvheads": 4,
@@ -28,6 +37,24 @@
     "weightBytes": 19306310880,
     "note": "Linear attention; KV cache estimate is approximate.",
     "hfId": "Qwen/Qwen3.5-9B"
+  },
+  {
+    "name": "Llama 3.1 8B",
+    "layers": 32,
+    "kvheads": 8,
+    "headdim": 128,
+    "params": 8,
+    "note": "Meta open-weight model; dense Llama 3.1 family.",
+    "hfId": "meta-llama/Meta-Llama-3.1-8B-Instruct"
+  },
+  {
+    "name": "Qwen3 8B",
+    "layers": 36,
+    "kvheads": 8,
+    "headdim": 128,
+    "params": 8,
+    "note": "Qwen3 family dense model.",
+    "hfId": "Qwen/Qwen3-8B"
   },
   {
     "name": "DeepSeek-R1 7B",
@@ -80,6 +107,15 @@
     "hfId": "google/gemma-4-12B-it"
   },
   {
+    "name": "Gemma 3 12B",
+    "layers": 40,
+    "kvheads": 8,
+    "headdim": 256,
+    "params": 12,
+    "note": "Official Gemma 3 family dense model.",
+    "hfId": "google/gemma-3-12b-it"
+  },
+  {
     "name": "Qwen3.5-27B",
     "layers": 64,
     "kvheads": 4,
@@ -90,6 +126,15 @@
     "hfId": "Qwen/Qwen3.5-27B"
   },
   {
+    "name": "Qwen3 14B",
+    "layers": 40,
+    "kvheads": 8,
+    "headdim": 128,
+    "params": 14,
+    "note": "Qwen3 family dense model.",
+    "hfId": "Qwen/Qwen3-14B"
+  },
+  {
     "name": "Gemma 4 31B",
     "layers": 60,
     "kvheads": 16,
@@ -98,6 +143,15 @@
     "weightBytes": 62546338248,
     "note": "Official Gemma 4 family dense model.",
     "hfId": "google/gemma-4-31B-it"
+  },
+  {
+    "name": "Gemma 3 27B",
+    "layers": 48,
+    "kvheads": 8,
+    "headdim": 256,
+    "params": 27,
+    "note": "Official Gemma 3 family dense model.",
+    "hfId": "google/gemma-3-27b-it"
   },
   {
     "name": "Llama 4 Scout",

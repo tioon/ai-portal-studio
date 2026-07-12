@@ -205,12 +205,12 @@
           <select id="modelPreset"></select>
           <div class="hint" id="modelCount"></div>
           <div class="hint" id="modelNote"></div>
-          <div class="hint" id="weightNote"></div>
+          <div class="hint" id="weightNote">프리셋을 선택하면 FP16/BF16 기준 기본 가중치를 자동으로 넣습니다. 양자화 dtype을 바꾸면 이 값에 자동 계수가 적용됩니다.</div>
         </div>
         <div class="field">
-          <label>체크포인트 가중치 (GB) <span class="val" id="v_weightgb"></span></label>
+          <label>체크포인트 가중치 (FP16/BF16 기준 GB) <span class="val" id="v_weightgb"></span></label>
           <input type="number" id="weightGB" min="0" max="1000" step="0.1" value="0">
-          <div class="hint">VRAM 도넛과 호스트 RAM 추정은 이 값을 기준으로 계산합니다. 프리셋은 기본값만 넣어주며, 실제 배포할 체크포인트 크기에 맞게 직접 바꿀 수 있습니다.</div>
+          <div class="hint">VRAM 도넛과 호스트 RAM 추정은 이 값을 기준으로 계산합니다. 양자화 dtype을 바꾸면 이 값에 계수가 적용되어 실제 GPU 메모리 추정치가 달라집니다.</div>
         </div>
         <div class="row2">
           <div class="field">
@@ -320,7 +320,7 @@
               <option value="0.5_gptq">GPTQ INT4 (0.5B)</option>
               <option value="0.35">GGUF Q3_K (~0.35B)</option>
             </select>
-            <div class="hint">이 선택은 배포 명령어의 dtype / quantization 플래그에만 반영됩니다. 가중치 메모리는 위 체크포인트 가중치 입력값으로 계산합니다.</div>
+            <div class="hint">이 선택은 배포 명령어의 dtype / quantization 플래그와 VRAM 계산용 가중치 둘 다에 반영됩니다.</div>
           </div>
           <div class="field">
             <label>KV 캐시 dtype</label>
@@ -646,10 +646,21 @@ function presetWeightGB(model){
   return 0;
 }
 
+function quantizationWeightFactor(wdtypeRaw){
+  switch (wdtypeRaw){
+    case '1':       return 0.5;   // FP8
+    case '1_int8':  return 0.5;   // INT8
+    case '0.5_awq': return 0.25;  // INT4
+    case '0.5_gptq':return 0.25;  // INT4
+    case '0.35':    return 0.175; // GGUF Q3 수준의 근사치
+    default:        return 1;     // FP16 / BF16
+  }
+}
+
 function selectedWeightGB(model){
   const input = +el('weightGB').value;
-  if (Number.isFinite(input) && input > 0) return input;
-  return presetWeightGB(model);
+  const baseWeightGB = Number.isFinite(input) && input > 0 ? input : presetWeightGB(model);
+  return baseWeightGB * quantizationWeightFactor(el('wdtype')?.value);
 }
 
 async function loadModelPresets(){
@@ -723,7 +734,7 @@ const TABLE_ROWS = [
   ["max_num_batched_tokens","<span class='impact up'>활성화↑</span>","한 스텝에서 처리할 토큰 예산(청크 프리필). 크게 잡으면 처리량은 늘지만 활성화(activation) 버퍼 메모리가 커짐."],
   ["tensor_parallel_size (TP)","<span class='impact down'>가중치/GPU↓</span>","모델 가중치와 KV head를 GPU 여러 장에 분할. GPU당 가중치·KV 메모리가 줄지만 NCCL 통신 오버헤드가 소폭 증가."],
   ["pipeline_parallel_size (PP)","<span class='impact down'>가중치/GPU↓</span>","레이어를 단계별로 GPU에 분산. GPU당 가중치와 KV 캐시(레이어 수 비례)가 모두 줄어듦. 통신은 TP보다 적지만 파이프라인 버블로 지연시간 증가 가능."],
-  ["quantization (AWQ/GPTQ/FP8/INT4/GGUF)","<span class='impact down'>가중치↓</span>","가중치를 저정밀도로 저장해 메모리를 1/2~1/6로 절감. 절감된 만큼 KV 캐시나 배치 크기를 늘릴 수 있음."],
+  ["quantization (AWQ/GPTQ/FP8/INT4/GGUF)","<span class='impact down'>가중치↓</span>","가중치를 저정밀도로 저장해 메모리를 1/2~1/6로 절감합니다. 이 선택은 VRAM 계산용 가중치와 배포 명령어의 quantization 플래그 둘 다에 반영됩니다."],
   ["kv_cache_dtype (fp8)","<span class='impact down'>KV/토큰↓</span>","KV 캐시를 FP8로 양자화하면 토큰당 캐시 크기가 절반이 되어 같은 메모리로 2배 더 긴 컨텍스트/더 많은 요청 처리 가능."],
   ["block_size","<span class='impact mix'>혼합</span>","PagedAttention 블록 크기(기본 16). 크면 블록 테이블 오버헤드는 줄지만 시퀀스 길이가 블록 단위로 올림 처리되어 내부 단편화(fragmentation)는 증가."],
   ["cpu_offload_gb","<span class='impact down'>GPU 가중치↓ / CPU RAM↑</span>","GPU당 지정한 GB만큼 가중치를 CPU RAM으로 오프로드합니다. vLLM 문서 기준 GPU당 값이므로 TP가 커질수록 총 호스트 RAM 요구량은 TP 배수로 커집니다."],
@@ -1524,10 +1535,10 @@ function applyModelPreset(){
   el('modelNote').textContent = m.note || '';
   const defaultWeightGB = presetWeightGB(m);
   el('weightGB').value = defaultWeightGB ? defaultWeightGB.toFixed(2) : '';
-  el('v_weightgb').textContent = defaultWeightGB ? defaultWeightGB.toFixed(2) + ' GB' : '-';
+  el('v_weightgb').textContent = selectedWeightGB(m) ? selectedWeightGB(m).toFixed(2) + ' GB' : '-';
   el('weightNote').textContent = Number.isFinite(m.weightBytes)
-    ? '프리셋 기본 가중치를 넣었습니다. 필요하면 아래 입력값을 직접 수정하세요.'
-    : '직접 입력 모델은 가중치를 직접 넣어야 합니다.';
+    ? '프리셋 기본 가중치를 넣었습니다. 양자화 dtype을 바꾸면 VRAM 계산용 가중치도 함께 보정됩니다.'
+    : '직접 입력 모델은 가중치를 직접 넣어야 합니다. 양자화 dtype을 바꾸면 VRAM 계산용 가중치도 함께 보정됩니다.';
   if (el('hfModelId') && m.hfId) el('hfModelId').value = m.hfId;
   compute();
 }
