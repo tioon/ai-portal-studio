@@ -39,6 +39,7 @@
   @media (max-width:860px){.grid2{grid-template-columns:1fr;}}
 
   .panel{background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:20px;}
+  .panel.sticky{position:sticky; top:18px;}
   .field{margin-bottom:16px;}
   .field label{display:flex; justify-content:space-between; font-size:12.8px; color:var(--muted); margin-bottom:6px;}
   .field label span.val{color:var(--accent2); font-weight:600;}
@@ -127,6 +128,41 @@
   .btn{background:var(--accent); color:#0b0f14; border:none; padding:9px 18px; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer;}
   .btn:hover{opacity:0.88;}
   .btn.secondary{background:var(--panel2); color:var(--text); border:1px solid var(--border);}
+
+  .accordion-list{display:flex; flex-direction:column; gap:12px;}
+  details.accordion{
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border:1px solid var(--border);
+    border-radius:14px;
+    overflow:hidden;
+  }
+  details.accordion[open]{box-shadow:0 10px 30px rgba(0,0,0,0.18);}
+  details.accordion > summary{
+    list-style:none; cursor:pointer; display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:14px 16px; background:rgba(18,24,33,0.78); border-bottom:1px solid transparent;
+  }
+  details.accordion > summary::-webkit-details-marker{display:none;}
+  details.accordion[open] > summary{border-bottom-color:var(--border);}
+  .summary-copy{display:flex; flex-direction:column; gap:2px;}
+  .summary-copy strong{font-size:14px; color:var(--text);}
+  .summary-copy span{font-size:11.5px; color:var(--muted);}
+  .summary-badge{
+    font-size:11px; color:#c9d1d9; background:var(--panel2); border:1px solid var(--border);
+    padding:4px 8px; border-radius:999px; white-space:nowrap;
+  }
+  .accordion-body{padding:16px;}
+  .accordion summary::after{
+    content:"▾"; color:var(--muted); font-size:13px; transition:transform 0.18s ease;
+  }
+  details.accordion[open] summary::after{transform:rotate(180deg);}
+  .compact-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  @media (max-width:640px){.compact-grid{grid-template-columns:1fr;}}
+  .mini-matrix{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; margin-bottom:14px;}
+  .mini-pill{
+    background:rgba(77,171,247,0.08); border:1px solid rgba(77,171,247,0.25); border-radius:12px; padding:10px 12px;
+  }
+  .mini-pill .k{font-size:11px; color:var(--muted);}
+  .mini-pill .v{font-size:14px; font-weight:700; color:var(--text); margin-top:2px;}
 </style>
 </head>
 <body>
@@ -188,187 +224,232 @@
     <div class="grid2">
       <!-- CONTROLS -->
       <div class="panel">
-        <div class="field">
-          <label>모델 프리셋</label>
-          <div class="row2" style="grid-template-columns:1.5fr 0.9fr; gap:8px; margin-bottom:8px;">
-            <input type="search" id="modelSearch" placeholder="모델명, provider, HF id 검색">
-            <select id="modelCategory">
-              <option value="all" selected>전체 카테고리</option>
-              <option value="0-1">0-1B</option>
-              <option value="1-3">1-3B</option>
-              <option value="3-7">3-7B</option>
-              <option value="7-14">7-14B</option>
-              <option value="14-30">14-30B</option>
-              <option value="30+">30B+</option>
-            </select>
-          </div>
-          <select id="modelPreset"></select>
-          <div class="hint" id="modelCount"></div>
-          <div class="hint" id="modelNote"></div>
-          <div class="hint" id="weightNote">프리셋을 선택하면 FP16/BF16 기준 기본 가중치를 자동으로 넣습니다. 양자화 dtype을 바꾸면 이 값에 자동 계수가 적용됩니다.</div>
-        </div>
-        <div class="field">
-          <label>체크포인트 가중치 (FP16/BF16 기준 GB) <span class="val" id="v_weightgb"></span></label>
-          <input type="number" id="weightGB" min="0" max="1000" step="0.1" value="0">
-          <div class="hint">VRAM 도넛과 호스트 RAM 추정은 이 값을 기준으로 계산합니다. 양자화 dtype을 바꾸면 이 값에 계수가 적용되어 실제 GPU 메모리 추정치가 달라집니다.</div>
-        </div>
-        <div class="row2">
-          <div class="field">
-            <label>레이어 수 <span class="val" id="v_layers"></span></label>
-            <input type="number" id="layers" min="1" max="200">
-          </div>
-          <div class="field">
-            <label>파라미터(B) <span class="val" id="v_params"></span></label>
-            <input type="number" id="params" min="0.1" step="0.1">
-          </div>
-        </div>
-        <div class="row2">
-          <div class="field">
-            <label>KV Head 수 <span class="val" id="v_kvheads"></span></label>
-            <input type="number" id="kvheads" min="1" max="128">
-          </div>
-          <div class="field">
-            <label>Head Dim <span class="val" id="v_headdim"></span></label>
-            <input type="number" id="headdim" min="16" max="256">
-          </div>
+        <div class="mini-matrix">
+          <div class="mini-pill"><div class="k">모델</div><div class="v" id="quickModel">-</div></div>
+          <div class="mini-pill"><div class="k">GPU / 병렬</div><div class="v" id="quickHardware">-</div></div>
+          <div class="mini-pill"><div class="k">양자화</div><div class="v" id="quickQuant">-</div></div>
+          <div class="mini-pill"><div class="k">가중치 추정</div><div class="v" id="quickWeight">-</div></div>
         </div>
 
-        <div class="divider"></div>
+        <div class="accordion-list">
+          <details class="accordion" open>
+            <summary>
+              <div class="summary-copy">
+                <strong>모델</strong>
+                <span>프리셋 검색, 체크포인트, 레이어/헤드 정보</span>
+              </div>
+              <span class="summary-badge">기본</span>
+            </summary>
+            <div class="accordion-body">
+              <div class="field">
+                <div class="row2" style="grid-template-columns:1.5fr 0.9fr; gap:8px; margin-bottom:8px;">
+                  <input type="search" id="modelSearch" placeholder="모델명, provider, HF id 검색">
+                  <select id="modelCategory">
+                    <option value="all" selected>전체 카테고리</option>
+                    <option value="0-1">0-1B</option>
+                    <option value="1-3">1-3B</option>
+                    <option value="3-7">3-7B</option>
+                    <option value="7-14">7-14B</option>
+                    <option value="14-30">14-30B</option>
+                    <option value="30+">30B+</option>
+                  </select>
+                </div>
+                <select id="modelPreset"></select>
+                <div class="hint" id="modelCount"></div>
+                <div class="hint" id="modelNote"></div>
+                <div class="hint" id="weightNote">프리셋을 선택하면 FP16/BF16 기준 기본 가중치를 자동으로 넣습니다. 양자화 dtype을 바꾸면 이 값에 자동 계수가 적용됩니다.</div>
+              </div>
+              <div class="field">
+                <label>체크포인트 가중치 (FP16/BF16 기준 GB) <span class="val" id="v_weightgb"></span></label>
+                <input type="number" id="weightGB" min="0" max="1000" step="0.1" value="0">
+                <div class="hint">VRAM 도넛과 호스트 RAM 추정은 이 값을 기준으로 계산합니다. 양자화 dtype을 바꾸면 이 값에 계수가 적용되어 실제 GPU 메모리 추정치가 달라집니다.</div>
+              </div>
+              <div class="compact-grid">
+                <div class="field">
+                  <label>레이어 수 <span class="val" id="v_layers"></span></label>
+                  <input type="number" id="layers" min="1" max="200">
+                </div>
+                <div class="field">
+                  <label>파라미터(B) <span class="val" id="v_params"></span></label>
+                  <input type="number" id="params" min="0.1" step="0.1">
+                </div>
+                <div class="field">
+                  <label>KV Head 수 <span class="val" id="v_kvheads"></span></label>
+                  <input type="number" id="kvheads" min="1" max="128">
+                </div>
+                <div class="field">
+                  <label>Head Dim <span class="val" id="v_headdim"></span></label>
+                  <input type="number" id="headdim" min="16" max="256">
+                </div>
+              </div>
+            </div>
+          </details>
 
-        <div class="field">
-          <label>GPU 종류 (프리셋 선택 시 VRAM 자동 입력)</label>
-          <select id="gpuPreset"></select>
-        </div>
-        <div class="field">
-          <label>실제 보유 VRAM (GB/장) — 직접 수정 가능 <span class="val" id="v_vram"></span></label>
-          <input type="number" id="vramInput" min="1" max="1000" step="1" value="80">
-          <div class="hint">MIG 분할, 공유 GPU 등 실제 환경에 맞게 자유롭게 값을 바꿀 수 있습니다.</div>
-        </div>
+          <details class="accordion" open>
+            <summary>
+              <div class="summary-copy">
+                <strong>하드웨어</strong>
+                <span>GPU 종류, VRAM, TP/PP, 네트워크 연결</span>
+              </div>
+              <span class="summary-badge">핵심</span>
+            </summary>
+            <div class="accordion-body">
+              <div class="field">
+                <label>GPU 종류 (프리셋 선택 시 VRAM 자동 입력)</label>
+                <select id="gpuPreset"></select>
+              </div>
+              <div class="field">
+                <label>실제 보유 VRAM (GB/장) — 직접 수정 가능 <span class="val" id="v_vram"></span></label>
+                <input type="number" id="vramInput" min="1" max="1000" step="1" value="80">
+                <div class="hint">MIG 분할, 공유 GPU 등 실제 환경에 맞게 자유롭게 값을 바꿀 수 있습니다.</div>
+              </div>
+              <div class="compact-grid">
+                <div class="field">
+                  <label>tensor_parallel_size <span class="val" id="v_tp"></span></label>
+                  <select id="tp">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="4">4</option>
+                    <option value="8">8</option>
+                    <option value="16">16</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>pipeline_parallel_size <span class="val" id="v_pp"></span></label>
+                  <select id="pp">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="4">4</option>
+                    <option value="8">8</option>
+                    <option value="16">16</option>
+                  </select>
+                </div>
+              </div>
+              <div class="hint" id="gpuCountHint" style="margin:-8px 0 14px;"></div>
+              <div class="field">
+                <label>GPU 간 연결 방식</label>
+                <select id="interconnect">
+                  <option value="nvlink">NVLink / NVSwitch (같은 서버, 고속 GPU 직결)</option>
+                  <option value="pcie">PCIe (같은 서버, NVLink 없음)</option>
+                  <option value="ethernet">이더넷/InfiniBand (여러 서버, 네트워크로 연결)</option>
+                </select>
+              </div>
+              <div id="interconnectBanner" class="banner"></div>
+            </div>
+          </details>
 
-        <div class="row2">
-          <div class="field">
-            <label>tensor_parallel_size <span class="val" id="v_tp"></span></label>
-            <select id="tp">
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="4">4</option>
-              <option value="8">8</option>
-              <option value="16">16</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>pipeline_parallel_size <span class="val" id="v_pp"></span></label>
-            <select id="pp">
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="4">4</option>
-              <option value="8">8</option>
-              <option value="16">16</option>
-            </select>
-          </div>
-        </div>
-        <div class="hint" id="gpuCountHint" style="margin:-8px 0 14px;"></div>
+          <details class="accordion" open>
+            <summary>
+              <div class="summary-copy">
+                <strong>기본 메모리</strong>
+                <span>GPU 메모리 배분과 서빙 안정성</span>
+              </div>
+              <span class="summary-badge">추천값</span>
+            </summary>
+            <div class="accordion-body">
+              <div class="field">
+                <label>gpu_memory_utilization <span class="val" id="v_util"></span></label>
+                <input type="range" id="util" min="0.4" max="0.98" step="0.01" value="0.9">
+              </div>
+              <div class="field">
+                <label>max_model_len (토큰) <span class="val" id="v_maxlen"></span></label>
+                <input type="range" id="maxlen" min="512" max="131072" step="512" value="8192">
+              </div>
+              <div class="compact-grid">
+                <div class="field">
+                  <label>max_num_seqs <span class="val" id="v_maxseqs"></span></label>
+                  <input type="range" id="maxseqs" min="1" max="512" step="1" value="256">
+                </div>
+                <div class="field">
+                  <label>max_num_batched_tokens <span class="val" id="v_maxbatch"></span></label>
+                  <input type="range" id="maxbatch" min="512" max="32768" step="256" value="4096">
+                </div>
+              </div>
+              <div class="field">
+                <label>block_size <span class="val" id="v_blocksize"></span></label>
+                <select id="blocksize">
+                  <option value="8">8</option>
+                  <option value="16" selected>16 (기본값)</option>
+                  <option value="32">32</option>
+                  <option value="64">64</option>
+                  <option value="128">128</option>
+                </select>
+                <div class="hint" id="blockHint"></div>
+              </div>
+              <div class="compact-grid">
+                <div class="field">
+                  <label>가중치 dtype / quantization</label>
+                  <select id="wdtype">
+                    <option value="2">FP16 / BF16 (2B)</option>
+                    <option value="1">FP8 (1B)</option>
+                    <option value="1_int8">INT8 (bitsandbytes, 1B)</option>
+                    <option value="0.5_awq">AWQ INT4 (0.5B)</option>
+                    <option value="0.5_gptq">GPTQ INT4 (0.5B)</option>
+                    <option value="0.35">GGUF Q3_K (~0.35B)</option>
+                  </select>
+                  <div class="hint">이 선택은 배포 명령어의 dtype / quantization 플래그와 VRAM 계산용 가중치 둘 다에 반영됩니다.</div>
+                </div>
+                <div class="field">
+                  <label>KV 캐시 dtype</label>
+                  <select id="kvdtype">
+                    <option value="2">모델과 동일 (FP16/BF16)</option>
+                    <option value="1">FP8 KV 캐시</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </details>
 
-        <div class="field">
-          <label>GPU 간 연결 방식</label>
-          <select id="interconnect">
-            <option value="nvlink">NVLink / NVSwitch (같은 서버, 고속 GPU 직결)</option>
-            <option value="pcie">PCIe (같은 서버, NVLink 없음)</option>
-            <option value="ethernet">이더넷/InfiniBand (여러 서버, 네트워크로 연결)</option>
-          </select>
-        </div>
-        <div id="interconnectBanner" class="banner"></div>
+          <details class="accordion">
+            <summary>
+              <div class="summary-copy">
+                <strong>고급 메모리 / 오프로드</strong>
+                <span>실패할 때만 열어보는 세부 튜닝</span>
+              </div>
+              <span class="summary-badge">접기</span>
+            </summary>
+            <div class="accordion-body">
+              <div class="compact-grid">
+                <div class="field">
+                  <label>cpu_offload_gb (GPU당) <span class="val" id="v_cpuoffload"></span></label>
+                  <input type="range" id="cpuoffload" min="0" max="80" step="1" value="0">
+                </div>
+                <div class="field">
+                  <label>swap_space (GPU당, CPU RAM) <span class="val" id="v_swap"></span></label>
+                  <input type="range" id="swap" min="0" max="64" step="1" value="4">
+                </div>
+              </div>
+              <div class="hint">공식 vLLM 문서 기준 <code>cpu_offload_gb</code>는 <b>GPU당</b> 값입니다. 즉 TP=4면 총 호스트 RAM 오프로드 버퍼는 대략 4배가 됩니다. <code>swap_space</code>도 GPU당 값이며, 부족할 때 KV 캐시를 CPU로 대피시킬 여유 공간입니다(둘 다 속도 저하 트레이드오프 있음).</div>
 
-        <div class="field">
-          <label>gpu_memory_utilization <span class="val" id="v_util"></span></label>
-          <input type="range" id="util" min="0.4" max="0.98" step="0.01" value="0.9">
-        </div>
-        <div class="field">
-          <label>max_model_len (토큰) <span class="val" id="v_maxlen"></span></label>
-          <input type="range" id="maxlen" min="512" max="131072" step="512" value="8192">
-        </div>
-        <div class="row2">
-          <div class="field">
-            <label>max_num_seqs <span class="val" id="v_maxseqs"></span></label>
-            <input type="range" id="maxseqs" min="1" max="512" step="1" value="256">
-          </div>
-          <div class="field">
-            <label>max_num_batched_tokens <span class="val" id="v_maxbatch"></span></label>
-            <input type="range" id="maxbatch" min="512" max="32768" step="256" value="4096">
-          </div>
-        </div>
-        <div class="field">
-          <label>block_size <span class="val" id="v_blocksize"></span></label>
-          <select id="blocksize">
-            <option value="8">8</option>
-            <option value="16" selected>16 (기본값)</option>
-            <option value="32">32</option>
-            <option value="64">64</option>
-            <option value="128">128</option>
-          </select>
-          <div class="hint" id="blockHint"></div>
-        </div>
+              <div class="field" style="margin-top:14px;">
+                <label>실제 보유 RAM (GB) <span class="val" id="v_hostram"></span></label>
+                <input type="number" id="hostramInput" min="4" max="4096" step="1" value="64">
+                <div class="hint" id="hostRamHint">호스트 RAM 권장값은 아래에서 계산됩니다.</div>
+              </div>
 
-        <div class="row2">
-          <div class="field">
-            <label>가중치 dtype / quantization</label>
-            <select id="wdtype">
-              <option value="2">FP16 / BF16 (2B)</option>
-              <option value="1">FP8 (1B)</option>
-              <option value="1_int8">INT8 (bitsandbytes, 1B)</option>
-              <option value="0.5_awq">AWQ INT4 (0.5B)</option>
-              <option value="0.5_gptq">GPTQ INT4 (0.5B)</option>
-              <option value="0.35">GGUF Q3_K (~0.35B)</option>
-            </select>
-            <div class="hint">이 선택은 배포 명령어의 dtype / quantization 플래그와 VRAM 계산용 가중치 둘 다에 반영됩니다.</div>
-          </div>
-          <div class="field">
-            <label>KV 캐시 dtype</label>
-            <select id="kvdtype">
-              <option value="2">모델과 동일 (FP16/BF16)</option>
-              <option value="1">FP8 KV 캐시</option>
-            </select>
-          </div>
-        </div>
+              <div class="divider"></div>
 
-        <div class="row2">
-          <div class="field">
-            <label>cpu_offload_gb (GPU당) <span class="val" id="v_cpuoffload"></span></label>
-            <input type="range" id="cpuoffload" min="0" max="80" step="1" value="0">
-          </div>
-          <div class="field">
-            <label>swap_space (GPU당, CPU RAM) <span class="val" id="v_swap"></span></label>
-            <input type="range" id="swap" min="0" max="64" step="1" value="4">
-          </div>
-        </div>
-        <div class="hint">공식 vLLM 문서 기준 <code>cpu_offload_gb</code>는 <b>GPU당</b> 값입니다. 즉 TP=4면 총 호스트 RAM 오프로드 버퍼는 대략 4배가 됩니다. <code>swap_space</code>도 GPU당 값이며, 부족할 때 KV 캐시를 CPU로 대피시킬 여유 공간입니다(둘 다 속도 저하 트레이드오프 있음).</div>
+              <div class="checkline">
+                <input type="checkbox" id="kvOverrideEnabled">
+                <label for="kvOverrideEnabled" style="margin:0; color:var(--text);">kv_cache_memory_bytes로 수동 지정</label>
+              </div>
+              <div class="field" style="margin-top:8px;">
+                <input type="number" id="kvOverrideGB" min="0" max="1000" step="0.5" value="20" disabled>
+                <div class="hint">체크하면 gpu_memory_utilization 대신 이 값(GB)을 KV 캐시 크기로 직접 사용합니다.</div>
+              </div>
 
-        <div class="field" style="margin-top:14px;">
-          <label>실제 보유 RAM (GB) <span class="val" id="v_hostram"></span></label>
-          <input type="number" id="hostramInput" min="4" max="4096" step="1" value="64">
-          <div class="hint" id="hostRamHint">호스트 RAM 권장값은 아래에서 계산됩니다.</div>
+              <div class="checkline">
+                <input type="checkbox" id="enforceEager">
+                <label for="enforceEager" style="margin:0; color:var(--text);">enforce_eager (CUDA Graph 비활성화)</label>
+              </div>
+              <div class="hint">체크 시 CUDA Graph용 메모리는 절약되지만 추론 속도(latency)가 느려집니다.</div>
+            </div>
+          </details>
         </div>
-
-        <div class="divider"></div>
-
-        <div class="checkline">
-          <input type="checkbox" id="kvOverrideEnabled">
-          <label for="kvOverrideEnabled" style="margin:0; color:var(--text);">kv_cache_memory_bytes로 수동 지정</label>
-        </div>
-        <div class="field" style="margin-top:8px;">
-          <input type="number" id="kvOverrideGB" min="0" max="1000" step="0.5" value="20" disabled>
-          <div class="hint">체크하면 gpu_memory_utilization 대신 이 값(GB)을 KV 캐시 크기로 직접 사용합니다.</div>
-        </div>
-
-        <div class="checkline">
-          <input type="checkbox" id="enforceEager">
-          <label for="enforceEager" style="margin:0; color:var(--text);">enforce_eager (CUDA Graph 비활성화)</label>
-        </div>
-        <div class="hint">체크 시 CUDA Graph용 메모리는 절약되지만 추론 속도(latency)가 느려집니다.</div>
       </div>
 
       <!-- OUTPUT -->
-      <div class="panel">
+      <div class="panel sticky">
         <div class="chartbox" id="chartbox"></div>
         <div class="barwrap" id="barwrap"></div>
         <div class="legend" id="legend"></div>
@@ -654,6 +735,17 @@ function quantizationWeightFactor(wdtypeRaw){
     case '0.5_gptq':return 0.25;  // INT4
     case '0.35':    return 0.175; // GGUF Q3 수준의 근사치
     default:        return 1;     // FP16 / BF16
+  }
+}
+
+function quantizationLabel(wdtypeRaw){
+  switch (wdtypeRaw){
+    case '1': return 'FP8';
+    case '1_int8': return 'INT8';
+    case '0.5_awq': return 'AWQ INT4';
+    case '0.5_gptq': return 'GPTQ INT4';
+    case '0.35': return 'GGUF Q3';
+    default: return 'FP16/BF16';
   }
 }
 
@@ -1081,6 +1173,10 @@ function compute(){
   el('v_hostram').textContent = hostRamGB + ' GB';
   el('v_users').textContent = (+el('concurrentUsers').value || 1) + ' 명';
   el('gpuCountHint').textContent = `총 사용 GPU 수 = tensor_parallel_size(${tp}) × pipeline_parallel_size(${pp}) = ${totalGpus}개`;
+  el('quickModel').textContent = model?.name || '-';
+  el('quickHardware').textContent = `${tp}×${pp} / ${vram}GB`;
+  el('quickQuant').textContent = quantizationLabel(el('wdtype').value);
+  el('quickWeight').textContent = fmtGB(selectedWeightGB(model));
 
   const totalWeightGB = selectedWeightGB(model);
 
