@@ -91,6 +91,62 @@
   .stat .value{font-size:19px; font-weight:700; margin-top:2px;}
   .stat .value.small{font-size:15px;}
 
+  .legend-strip{display:flex; flex-wrap:wrap; gap:8px; margin:0 0 18px;}
+  .legend-chip{
+    display:inline-flex; align-items:center; gap:6px;
+    padding:5px 10px; border-radius:999px;
+    background:var(--panel2); border:1px solid var(--border);
+    font-size:11.5px; color:var(--muted);
+  }
+  .legend-chip i{width:10px; height:10px; border-radius:999px; display:inline-block;}
+  .legend-chip.core i{background:#ff7a3d;}
+  .legend-chip.important i{background:#4dabf7;}
+  .legend-chip.advanced i{background:#d29922;}
+  .legend-chip.edge i{background:#8b98a5;}
+
+  .option-groups{display:grid; gap:16px;}
+  .group-card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:14px;
+    overflow:hidden;
+  }
+  .group-head{padding:16px 18px 0;}
+  .group-head h3{margin:0; font-size:15px; display:flex; flex-wrap:wrap; align-items:center; gap:8px;}
+  .group-head p{margin:8px 0 0; color:var(--muted); font-size:12.8px;}
+  .group-meta{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
+  .badge{
+    display:inline-flex; align-items:center; gap:5px;
+    padding:3px 9px; border-radius:999px;
+    font-size:11px; font-weight:700;
+    background:var(--panel2); border:1px solid var(--border); color:var(--muted);
+  }
+  .badge.core{color:#ffb28a; border-color:rgba(255,122,61,0.28); background:rgba(255,122,61,0.08);}
+  .badge.important{color:#8fd0ff; border-color:rgba(77,171,247,0.28); background:rgba(77,171,247,0.08);}
+  .badge.advanced{color:#e3b341; border-color:rgba(210,153,34,0.28); background:rgba(210,153,34,0.08);}
+  .badge.edge{color:#b8c4d0; border-color:rgba(139,152,165,0.28); background:rgba(139,152,165,0.08);}
+
+  .group-table{padding:14px 18px 18px;}
+  .group-table table{font-size:12.8px;}
+  .group-table th,.group-table td{padding:10px 12px;}
+  .group-table td small{color:var(--muted);}
+  .mini-tags{display:flex; flex-wrap:wrap; gap:6px;}
+  .mini-tags span{
+    display:inline-flex; align-items:center; padding:2px 8px; border-radius:999px;
+    border:1px solid var(--border); background:var(--panel2); color:var(--muted); font-size:11px;
+  }
+  .weight-summary{
+    margin-top:8px;
+    padding:10px 12px;
+    border-radius:10px;
+    border:1px dashed rgba(77,171,247,0.28);
+    background:rgba(77,171,247,0.06);
+    color:#d8e4f0;
+    font-size:12px;
+    line-height:1.65;
+  }
+  .weight-summary b{color:#8fd0ff;}
+
   .barwrap{background:var(--panel2); border:1px solid var(--border); border-radius:10px; height:36px; overflow:hidden; display:flex; margin-top:14px;}
   .barseg{height:100%; display:flex; align-items:center; justify-content:center; font-size:10.5px; color:#0b0f14; font-weight:700; white-space:nowrap; overflow:hidden;}
 
@@ -198,7 +254,7 @@
           <div class="mini-pill"><div class="k">양자화</div><div class="v" id="quickQuant">-</div></div>
           <div class="mini-pill"><div class="k">가중치 추정</div><div class="v" id="quickWeight">-</div></div>
         </div>
-
+        <div class="weight-summary" id="weightNote"></div>
         <div class="accordion-list">
           <details class="accordion" open>
             <summary>
@@ -224,7 +280,7 @@
                 <select id="modelPreset"></select>
                 <div class="hint" id="modelCount"></div>
                 <div class="hint" id="modelNote"></div>
-                <div class="hint" id="weightNote">프리셋을 선택하면 FP16/BF16 기준 기본 가중치를 자동으로 넣습니다. 양자화 dtype을 바꾸면 이 값에 자동 계수가 적용됩니다.</div>
+                <div class="hint" id="weightNoteHint">프리셋을 선택하면 FP16/BF16 기준 기본 가중치를 자동으로 넣습니다. 양자화 dtype을 바꾸면 이 값에 자동 계수가 적용됩니다.</div>
               </div>
               <div class="field">
                 <label>체크포인트 가중치 (FP16/BF16 기준 GB) <span class="val" id="v_weightgb"></span></label>
@@ -571,11 +627,15 @@
   </section>
 
   <section id="table">
-    <h2>4. 설정값별 메모리 영향 요약 <span class="tag">레퍼런스</span></h2>
-    <table>
-      <thead><tr><th>설정</th><th>메모리 영향</th><th>설명 및 팁</th></tr></thead>
-      <tbody id="tblBody"></tbody>
-    </table>
+    <h2>4. vLLM 옵션별 메모리 영향 요약 <span class="tag">레퍼런스</span></h2>
+    <p class="sub">실제 배포에서 메모리에 가장 큰 영향을 주는 vLLM 옵션을 <b>핵심</b>부터 <b>고급</b>까지 우선순위로 묶었습니다. 가중치는 이제 <code>params × dtype_bytes</code>를 기본으로 하고, 모델 config가 보이면 <code>vocab/embedding</code>과 <code>architecture</code> 보정을 얹는 방식으로 추정합니다.</p>
+    <div class="legend-strip">
+      <span class="legend-chip core"><i></i>핵심: 먼저 확인할 옵션</span>
+      <span class="legend-chip important"><i></i>중요: 배포 구조를 바꾸는 옵션</span>
+      <span class="legend-chip advanced"><i></i>고급: 메모리 우회 / 수동 제어</span>
+      <span class="legend-chip edge"><i></i>예외: 일부 상황에서만 사용</span>
+    </div>
+    <div id="optionGroups" class="option-groups"></div>
   </section>
 
   <section id="not-covered">
@@ -728,9 +788,7 @@ function modelOptionLabel(m){
 }
 
 function presetWeightGB(model){
-  if (Number.isFinite(model?.weightBytes) && model.weightBytes > 0) return model.weightBytes / 1e9;
-  if (Number.isFinite(model?.params) && model.params > 0) return Math.max(0.1, model.params * 2);
-  return 0;
+  return estimateWeightProfile(model, '2').totalBytes / 1e9;
 }
 
 function quantizationWeightFactor(wdtypeRaw){
@@ -776,6 +834,159 @@ async function loadModelPresets(){
   const res = await fetch('./model-presets.json', {cache:'no-cache'});
   if (!res.ok) throw new Error(`모델 프리셋 파일을 불러오지 못했습니다: ${res.status}`);
   MODEL_PRESETS = await res.json();
+}
+
+const MODEL_CONFIG_CACHE = new Map();
+let modelConfigToken = 0;
+
+function firstDefined(...values){
+  for (const value of values){
+    if (value !== undefined && value !== null && value !== '') return value;
+  }
+  return undefined;
+}
+
+function toNumberOrNull(value){
+  const num = Number(value);
+  return Number.isFinite(num) ? num : null;
+}
+
+function normalizeModelConfig(raw){
+  const text = raw?.text_config || {};
+  const vision = raw?.vision_config || {};
+  return {
+    modelType: firstDefined(raw?.model_type, text?.model_type, vision?.model_type) || '',
+    architectures: Array.isArray(raw?.architectures) ? raw.architectures : [],
+    hiddenSize: toNumberOrNull(firstDefined(raw?.hidden_size, text?.hidden_size, vision?.hidden_size)),
+    intermediateSize: toNumberOrNull(firstDefined(raw?.intermediate_size, text?.intermediate_size, vision?.intermediate_size)),
+    vocabSize: toNumberOrNull(firstDefined(raw?.vocab_size, text?.vocab_size, vision?.vocab_size)),
+    numHiddenLayers: toNumberOrNull(firstDefined(raw?.num_hidden_layers, text?.num_hidden_layers, vision?.num_hidden_layers)),
+    numAttentionHeads: toNumberOrNull(firstDefined(raw?.num_attention_heads, text?.num_attention_heads, vision?.num_attention_heads)),
+    numKeyValueHeads: toNumberOrNull(firstDefined(raw?.num_key_value_heads, text?.num_key_value_heads, vision?.num_key_value_heads)),
+    tieWordEmbeddings: firstDefined(raw?.tie_word_embeddings, text?.tie_word_embeddings, vision?.tie_word_embeddings),
+    numExperts: toNumberOrNull(firstDefined(raw?.num_experts, raw?.num_local_experts, text?.num_experts, text?.num_local_experts, vision?.num_experts)),
+    numExpertsPerTok: toNumberOrNull(firstDefined(raw?.num_experts_per_tok, text?.num_experts_per_tok, vision?.num_experts_per_tok)),
+    numDenseLayers: toNumberOrNull(firstDefined(raw?.num_dense_layers, text?.num_dense_layers, vision?.num_dense_layers)),
+    numMtpLayers: toNumberOrNull(firstDefined(raw?.num_mtp_layers, text?.num_mtp_layers, vision?.num_mtp_layers)),
+    slidingWindowSize: toNumberOrNull(firstDefined(raw?.sliding_window_size, raw?.sliding_window, text?.sliding_window_size, text?.sliding_window, vision?.sliding_window_size, vision?.sliding_window)),
+    usesLinearAttention: Boolean(firstDefined(raw?.uses_linear_attention, text?.uses_linear_attention, vision?.uses_linear_attention)),
+    usesSlidingWindow: Boolean(firstDefined(raw?.uses_sliding_window, text?.uses_sliding_window, vision?.uses_sliding_window)),
+  };
+}
+
+function modelConfigUrl(hfId){
+  return `https://huggingface.co/${hfId.split('/').map(encodeURIComponent).join('/')}/raw/main/config.json`;
+}
+
+async function loadModelConfig(model){
+  if (!model?.hfId) return null;
+  if (model._config !== undefined) return model._config;
+  if (MODEL_CONFIG_CACHE.has(model.hfId)){
+    model._config = MODEL_CONFIG_CACHE.get(model.hfId);
+    return model._config;
+  }
+  try{
+    const res = await fetch(modelConfigUrl(model.hfId), {cache:'force-cache'});
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const raw = await res.json();
+    const config = normalizeModelConfig(raw);
+    MODEL_CONFIG_CACHE.set(model.hfId, config);
+    model._config = config;
+    return config;
+  }catch(err){
+    MODEL_CONFIG_CACHE.set(model.hfId, null);
+    model._config = null;
+    return null;
+  }
+}
+
+function dtypeProfileForWeight(raw){
+  switch (raw){
+    case '2':
+      return {key:'fp16', label:'FP16/BF16', bytes:2, quantOverheadPct:0.001};
+    case '1':
+      return {key:'q8', label:'FP8', bytes:1, quantOverheadPct:0.01};
+    case '1_int8':
+      return {key:'q8', label:'INT8', bytes:1, quantOverheadPct:0.015};
+    case '0.5_awq':
+      return {key:'q4', label:'AWQ INT4', bytes:0.5, quantOverheadPct:0.03};
+    case '0.5_gptq':
+      return {key:'q4', label:'GPTQ INT4', bytes:0.5, quantOverheadPct:0.03};
+    case '0.35':
+      return {key:'q3', label:'GGUF Q3_K', bytes:0.35, quantOverheadPct:0.05};
+    default:
+      return {key:'fp16', label:'FP16/BF16', bytes:2, quantOverheadPct:0.001};
+  }
+}
+
+function formatBytesGB(bytes){
+  return fmtGB(bytes / 1e9);
+}
+
+function estimateWeightProfile(model, dtypeRaw='2'){
+  const dtype = dtypeProfileForWeight(dtypeRaw);
+  const paramsB = Math.max(0, Number(model?.params) || 0);
+  const config = model?._config || null;
+  const baseBytes = paramsB * 1e9 * dtype.bytes;
+
+  // 대부분의 decoder-only checkpoint는 total params에 embedding/lm_head가 이미 포함되어 있어서
+  // 여기서는 "중복 덧셈"을 하지 않는다. 다만 config가 확실히 주어지는 경우에만 untied head를 별도 보정할 수 있게 둔다.
+  let vocabEmbeddingBytes = 0;
+  if (config?.vocabSize && config?.hiddenSize && config.tieWordEmbeddings === false && model?.weightHints?.addUntiedHead === true){
+    vocabEmbeddingBytes = config.vocabSize * config.hiddenSize * dtype.bytes;
+  }
+
+  const architectureKind = model?.weightHints?.architecture || (
+    config?.numExperts ? 'moe'
+      : /embedding/i.test(model?.name || '') ? 'embedding'
+      : /linear attention|mla|hybrid linear/i.test(model?.note || '') ? 'linear'
+      : 'dense'
+  );
+
+  const architectureCorrectionPct = model?.weightHints?.architectureCorrectionPct ?? ({
+    dense: 0.002,
+    embedding: 0.003,
+    linear: 0.002,
+    moe: 0.004,
+    multimodal: 0.006,
+  }[architectureKind] ?? 0.002);
+
+  const architectureCorrectionBytes = baseBytes * architectureCorrectionPct;
+  const quantizationMetadataBytes = baseBytes * dtype.quantOverheadPct;
+  const totalBytes = Math.max(0, baseBytes + vocabEmbeddingBytes + architectureCorrectionBytes + quantizationMetadataBytes);
+
+  return {
+    dtype,
+    paramsB,
+    architectureKind,
+    baseBytes,
+    vocabEmbeddingBytes,
+    architectureCorrectionBytes,
+    quantizationMetadataBytes,
+    totalBytes,
+  };
+}
+
+function buildWeightSummary(model){
+  const fp16 = estimateWeightProfile(model, '2');
+  const q8 = estimateWeightProfile(model, '1');
+  const q4 = estimateWeightProfile(model, '0.5_awq');
+  const config = model?._config;
+  const configBits = config ? [
+    config.modelType ? `model_type=${config.modelType}` : null,
+    config.hiddenSize ? `hidden_size=${config.hiddenSize.toLocaleString()}` : null,
+    config.vocabSize ? `vocab_size=${config.vocabSize.toLocaleString()}` : null,
+    config.tieWordEmbeddings === false ? 'untied_embeddings' : null,
+    config.numExperts ? `experts=${config.numExperts}` : null,
+  ].filter(Boolean) : [];
+  const configText = configBits.length ? ` · config: ${configBits.join(', ')}` : '';
+  const breakdown = [
+    `base ${formatBytesGB(fp16.baseBytes)}`,
+    fp16.vocabEmbeddingBytes > 0 ? `vocab/embedding ${formatBytesGB(fp16.vocabEmbeddingBytes)}` : 'vocab/embedding in params',
+    `arch ${formatBytesGB(fp16.architectureCorrectionBytes)}`,
+    `quant ${formatBytesGB(fp16.quantizationMetadataBytes)}`,
+  ].join(' · ');
+  return `<b>자동 추정</b> fp16 ${formatBytesGB(fp16.totalBytes)} · q8 ${formatBytesGB(q8.totalBytes)} · q4 ${formatBytesGB(q4.totalBytes)}${configText}<br><b>분해</b> ${breakdown}<br><b>공식</b> params × dtype_bytes + vocab/embedding correction + architecture correction`;
 }
 
 function filteredModelIndices(){
@@ -833,21 +1044,144 @@ const GPU_PRESETS = [
   {name:"직접 입력",                                    vram:40,  nvlinkDomain:8},
 ];
 
-const TABLE_ROWS = [
-  ["gpu_memory_utilization","<span class='impact mix'>혼합</span>","KV 캐시로 쓸 GPU 메모리 비율(기본 0.92). 올리면 KV 캐시 여유가 늘지만 다른 프로세스와 공유 시 OOM 위험 증가."],
-  ["max_model_len","<span class='impact up'>KV↑</span>","시퀀스당 캐시 길이 상한. 길게 잡을수록 시퀀스 1개가 차지하는 KV 캐시가 커져 동시 처리 가능 요청 수는 줄어듦."],
-  ["max_num_seqs","<span class='impact up'>KV↑</span>","배치에서 동시에 처리할 시퀀스 수 상한. 크게 잡으면 처리량은 늘지만 필요한 KV 캐시 총량도 증가."],
-  ["max_num_batched_tokens","<span class='impact up'>활성화↑</span>","한 스텝에서 처리할 토큰 예산(청크 프리필). 크게 잡으면 처리량은 늘지만 활성화(activation) 버퍼 메모리가 커짐."],
-  ["tensor_parallel_size (TP)","<span class='impact down'>가중치/GPU↓</span>","모델 가중치와 KV head를 GPU 여러 장에 분할. GPU당 가중치·KV 메모리가 줄지만 NCCL 통신 오버헤드가 소폭 증가."],
-  ["pipeline_parallel_size (PP)","<span class='impact down'>가중치/GPU↓</span>","레이어를 단계별로 GPU에 분산. GPU당 가중치와 KV 캐시(레이어 수 비례)가 모두 줄어듦. 통신은 TP보다 적지만 파이프라인 버블로 지연시간 증가 가능."],
-  ["quantization (AWQ/GPTQ/FP8/INT4/GGUF)","<span class='impact down'>가중치↓</span>","가중치를 저정밀도로 저장해 메모리를 1/2~1/6로 절감합니다. 이 선택은 VRAM 계산용 가중치와 배포 명령어의 quantization 플래그 둘 다에 반영됩니다."],
-  ["kv_cache_dtype (fp8)","<span class='impact down'>KV/토큰↓</span>","KV 캐시를 FP8로 양자화하면 토큰당 캐시 크기가 절반이 되어 같은 메모리로 2배 더 긴 컨텍스트/더 많은 요청 처리 가능."],
-  ["block_size","<span class='impact mix'>혼합</span>","PagedAttention 블록 크기(기본 16). 크면 블록 테이블 오버헤드는 줄지만 시퀀스 길이가 블록 단위로 올림 처리되어 내부 단편화(fragmentation)는 증가."],
-  ["cpu_offload_gb","<span class='impact down'>GPU 가중치↓ / CPU RAM↑</span>","GPU당 지정한 GB만큼 가중치를 CPU RAM으로 오프로드합니다. vLLM 문서 기준 GPU당 값이므로 TP가 커질수록 총 호스트 RAM 요구량은 TP 배수로 커집니다."],
-  ["swap_space","<span class='impact mix'>CPU 오프로드</span>","GPU 메모리가 부족할 때 KV 캐시를 CPU RAM으로 스왑할 여유 공간(GiB). GPU 메모리 자체는 늘리지 않지만 OOM 대신 지연시간 증가로 대응하고, 유효 캐시 용량을 확장합니다."],
-  ["host_ram_recommendation","<span class='impact mix'>호스트 RAM</span>","이 계산기는 체크포인트 로딩 피크와 CPU offload / swap buffer / 런타임 여유를 합쳐 권장 호스트 RAM을 추정합니다."],
-  ["enforce_eager","<span class='impact down'>오버헤드↓</span>","CUDA Graph 캡처를 생략해 그래프용 메모리를 절약하지만 추론 속도가 느려짐."],
-  ["kv_cache_memory_bytes","<span class='impact mix'>수동 지정</span>","gpu_memory_utilization 대신 KV 캐시 크기를 바이트 단위로 직접 지정해 더 세밀하게 제어."],
+const TABLE_GROUPS = [
+  {
+    title: "핵심 메모리 제어",
+    summary: "배포를 시작할 때 가장 먼저 보는 옵션입니다. 여기서 실수하면 바로 OOM 또는 KV 부족으로 이어집니다.",
+    color: "core",
+    priority: "1순위",
+    items: [
+      {
+        name: "gpu_memory_utilization",
+        importance: "핵심",
+        impact: "혼합",
+        impactText: "KV 캐시 예산을 직접 좌우",
+        detail: "KV 캐시로 쓸 GPU 메모리 비율(기본 0.92). 값을 올리면 캐시 여유가 늘지만 다른 프로세스와 함께 쓸 때 OOM 위험도 같이 커집니다.",
+      },
+      {
+        name: "max_model_len",
+        importance: "핵심",
+        impact: "KV↑",
+        impactText: "시퀀스당 KV 캐시 증가",
+        detail: "시퀀스당 캐시 길이 상한입니다. 길게 잡을수록 한 요청이 차지하는 KV가 커져 동시 처리 가능한 요청 수가 줄어듭니다.",
+      },
+      {
+        name: "max_num_seqs",
+        importance: "핵심",
+        impact: "KV↑",
+        impactText: "동시 시퀀스 수 증가",
+        detail: "배치에서 동시에 처리할 시퀀스 수 상한입니다. 크게 잡으면 처리량은 늘지만 필요한 KV 캐시 총량도 증가합니다.",
+      },
+      {
+        name: "max_num_batched_tokens",
+        importance: "중요",
+        impact: "활성화↑",
+        impactText: "프리필/배치 메모리 증가",
+        detail: "한 스텝에서 처리할 토큰 예산입니다. 크게 잡으면 처리량은 오르지만 활성화(activation) 버퍼 메모리가 커집니다.",
+      },
+    ],
+  },
+  {
+    title: "분산 배치 구조",
+    summary: "GPU를 여러 장 쓰는 순간부터는 TP/PP가 가중치와 KV 분배 방식을 결정합니다.",
+    color: "important",
+    priority: "2순위",
+    items: [
+      {
+        name: "tensor_parallel_size (TP)",
+        importance: "중요",
+        impact: "가중치/GPU↓",
+        impactText: "GPU당 가중치 감소, 통신 증가",
+        detail: "모델 가중치와 KV head를 여러 GPU에 분할합니다. GPU당 메모리는 줄지만 NCCL all-reduce 통신 오버헤드가 늘어납니다.",
+      },
+      {
+        name: "pipeline_parallel_size (PP)",
+        importance: "중요",
+        impact: "가중치/GPU↓",
+        impactText: "GPU당 레이어 수 감소",
+        detail: "레이어를 단계별로 GPU에 분산합니다. GPU당 가중치와 KV 캐시가 줄지만 파이프라인 버블 때문에 지연시간이 늘 수 있습니다.",
+      },
+      {
+        name: "block_size",
+        importance: "중요",
+        impact: "혼합",
+        impactText: "단편화 vs 테이블 오버헤드",
+        detail: "PagedAttention 블록 크기입니다. 크면 블록 테이블 오버헤드는 줄고, 작으면 내부 단편화는 줄지만 관리 비용이 늘 수 있습니다.",
+      },
+    ],
+  },
+  {
+    title: "정밀도와 캐시 압축",
+    summary: "같은 GPU에서도 훨씬 많은 모델/토큰을 다루게 해 주는 옵션들입니다. 메모리 절감 효과가 큽니다.",
+    color: "advanced",
+    priority: "3순위",
+    items: [
+      {
+        name: "quantization (AWQ/GPTQ/FP8/INT4/GGUF)",
+        importance: "중요",
+        impact: "가중치↓",
+        impactText: "가중치 메모리 절감",
+        detail: "가중치를 저정밀도로 저장해 메모리를 1/2~1/6까지 줄입니다. 절감분은 KV 캐시나 배치 크기로 돌릴 수 있습니다.",
+      },
+      {
+        name: "kv_cache_dtype (fp8)",
+        importance: "핵심",
+        impact: "KV/토큰↓",
+        impactText: "토큰당 캐시 절반",
+        detail: "KV 캐시를 FP8로 양자화하면 토큰당 캐시 크기가 절반이 되어 같은 메모리로 더 긴 컨텍스트를 담을 수 있습니다.",
+      },
+      {
+        name: "kv_cache_memory_bytes",
+        importance: "고급",
+        impact: "수동 지정",
+        impactText: "KV 캐시를 바이트로 직접 제어",
+        detail: "gpu_memory_utilization 대신 KV 캐시 크기를 직접 지정합니다. 계산기와 실제 운영값을 분리해 미세 조정할 때 유용합니다.",
+      },
+    ],
+  },
+  {
+    title: "호스트 RAM과 예외 처리",
+    summary: "GPU가 부족할 때의 우회로이지만, 속도 저하와 호스트 메모리 부담을 같이 봐야 합니다.",
+    color: "edge",
+    priority: "4순위",
+    items: [
+      {
+        name: "cpu_offload_gb",
+        importance: "고급",
+        impact: "GPU 가중치↓ / CPU RAM↑",
+        impactText: "가중치 일부를 CPU로 이동",
+        detail: "GPU당 지정한 GB만큼 가중치를 CPU RAM으로 오프로드합니다. TP가 커질수록 총 호스트 RAM 요구량도 배수로 늘어납니다.",
+      },
+      {
+        name: "swap_space",
+        importance: "고급",
+        impact: "CPU 오프로드",
+        impactText: "KV 캐시를 CPU로 대피",
+        detail: "GPU 메모리가 부족할 때 KV 캐시를 CPU RAM으로 넘길 여유 공간입니다. OOM 대신 지연시간 증가로 버티는 옵션입니다.",
+      },
+      {
+        name: "enforce_eager",
+        importance: "예외",
+        impact: "오버헤드↓",
+        impactText: "CUDA Graph 비활성화",
+        detail: "CUDA Graph 캡처를 생략해 그래프용 메모리를 줄이지만, 보통은 속도가 느려집니다. 메모리보다 안정성이 더 중요할 때 씁니다.",
+      },
+      {
+        name: "enable_lora / max_loras / max_lora_rank",
+        importance: "고급",
+        impact: "가중치↑",
+        impactText: "LoRA 어댑터 메모리 추가",
+        detail: "LoRA를 여러 개 붙일수록 어댑터 메모리 풀이 추가로 필요합니다. 동시에 로드하는 개수와 rank가 커질수록 GPU 메모리 압박이 커집니다.",
+      },
+      {
+        name: "speculative_config",
+        importance: "고급",
+        impact: "가중치↑ / KV↑",
+        impactText: "드래프트 모델 + 별도 KV 캐시",
+        detail: "스펙큘레이티브 디코딩은 드래프트 모델과 그 모델의 KV 캐시까지 추가 상주합니다. 속도는 빠르지만 메모리도 함께 늘어납니다.",
+      },
+    ],
+  },
 ];
 
 const WORKLOAD_PRESETS = [
@@ -1191,6 +1525,7 @@ function compute(){
   el('quickHardware').textContent = `${tp}×${pp} / ${vram}GB`;
   el('quickQuant').textContent = quantizationLabel(el('wdtype').value);
   el('quickWeight').textContent = fmtGB(selectedWeightGB(model));
+  el('weightNote').innerHTML = buildWeightSummary(model);
 
   const totalWeightGB = selectedWeightGB(model);
 
@@ -1649,10 +1984,16 @@ function applyModelPreset(){
   const defaultWeightGB = presetWeightGB(m);
   el('weightGB').value = defaultWeightGB ? defaultWeightGB.toFixed(2) : '';
   el('v_weightgb').textContent = selectedWeightGB(m) ? selectedWeightGB(m).toFixed(2) + ' GB' : '-';
-  el('weightNote').textContent = Number.isFinite(m.weightBytes)
-    ? '프리셋 기본 가중치를 넣었습니다. 양자화 dtype을 바꾸면 VRAM 계산용 가중치도 함께 보정됩니다.'
-    : '직접 입력 모델은 가중치를 직접 넣어야 합니다. 양자화 dtype을 바꾸면 VRAM 계산용 가중치도 함께 보정됩니다.';
+  el('weightNote').innerHTML = buildWeightSummary(m);
   if (el('hfModelId') && m.hfId) el('hfModelId').value = m.hfId;
+  const token = ++modelConfigToken;
+  loadModelConfig(m).then(()=>{
+    if (token !== modelConfigToken) return;
+    if (+el('modelPreset').value === idx.toString()){
+      el('weightNote').innerHTML = buildWeightSummary(m);
+      compute();
+    }
+  });
   if (lastDeployCfg){
     lastDeployCfg.modelId = selectedModelId();
     updateDeployCommands(lastDeployCfg);
@@ -1666,8 +2007,56 @@ function applyGpuPreset(){
   compute();
 }
 
+function importanceBadgeClass(level){
+  switch (level){
+    case '핵심': return 'core';
+    case '중요': return 'important';
+    case '고급': return 'advanced';
+    default: return 'edge';
+  }
+}
+
 function buildTable(){
-  el('tblBody').innerHTML = TABLE_ROWS.map(r=>`<tr><td class="param">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('');
+  const groups = TABLE_GROUPS.map(group => {
+    const rows = group.items.map(item => `
+      <tr>
+        <td class="param">${item.name}</td>
+        <td><span class="badge ${importanceBadgeClass(item.importance)}">${item.importance}</span></td>
+        <td>
+          <div class="mini-tags"><span>${item.impact}</span><span>${item.impactText}</span></div>
+        </td>
+        <td>
+          <div>${item.detail}</div>
+        </td>
+      </tr>
+    `).join('');
+    return `
+      <article class="group-card">
+        <div class="group-head">
+          <h3>${group.title} <span class="badge ${group.color}">${group.items.length}개 옵션</span></h3>
+          <p>${group.summary}</p>
+          <div class="group-meta">
+            <span class="badge ${group.color}">카테고리</span>
+            <span class="badge ${group.color}">우선순위: ${group.priority}</span>
+          </div>
+        </div>
+        <div class="group-table">
+          <table>
+            <thead>
+              <tr>
+                <th>옵션</th>
+                <th>중요도</th>
+                <th>메모리 영향</th>
+                <th>설명 및 팁</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      </article>
+    `;
+  }).join('');
+  el('optionGroups').innerHTML = groups;
 }
 
 async function init(){
