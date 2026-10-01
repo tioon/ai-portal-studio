@@ -23,6 +23,7 @@ const gpuPowerValue = document.querySelector("#gpuPowerValue");
 const gpuConnectorValue = document.querySelector("#gpuConnectorValue");
 const gpuExactnessValue = document.querySelector("#gpuExactnessValue");
 const gpuRequiredPartsValue = document.querySelector("#gpuRequiredPartsValue");
+const gpuAvailabilityNote = document.querySelector("#gpuAvailabilityNote");
 const clearExtraServersButton = document.querySelector("#clearExtraServers");
 const STORAGE_KEY = "ai-server-request-state";
 const DEFAULT_VENDOR_LIMIT = 6;
@@ -386,10 +387,11 @@ const GPU_OPTIONS = [
     label: "B200 / Blackwell",
     cpu: "2-socket, 48-96+ cores",
     memory: "1TB-2TB",
+    gpuMemory: "180GB HBM3e",
     platforms: ["SXM"],
     variants: {
       SXM: {
-        tdp: "HGX platform-specific",
+        tdp: "up to 1000W",
         connector: "HGX baseboard / SXM",
         exactness: "platform-specific",
         serverNeed: "NVIDIA HGX with 8 Blackwell SXMs",
@@ -399,17 +401,18 @@ const GPU_OPTIONS = [
       }
     },
     fit: "next-gen training",
-    note: "차세대 랙 전력 예산 필요"
+    note: "180GB HBM3e · HGX 8-GPU SXM 전용 · 차세대 랙 전력 예산 필요"
   },
   {
     value: "B300",
     label: "B300 / Blackwell",
     cpu: "2-socket, 48-96+ cores",
     memory: "1TB-2TB",
+    gpuMemory: "288GB HBM3e",
     platforms: ["SXM"],
     variants: {
       SXM: {
-        tdp: "platform-specific",
+        tdp: "up to 1100W",
         connector: "HGX baseboard / SXM",
         exactness: "platform-specific",
         serverNeed: "HGX Blackwell platform with matching SXM baseboard",
@@ -419,7 +422,7 @@ const GPU_OPTIONS = [
       }
     },
     fit: "next-gen training",
-    note: "Blackwell 세대의 SXM 기준"
+    note: "288GB HBM3e · HGX 8-GPU SXM 전용 · Blackwell Ultra 세대"
   }
 ];
 
@@ -744,7 +747,7 @@ const VENDORS = [
     model: "PowerEdge R960",
     badge: "maximum memory",
     summary: "Dell의 대형 CPU/메모리 축으로, 대규모 AI 지원 환경에 맞습니다.",
-    fit: ["A100", "H100", "H200", "B200", "B300"],
+    fit: ["A100", "H100", "H200"],
     platforms: ["PCIe"],
     capacityLevel: 4,
     slotCapacity: 8,
@@ -1263,9 +1266,14 @@ function normalizeGpuSelection(rawGpu, rawPlatform) {
     };
   }
 
+  const gpu = getGpu(rawGpu);
+  const gpuPlatform = rawPlatform && gpu.platforms.includes(rawPlatform)
+    ? rawPlatform
+    : gpu.platforms[0] || rawPlatform || "PCIe";
+
   return {
-    gpuTier: rawGpu,
-    gpuPlatform: rawPlatform || "PCIe"
+    gpuTier: gpu.value,
+    gpuPlatform
   };
 }
 
@@ -1545,11 +1553,20 @@ function renderGpuOptions(platform, selectedValue) {
     ? selectedValue
     : getDefaultGpuValue(platform);
 
-  gpuTierSelect.innerHTML = compatible
-    .map((gpu) => `<option value="${gpu.value}"${gpu.value === fallbackValue ? " selected" : ""}>${gpu.label}</option>`)
+  gpuTierSelect.innerHTML = GPU_OPTIONS
+    .map((gpu) => {
+      const isCompatible = gpu.platforms.includes(platform);
+      const platformHint = isCompatible ? "" : ` (${gpu.platforms.join(" / ")} 전용 · 선택 시 자동 전환)`;
+      return `<option value="${gpu.value}"${gpu.value === fallbackValue ? " selected" : ""}>${gpu.label}${platformHint}</option>`;
+    })
     .join("");
 
   gpuTierSelect.value = fallbackValue;
+  if (gpuAvailabilityNote) {
+    gpuAvailabilityNote.textContent = platform === "SXM"
+      ? "SXM / HGX 구성: B200(180GB)·B300(288GB)을 포함한 8-GPU 플랫폼 기준입니다."
+      : "PCIe 카드형 기준입니다. B200·B300은 HGX SXM 전용이며 GPU 급에서 선택하면 폼팩터가 자동 전환됩니다.";
+  }
   return fallbackValue;
 }
 
@@ -1623,6 +1640,7 @@ function render() {
   livePreview.textContent = [
     `워크로드: ${state.workload.label}`,
     `GPU: ${state.gpu.label} / ${state.gpuPlatform} x${state.gpuCount}`,
+    `GPU 메모리: ${state.gpu.gpuMemory || "SKU-specific"}`,
     `CPU: ${state.cpu}`,
     `GPU 전력: ${state.gpuPower}`,
     `GPU 커넥터: ${state.gpuConnector}`,
@@ -1730,11 +1748,17 @@ if (clearExtraServersButton) {
 }
 
 workloadSelect.addEventListener("change", render);
-gpuTierSelect.addEventListener("change", render);
 gpuPlatformSelect.addEventListener("change", render);
 gpuCountInput.addEventListener("input", render);
 siteTypeSelect.addEventListener("change", render);
 serverSelect.addEventListener("change", render);
+gpuTierSelect.addEventListener("change", () => {
+  const selectedGpu = getGpu(gpuTierSelect.value);
+  if (!selectedGpu.platforms.includes(gpuPlatformSelect.value)) {
+    gpuPlatformSelect.value = selectedGpu.platforms[0];
+  }
+  render();
+});
 copyButton.addEventListener("click", copyRequest);
 
 render();

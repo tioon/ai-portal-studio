@@ -501,6 +501,13 @@ summary:focus-visible {
   grid-column: 1 / -1;
 }
 
+.field-note {
+  margin: -0.4rem 0 1rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
 label {
   display: grid;
   gap: 8px;
