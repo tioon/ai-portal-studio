@@ -11,7 +11,8 @@ const tabs = Array.from(document.querySelectorAll(".tab"));
 const state = {
   distro: "rocky",
   category: "all",
-  search: ""
+  search: "",
+  scenario: ""
 };
 
 const scenarios = [
@@ -19,25 +20,25 @@ const scenarios = [
     id: "disk",
     label: "디스크 부족",
     note: "df / du / find / journalctl",
-    search: "df du find journalctl"
+    ids: ["disk", "storage-advanced", "find", "journalctl", "lsof"]
   },
   {
     id: "service",
     label: "서비스 재시작",
     note: "systemctl / journalctl",
-    search: "systemctl journalctl service"
+    ids: ["systemctl", "service-check", "systemctl-cat", "journalctl"]
   },
   {
     id: "network",
     label: "포트 확인",
     note: "ss / ip / curl / dig",
-    search: "ss ip curl dig"
+    ids: ["ss", "iproute", "curl", "nc", "tcpdump"]
   },
   {
     id: "logs",
     label: "로그 추적",
     note: "tail / journalctl / grep",
-    search: "tail journalctl grep"
+    ids: ["journalctl", "tailgrep", "grep", "less", "journalctl-advanced"]
   }
 ];
 
@@ -1749,7 +1750,7 @@ const COMMANDS = [
           { label: "활성 연결 보기", code: "nmcli -p con show --active" },
           { label: "장치 상태 보기", code: "nmcli dev status" }
         ],
-        diff: "Ubuntu 서버는 netplan이 상위 설정이지만 실제 링크 상태는 nmcli로 보는 경우가 많습니다.",
+        diff: "Ubuntu에서 nmcli는 NetworkManager가 설치되어 해당 연결을 관리할 때 사용합니다. Netplan의 renderer가 systemd-networkd이면 networkctl과 ip로 확인하세요.",
         warnings: ["정적 IP나 DNS 수정은 원격 접속 유지 상태를 먼저 확인하세요."]
       }
     }
@@ -3510,7 +3511,7 @@ const COMMANDS = [
       },
       ubuntu: {
         options: [
-          { flag: "apt history", desc: "apt 로그 파일을 기반으로 이력 확인" },
+          { flag: "/var/log/apt/history.log", desc: "APT 작업 이력 로그 (명령어가 아닌 파일 경로)" },
           { flag: "history.log", desc: "로그 경로 참고" }
         ],
         examples: [
@@ -6004,6 +6005,24 @@ const COMMANDS = [
   }
 ];
 
+// Primary snippets should be a coherent operation, not a chain of unrelated actions.
+const reviewedCommands = {
+  "dnf-history": { rocky: "dnf history", ubuntu: "less /var/log/apt/history.log" },
+  "dnf-autoremove": { rocky: "dnf autoremove --assumeno", ubuntu: "apt-get --simulate autoremove" },
+  "apt-autoremove": { rocky: "dnf autoremove --assumeno", ubuntu: "apt-get --simulate autoremove" },
+  "dnf-config-manager": { rocky: "dnf repolist", ubuntu: "apt-cache policy" },
+  "apt-mark-hold": { rocky: "dnf versionlock list", ubuntu: "apt-mark showhold" },
+  "add-apt-repository": { rocky: "dnf repolist", ubuntu: "apt-cache policy" },
+  packages: { rocky: "dnf list --installed", ubuntu: "apt list --installed" },
+  "package-legacy": { rocky: "rpm -q nginx", ubuntu: "dpkg -s nginx" },
+  systemctl: { rocky: "systemctl status nginx", ubuntu: "systemctl status nginx" },
+  ps: { rocky: "ps aux", ubuntu: "ps aux" },
+  mount: { rocky: "findmnt", ubuntu: "findmnt" },
+  "proc-control": { rocky: "pgrep -af nginx", ubuntu: "pgrep -af nginx" },
+  "package-tools": { rocky: "dnf history", ubuntu: "apt-cache policy nginx" },
+  "fs-legacy": { rocky: "lsblk -f", ubuntu: "lsblk -f" }
+};
+
 function normalizeText(value) {
   return String(value).toLowerCase();
 }
@@ -6020,12 +6039,22 @@ function getCommandTopic(command) {
   return topicByCommandId[command.id] || command.category;
 }
 
+const distroTitles = {
+  "dnf-history": { rocky: "dnf history", ubuntu: "APT 설치 이력" },
+  "dnf-autoremove": { rocky: "dnf autoremove", ubuntu: "apt autoremove" },
+  "apt-autoremove": { rocky: "dnf autoremove", ubuntu: "apt autoremove" },
+  "dnf-config-manager": { rocky: "dnf config-manager", ubuntu: "APT 저장소 관리" },
+  "apt-mark-hold": { rocky: "dnf versionlock", ubuntu: "apt-mark hold" },
+  "add-apt-repository": { rocky: "DNF 저장소 관리", ubuntu: "add-apt-repository" },
+  "package-legacy": { rocky: "yum / rpm", ubuntu: "apt-get / dpkg" }
+};
+
 function getCommandDisplay(command, distro) {
   const override = displayOverrides[command.id]?.[distro];
   return {
-    title: command.title,
+    title: distroTitles[command.id]?.[distro] || command.title,
     searchTitle: override?.title || command.title,
-    command: override?.command || command.command
+    command: reviewedCommands[command.id]?.[distro] || override?.command || command.command
   };
 }
 
@@ -6050,7 +6079,8 @@ function getVisibleCommands() {
     ].join(" "));
 
     const searchMatch = !terms.length || terms.every((term) => haystack.includes(term));
-    return categoryMatch && searchMatch;
+    const scenario = scenarios.find((item) => item.id === state.scenario);
+    return categoryMatch && searchMatch && (!scenario || scenario.ids.includes(command.id));
   });
 
   return matched;
@@ -6069,42 +6099,65 @@ function groupVisibleCommands(commands) {
 }
 
 function renderCategories() {
-  categoryRow.innerHTML = "";
-  categories.forEach((category) => {
-    const button = document.createElement("button");
-    button.className = `category-pill ${state.category === category.id ? "is-active" : ""}`;
-    button.type = "button";
-    button.textContent = category.label;
-    button.addEventListener("click", () => {
-      state.category = category.id;
-      renderAll();
+  if (!categoryRow.children.length) {
+    categories.forEach((category) => {
+      const button = document.createElement("button");
+      button.className = "category-pill";
+      button.type = "button";
+      button.dataset.category = category.id;
+      const label = document.createElement("strong");
+      label.style.fontWeight = "inherit";
+      label.textContent = category.label;
+      const count = document.createElement("span");
+      count.textContent = category.id === "all" ? COMMANDS.length : COMMANDS.filter((item) => getCommandTopic(item) === category.id).length;
+      count.setAttribute("aria-hidden", "true");
+      button.append(label, count);
+      button.addEventListener("click", () => {
+        state.category = category.id;
+        state.scenario = "";
+        renderAll();
+      });
+      categoryRow.append(button);
     });
-    categoryRow.append(button);
+  }
+  categoryRow.querySelectorAll("button").forEach((button) => {
+    const active = state.category === button.dataset.category;
+    button.classList.toggle("is-active", active);
+    button.setAttribute("aria-pressed", String(active));
   });
 }
 
 function renderScenarios() {
-  scenarioGrid.innerHTML = "";
-  scenarios.forEach((scenario) => {
-    const button = document.createElement("button");
-    button.className = "scenario-card";
-    button.type = "button";
-    button.innerHTML = `<strong>${scenario.label}</strong><span>${scenario.note}</span>`;
-    button.addEventListener("click", () => {
-      searchInput.value = scenario.search;
-      state.search = scenario.search;
-      renderAll();
-      searchInput.focus();
+  if (!scenarioGrid.children.length) {
+    scenarios.forEach((scenario) => {
+      const button = document.createElement("button");
+      button.className = "scenario-card";
+      button.type = "button";
+      button.dataset.scenario = scenario.id;
+      button.title = scenario.note;
+      button.textContent = scenario.label;
+      button.addEventListener("click", () => {
+        state.scenario = state.scenario === scenario.id ? "" : scenario.id;
+        state.search = "";
+        state.category = "all";
+        searchInput.value = "";
+        renderAll();
+      });
+      scenarioGrid.append(button);
     });
-    scenarioGrid.append(button);
+  }
+  scenarioGrid.querySelectorAll("button").forEach((button) => {
+    const active = state.scenario === button.dataset.scenario;
+    button.classList.toggle("is-active", active);
+    button.setAttribute("aria-pressed", String(active));
   });
 }
 
 function renderCommands() {
   const visible = getVisibleCommands();
   commandSections.innerHTML = "";
-  resultCount.textContent = `${visible.length}개`;
-  listTitle.textContent = state.distro === "rocky" ? "Rocky Linux 전용 보기" : "Ubuntu 전용 보기";
+  resultCount.textContent = `${visible.length}개 항목`;
+  listTitle.textContent = scenarios.find((item) => item.id === state.scenario)?.label || (state.category === "all" ? "전체 명령어" : categories.find((item) => item.id === state.category)?.label);
 
   if (!visible.length) {
     commandSections.innerHTML = `
@@ -6132,7 +6185,7 @@ function renderCommands() {
     sectionHead.innerHTML = `
       <div class="section-title">
         <h3>${category.label}</h3>
-        <span class="section-meta">${items.length}개 명령어</span>
+        <span class="section-meta">${items.length}개 항목</span>
       </div>
       <span class="result-count">${items.length}개</span>
     `;
@@ -6146,9 +6199,10 @@ function renderCommands() {
       const display = getCommandDisplay(command, state.distro);
       const node = commandTemplate.content.cloneNode(true);
       const card = node.querySelector(".command-card");
+      card.id = `command-${command.id}`;
       const categoryLabel = categories.find((item) => item.id === getCommandTopic(command))?.label || command.category;
       node.querySelector(".pill-category").textContent = categoryLabel;
-      node.querySelector(".pill-distro").textContent = state.distro === "rocky" ? "Rocky Linux only" : "Ubuntu only";
+      node.querySelector(".pill-distro").textContent = state.distro === "rocky" ? "Rocky Linux 기준" : "Ubuntu 기준";
       node.querySelector("h3").textContent = display.title;
       node.querySelector(".summary").textContent = command.summary;
       node.querySelector(".command-line code").textContent = display.command;
@@ -6157,7 +6211,11 @@ function renderCommands() {
       variant.options.forEach((option) => {
         const item = document.createElement("div");
         item.className = "option-item";
-        item.innerHTML = `<strong>${option.flag}</strong><span>${option.desc}</span>`;
+        const flag = document.createElement("strong");
+        flag.textContent = option.flag;
+        const description = document.createElement("span");
+        description.textContent = option.desc;
+        item.append(flag, description);
         optionList.append(item);
       });
 
@@ -6165,7 +6223,11 @@ function renderCommands() {
       variant.examples.forEach((example) => {
         const item = document.createElement("div");
         item.className = "example-item";
-        item.innerHTML = `<strong>${example.label}</strong><code>${example.code}</code>`;
+        const label = document.createElement("strong");
+        label.textContent = example.label;
+        const code = document.createElement("code");
+        code.textContent = example.code;
+        item.append(label, code);
         exampleList.append(item);
       });
 
@@ -6184,11 +6246,20 @@ function renderCommands() {
 
       const copyButton = node.querySelector(".copy-button");
       copyButton.addEventListener("click", async () => {
-        await navigator.clipboard.writeText(display.command);
-        copyButton.textContent = "Copied";
-        window.setTimeout(() => {
-          copyButton.textContent = "Copy";
-        }, 1200);
+        try {
+          await navigator.clipboard.writeText(display.command);
+          copyButton.textContent = "복사됨";
+          document.querySelector("#copyStatus").textContent = `${display.title} 명령어가 복사되었습니다.`;
+        } catch {
+          copyButton.textContent = "직접 선택";
+          const selection = window.getSelection();
+          const range = document.createRange();
+          range.selectNodeContents(card.querySelector(".command-line code"));
+          selection.removeAllRanges();
+          selection.addRange(range);
+          document.querySelector("#copyStatus").textContent = "클립보드에 접근할 수 없습니다. 선택된 명령어를 직접 복사하세요.";
+        }
+        window.setTimeout(() => { copyButton.textContent = "복사"; }, 1800);
       });
 
       grid.append(node);
@@ -6203,23 +6274,27 @@ function renderTabs() {
   tabs.forEach((tab) => {
     const active = tab.dataset.distro === state.distro;
     tab.classList.toggle("is-active", active);
-    tab.setAttribute("aria-selected", String(active));
+    tab.setAttribute("aria-pressed", String(active));
   });
 }
 
 function renderAll() {
   renderTabs();
+  renderScenarios();
   renderCategories();
   renderCommands();
 }
 
 searchInput.addEventListener("input", (event) => {
   state.search = event.target.value;
+  state.scenario = "";
+  renderScenarios();
   renderCommands();
 });
 
 clearFilters.addEventListener("click", () => {
   state.search = "";
+  state.scenario = "";
   state.category = "all";
   searchInput.value = "";
   renderAll();
@@ -6233,16 +6308,13 @@ tabs.forEach((tab) => {
   });
 });
 
-document.querySelectorAll("[data-scenario]").forEach((button) => {
-  button.addEventListener("click", () => {
-    const scenario = scenarios.find((item) => item.id === button.dataset.scenario);
-    if (!scenario) return;
-    searchInput.value = scenario.search;
-    state.search = scenario.search;
-    renderCommands();
+document.addEventListener("keydown", (event) => {
+  if (event.key === "/" && !event.ctrlKey && !event.metaKey && !event.altKey && !event.target.matches("input, textarea, select, [contenteditable]")) {
+    event.preventDefault();
     searchInput.focus();
-  });
+  }
 });
 
-renderScenarios();
+const navigation = document.querySelector(".navigation");
+if (window.matchMedia("(max-width: 720px)").matches) navigation.open = false;
 renderAll();

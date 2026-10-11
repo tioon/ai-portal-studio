@@ -1,106 +1,55 @@
 <!doctype html>
 <html lang="ko">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Linux Ops Manual</title>
-    <meta
-      name="description"
-      content="Rocky Linux와 Ubuntu 기준으로 자주 쓰는 리눅스 명령어를 상황별로 바로 찾는 운영 치트시트."
-    />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="./styles.css" />
-  </head>
-  <body>
-    <main class="shell">
-      <section class="hero card">
-        <div class="hero-copy">
-          <div class="eyebrow">Linux Ops Manual</div>
-          <h1>Rocky / Ubuntu 운영 명령어를 10초 안에 찾는 치트시트</h1>
-          <p class="lede">
-            서버 개발과 운영 중 자주 쓰는 명령어를 배포판별로 나누고, 옵션과 예시까지
-            함께 정리한 실전형 레퍼런스입니다.
-          </p>
-
-          <div class="hero-actions">
-            <button class="button button-primary" data-scenario="disk">디스크 점검</button>
-            <button class="button button-secondary" data-scenario="service">서비스 재시작</button>
-            <button class="button button-secondary" data-scenario="network">포트 확인</button>
-            <button class="button button-secondary" data-scenario="logs">로그 추적</button>
-          </div>
-
-          <div class="hero-chips">
-            <span class="chip">Rocky Linux</span>
-            <span class="chip">Ubuntu</span>
-            <span class="chip">상황별 검색</span>
-            <span class="chip">복사 버튼</span>
-          </div>
-        </div>
-
-        <div class="hero-panel">
-          <div class="panel-top">
-            <div>
-              <div class="panel-label">Quick search</div>
-              <h2>바로 찾기</h2>
-            </div>
-            <span class="panel-badge">Live</span>
-          </div>
-          <label class="search">
-            <span class="sr-only">명령어 검색</span>
-            <input
-              id="searchInput"
-              type="search"
-              placeholder="예: 디스크 가득참, 포트 확인, 서비스 재시작"
-              autocomplete="off"
-            />
-          </label>
-
-          <div class="distro-tabs" role="tablist" aria-label="배포판 선택">
-            <button class="tab is-active" data-distro="rocky" role="tab" aria-selected="true">
-              Rocky Linux
-            </button>
-            <button class="tab" data-distro="ubuntu" role="tab" aria-selected="false">
-              Ubuntu
-            </button>
-          </div>
-
-          <div class="panel-note">
-            같은 명령어라도 패키지 관리자, 서비스명, 방화벽, 설정 경로가 달라지는 부분을
-            따로 보여줍니다.
-          </div>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Rocky Linux와 Ubuntu 운영 명령어 레퍼런스. 분야별 탐색, 배포판별 예시와 주의사항." />
+  <title>Linux Ops Manual — 운영 레퍼런스</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">본문으로 이동</a>
+  <header class="topbar">
+    <a class="brand" href="./"><span class="brand-mark" aria-hidden="true">L/</span>Linux Ops Manual</a>
+    <span class="header-caption">서버 운영 레퍼런스</span>
+    <a class="portal-link" href="../portal-home/">프로젝트 목록 ↗</a>
+  </header>
+  <div class="workspace">
+    <aside class="sidebar" aria-label="분야 탐색">
+      <details class="navigation" open>
+        <summary>명령어 목차 <span>분야별 탐색</span></summary>
+        <nav id="categoryRow" class="category-row" aria-label="명령어 분야"></nav>
+      </details>
+      <div class="sidebar-note">Rocky Linux · Ubuntu<br>운영 중 참고하는 명령어 모음입니다.<br>전체 Linux 학습 과정은 아닙니다.</div>
+    </aside>
+    <main id="main" class="main-content" tabindex="-1">
+      <div class="breadcrumb">문서 / Linux / 명령어 레퍼런스</div>
+      <section class="intro" aria-labelledby="pageTitle">
+        <h1 id="pageTitle">리눅스 운영 명령어</h1>
+        <p class="lede">필요한 명령어를 찾고, 옵션과 배포판별 차이를 확인하세요.</p>
+        <p class="scope-note">29개 분야 · 141개 항목 <span>여러 명령어를 함께 설명하는 항목이 포함되어 있습니다.</span></p>
+      </section>
+      <section class="search-toolbar" aria-label="검색 및 배포판 선택">
+        <label class="search" for="searchInput"><span class="sr-only">명령어 검색</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>
+          <input id="searchInput" type="search" placeholder="명령어 또는 작업 검색" autocomplete="off" aria-describedby="searchHint" />
+          <kbd aria-hidden="true">/</kbd>
+        </label>
+        <div class="distro-tabs" role="group" aria-label="배포판 선택">
+          <button class="tab is-active" data-distro="rocky" aria-pressed="true">Rocky Linux</button>
+          <button class="tab" data-distro="ubuntu" aria-pressed="false">Ubuntu</button>
         </div>
       </section>
-
-      <section class="section card">
-        <div class="section-head">
-          <div>
-            <div class="section-label">Categories</div>
-            <h2>상황별 탐색</h2>
-          </div>
-          <span id="resultCount" class="result-count"></span>
-        </div>
-
-        <div id="categoryRow" class="category-row"></div>
-      </section>
-
-      <section class="section">
-        <div class="section-head compact">
-          <div>
-            <div class="section-label">Commands</div>
-            <h2 id="listTitle">Rocky Linux용 명령어</h2>
-          </div>
-          <button id="clearFilters" class="button button-secondary small">필터 초기화</button>
-        </div>
-        <div id="scenarioGrid" class="scenario-grid"></div>
+      <p id="searchHint" class="search-hint">예: journalctl, 디스크, 서비스 · 여러 검색어는 모두 포함하는 항목을 찾습니다.</p>
+      <div class="quick-access"><span>빠른 점검</span><div id="scenarioGrid" class="scenario-grid"></div></div>
+      <section aria-labelledby="listTitle">
+        <div class="section-head list-heading"><div><h2 id="listTitle">전체 명령어</h2><span id="resultCount" class="result-count" role="status" aria-live="polite"></span></div><button id="clearFilters" class="button small">초기화</button></div>
         <div id="commandSections" class="command-sections"></div>
       </section>
+      <footer class="footer">명령어는 설치 패키지와 버전에 따라 달라질 수 있습니다. 실행 전 대상과 권한을 확인하고 <code>man</code> / <code>--help</code>를 참고하세요.<br><a href="./review/analysis.html">문서 범위 및 정밀 분석 보고서 ↗</a></footer>
     </main>
-
+  </div>
+  <div id="copyStatus" class="sr-only" role="status" aria-live="polite"></div>
     <template id="commandTemplate">
       <article class="command-card card">
         <div class="card-head">
@@ -112,7 +61,7 @@
             <h3></h3>
             <p class="summary"></p>
           </div>
-          <button class="copy-button" type="button">Copy</button>
+          <button class="copy-button" type="button">복사</button>
         </div>
 
         <div class="command-line">
@@ -120,7 +69,7 @@
         </div>
 
         <details class="command-details">
-          <summary>상세 정보 보기</summary>
+          <summary>옵션 · 예시 · 주의사항</summary>
           <div class="details-grid">
             <div class="detail-block">
               <div class="block-head">
@@ -133,7 +82,7 @@
             <div class="detail-block">
               <div class="block-head">
                 <strong>실전 예시</strong>
-                <span>바로 복사해서 쓰는 패턴</span>
+                <span>환경과 대상에 맞게 수정해서 사용</span>
               </div>
               <div class="example-list"></div>
             </div>
@@ -158,6 +107,6 @@
       </article>
     </template>
 
-    <script src="./app.js"></script>
-  </body>
+  <script src="./app.js"></script>
+</body>
 </html>

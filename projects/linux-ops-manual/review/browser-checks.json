@@ -1,0 +1,94 @@
+[
+  {
+    "name": "141 cards",
+    "pass": true
+  },
+  {
+    "name": "30 categories including all",
+    "pass": true
+  },
+  {
+    "name": "rocky disk curated results",
+    "pass": true
+  },
+  {
+    "name": "rocky service curated results",
+    "pass": true
+  },
+  {
+    "name": "rocky network curated results",
+    "pass": true
+  },
+  {
+    "name": "rocky logs curated results",
+    "pass": true
+  },
+  {
+    "name": "ubuntu disk curated results",
+    "pass": true
+  },
+  {
+    "name": "ubuntu service curated results",
+    "pass": true
+  },
+  {
+    "name": "ubuntu network curated results",
+    "pass": true
+  },
+  {
+    "name": "ubuntu logs curated results",
+    "pass": true
+  },
+  {
+    "name": "search",
+    "pass": true
+  },
+  {
+    "name": "empty state",
+    "pass": true
+  },
+  {
+    "name": "category",
+    "pass": true
+  },
+  {
+    "name": "literal placeholder",
+    "pass": true
+  },
+  {
+    "name": "clipboard",
+    "pass": true
+  },
+  {
+    "name": "clipboard failure",
+    "pass": true
+  },
+  {
+    "name": "no overflow 1440",
+    "pass": true
+  },
+  {
+    "name": "no overflow 1024",
+    "pass": true
+  },
+  {
+    "name": "no overflow 768",
+    "pass": true
+  },
+  {
+    "name": "no overflow 390",
+    "pass": true
+  },
+  {
+    "name": "mobile category",
+    "pass": true
+  },
+  {
+    "name": "no overflow 320",
+    "pass": true
+  },
+  {
+    "name": "no JS errors",
+    "pass": true
+  }
+]
