@@ -999,3 +999,7 @@ a.button:hover,a.scenario-card:hover { background:var(--soft); text-decoration:n
   .builder { top:50px }
   .cmd-intro h1 { font-size:27px }
 }
+
+.tldr { display:block; min-width:0 }
+.tldr .example-item,.tldr .command-line,.tldr .command-line code { min-width:0 }
+.block { min-width:0; max-width:100% }

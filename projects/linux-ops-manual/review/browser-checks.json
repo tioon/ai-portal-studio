@@ -120,10 +120,8 @@
   },
   {
     "name": "no horizontal overflow at 320px",
-    "pass": false,
-    "detail": [
-      "#/c/systemctl.1+19"
-    ]
+    "pass": true,
+    "detail": []
   },
   {
     "name": "no horizontal overflow at 390px",
