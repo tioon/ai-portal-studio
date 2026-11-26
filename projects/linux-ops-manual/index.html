@@ -3,110 +3,47 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Rocky Linux와 Ubuntu 운영 명령어 레퍼런스. 분야별 탐색, 배포판별 예시와 주의사항." />
+  <meta name="description" content="Rocky Linux 9.6 · Ubuntu 22.04 공식 패키지의 man 페이지 전체를 담은 운영 명령어 레퍼런스. 모든 옵션, 배포판 차이, 한국어 운영 노트." />
   <title>Linux Ops Manual — 운영 레퍼런스</title>
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
   <a class="skip-link" href="#main">본문으로 이동</a>
   <header class="topbar">
-    <a class="brand" href="./"><span class="brand-mark" aria-hidden="true">L/</span>Linux Ops Manual</a>
-    <span class="header-caption">서버 운영 레퍼런스</span>
+    <a class="brand" href="#/"><span class="brand-mark" aria-hidden="true">L/</span>Linux Ops Manual</a>
+    <nav class="topnav" aria-label="주요 메뉴">
+      <a href="#/" data-nav="home">운영 카드</a>
+      <a href="#/all" data-nav="all">전체 명령어</a>
+      <a href="#/x" data-nav="x">명령줄 해설</a>
+      <a href="#/about" data-nav="about">데이터 출처</a>
+    </nav>
+    <div class="distro-tabs" role="group" aria-label="배포판 선택">
+      <button class="tab" data-distro="r" aria-pressed="false">Rocky 9.6</button>
+      <button class="tab" data-distro="u" aria-pressed="false">Ubuntu 22.04</button>
+    </div>
     <a class="portal-link" href="../portal-home/">프로젝트 목록 ↗</a>
   </header>
   <div class="workspace">
-    <aside class="sidebar" aria-label="분야 탐색">
+    <aside class="sidebar" aria-label="탐색">
       <details class="navigation" open>
-        <summary>명령어 목차 <span>분야별 탐색</span></summary>
-        <nav id="categoryRow" class="category-row" aria-label="명령어 분야"></nav>
+        <summary>목차 <span>분야 · 색인</span></summary>
+        <nav id="sideNav" class="category-row" aria-label="분야"></nav>
       </details>
-      <div class="sidebar-note">Rocky Linux · Ubuntu<br>운영 중 참고하는 명령어 모음입니다.<br>전체 Linux 학습 과정은 아닙니다.</div>
+      <div class="sidebar-note" id="sideNote"></div>
     </aside>
     <main id="main" class="main-content" tabindex="-1">
-      <div class="breadcrumb">문서 / Linux / 명령어 레퍼런스</div>
-      <section class="intro" aria-labelledby="pageTitle">
-        <h1 id="pageTitle">리눅스 운영 명령어</h1>
-        <p class="lede">필요한 명령어를 찾고, 옵션과 배포판별 차이를 확인하세요.</p>
-        <p class="scope-note">29개 분야 · 141개 항목 <span>여러 명령어를 함께 설명하는 항목이 포함되어 있습니다.</span></p>
-      </section>
-      <section class="search-toolbar" aria-label="검색 및 배포판 선택">
+      <section class="search-toolbar" aria-label="검색">
         <label class="search" for="searchInput"><span class="sr-only">명령어 검색</span>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>
-          <input id="searchInput" type="search" placeholder="명령어 또는 작업 검색" autocomplete="off" aria-describedby="searchHint" />
+          <input id="searchInput" type="search" placeholder="명령어 이름 또는 작업 검색 — 예: rsync, 디스크, firewall" autocomplete="off" spellcheck="false" />
           <kbd aria-hidden="true">/</kbd>
         </label>
-        <div class="distro-tabs" role="group" aria-label="배포판 선택">
-          <button class="tab is-active" data-distro="rocky" aria-pressed="true">Rocky Linux</button>
-          <button class="tab" data-distro="ubuntu" aria-pressed="false">Ubuntu</button>
-        </div>
       </section>
-      <p id="searchHint" class="search-hint">예: journalctl, 디스크, 서비스 · 여러 검색어는 모두 포함하는 항목을 찾습니다.</p>
-      <div class="quick-access"><span>빠른 점검</span><div id="scenarioGrid" class="scenario-grid"></div></div>
-      <section aria-labelledby="listTitle">
-        <div class="section-head list-heading"><div><h2 id="listTitle">전체 명령어</h2><span id="resultCount" class="result-count" role="status" aria-live="polite"></span></div><button id="clearFilters" class="button small">초기화</button></div>
-        <div id="commandSections" class="command-sections"></div>
-      </section>
-      <footer class="footer">명령어는 설치 패키지와 버전에 따라 달라질 수 있습니다. 실행 전 대상과 권한을 확인하고 <code>man</code> / <code>--help</code>를 참고하세요.<br><a href="./review/analysis.html">문서 범위 및 정밀 분석 보고서 ↗</a></footer>
+      <div id="view" class="view" aria-live="polite"><p class="loading">데이터를 불러오는 중…</p></div>
+      <footer class="footer" id="footer"></footer>
     </main>
   </div>
   <div id="copyStatus" class="sr-only" role="status" aria-live="polite"></div>
-    <template id="commandTemplate">
-      <article class="command-card card">
-        <div class="card-head">
-          <div>
-            <div class="meta-row">
-              <span class="pill pill-category"></span>
-              <span class="pill pill-distro"></span>
-            </div>
-            <h3></h3>
-            <p class="summary"></p>
-          </div>
-          <button class="copy-button" type="button">복사</button>
-        </div>
-
-        <div class="command-line">
-          <code></code>
-        </div>
-
-        <details class="command-details">
-          <summary>옵션 · 예시 · 주의사항</summary>
-          <div class="details-grid">
-            <div class="detail-block">
-              <div class="block-head">
-                <strong>자주 쓰는 옵션</strong>
-                <span>실전에서 자주 보는 조합</span>
-              </div>
-              <div class="option-list"></div>
-            </div>
-
-            <div class="detail-block">
-              <div class="block-head">
-                <strong>실전 예시</strong>
-                <span>환경과 대상에 맞게 수정해서 사용</span>
-              </div>
-              <div class="example-list"></div>
-            </div>
-
-            <div class="detail-block detail-wide">
-              <div class="block-head">
-                <strong>Rocky / Ubuntu 차이</strong>
-                <span>배포판별로 꼭 헷갈리는 부분</span>
-              </div>
-              <div class="diff-row"></div>
-            </div>
-
-            <div class="detail-block detail-wide warning-block">
-              <div class="block-head">
-                <strong>주의점</strong>
-                <span>운영 중 특히 조심할 부분</span>
-              </div>
-              <ul class="warning-list"></ul>
-            </div>
-          </div>
-        </details>
-      </article>
-    </template>
-
   <script src="./app.js"></script>
 </body>
 </html>

@@ -1,0 +1,1 @@
+{"id":"pnmmargin.1","lang":"ko","desc":"PNM 이미지에 테두리를 추가.","items":[["지정된 크기의 테두리를 PNM 이미지에 추가","pnmmargin {{크기}} {{경로/대상/이미지.pnm}} >{{경로/대상/출력.pnm}}"],["테두리 색상 지정","pnmmargin {{[-c|-color]}} {{색상}} {{크기}} {{경로/대상/이미지.pnm}} >{{경로/대상/출력.pnm}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/pnmmargin.md"}

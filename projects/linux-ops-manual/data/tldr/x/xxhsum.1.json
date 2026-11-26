@@ -1,0 +1,1 @@
+{"id":"xxhsum.1","lang":"ko","desc":"빠른 비암호화 알고리즘인 xxHash를 사용하여 체크섬을 출력하거나 검증합니다.","items":[["특정 알고리즘을 사용하여 [f]파일의 체크섬 계산","xxhsum -H{{0|32|64|128}} {{경로/대상/파일}}"],["벤치마크 실행","xxhsum -b"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/xxhsum.md"}

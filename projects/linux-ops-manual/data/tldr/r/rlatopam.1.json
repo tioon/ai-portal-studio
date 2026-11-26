@@ -1,0 +1,1 @@
+{"id":"rlatopam.1","lang":"ko","desc":"Alias/Wavefront RLA 및 RPF 이미지 파일을 Netpbm 형식으로 변환.","items":[["지정한 SPOT 이미지를 PGM 형식으로 변환","rlatopam {{경로/대상/파일}} >{{경로/대상/출력파일.pam}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/rlatopam.md"}

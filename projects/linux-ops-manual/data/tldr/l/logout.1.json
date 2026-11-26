@@ -1,0 +1,1 @@
+{"id":"logout.1","lang":"ko","desc":"로그인 셸 종료.","items":[["로그인 셸 종료","logout"],["종료 코드를 지정하여 로그인 셸 종료","logout {{종료_코드}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/logout.md"}

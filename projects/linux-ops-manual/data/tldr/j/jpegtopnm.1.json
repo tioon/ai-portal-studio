@@ -1,0 +1,1 @@
+{"id":"jpegtopnm.1","lang":"ko","desc":"JPEG/JFIF 파일을 PPM 또는 PGM 형식으로 변환.","items":[["JPEG/JFIF 이미지를 PPM 또는 PGM 이미지로 변환","jpegtopnm {{경로/대상/파일.jpg}} >{{경로/대상/파일.pnm}}"],["버전 표시","jpegtopnm {{[-v|-version]}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/jpegtopnm.md"}

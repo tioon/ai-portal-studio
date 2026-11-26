@@ -1,0 +1,1 @@
+{"id":"vmstat.8","lang":"ko","desc":"프로세스, 메모리, 페이징, 블록 IO, 트랩, 디스크 및 CPU 활동에 대한 정보를 표시합니다.","items":[["가상 메모리 통계를 표시","vmstat"],["2초마다 5회 보고서 표시","vmstat 2 5"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/vmstat.md"}

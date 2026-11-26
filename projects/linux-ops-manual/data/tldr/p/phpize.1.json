@@ -1,0 +1,1 @@
+{"id":"phpize.1","lang":"ko","desc":"PHP 확장을 컴파일할 준비를 합니다.","items":[["현재 디렉토리에서 PHP 확장을 컴파일할 준비","phpize"],["phpize로 생성된 파일 삭제","phpize --clean"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/phpize.md"}

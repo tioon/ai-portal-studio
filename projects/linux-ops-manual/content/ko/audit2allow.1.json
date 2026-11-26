@@ -1,0 +1,25 @@
+{
+ "audit2allow.1": {
+  "-a": "audit 및 message 로그에서 입력 읽기 (-i 와 충돌)",
+  "-b": "마지막 부팅 이후의 audit 메시지에서 입력 읽기 (-i 와 충돌)",
+  "-d": "/bin/dmesg 출력에서 입력 읽기",
+  "-D": "dontaudit 규칙 생성 (기본: allow)",
+  "-e": "생성된 출력을 상세히 설명",
+  "-h": "짧은 사용법 메시지 출력",
+  "-i": "<inputfile> 에서 입력 읽기",
+  "--interface-info": "<interface_info_file> 에서 interface 정보 읽기",
+  "-l": "마지막 정책 reload 이후의 입력만 읽기",
+  "-m": "<modulename> 으로 module/require 출력 생성",
+  "-M": "로드 가능한 모듈 패키지 생성 (-o 와 충돌)",
+  "-p": "분석에 사용할 정책 파일 지정",
+  "--perm-map": "<perm_map_file> 에서 permission map 읽기",
+  "-o": "출력을 <outputfile> 에 덧붙임",
+  "-r": "로드 가능한 모듈용 require 출력 구문 생성",
+  "-N": "reference policy 를 생성하지 않고 전통적인 allow 규칙 생성 (기본 동작)",
+  "-R": "설치된 매크로를 이용해 reference policy 생성 (부정확할 수 있음)",
+  "-t": "type 이 <type_regex> 정규식과 일치하는 메시지만 처리",
+  "-x": "extended permission access vector 규칙 생성",
+  "-w": "SELinux audit 메시지를 접근이 거부된 이유에 대한 설명으로 변환",
+  "-v": "verbose 출력 켜기"
+ }
+}

@@ -1,0 +1,1 @@
+{"id":"efivar.1","lang":"ko","desc":"UEFI 변수 관리.","items":[["모든 UEFI 변수 목록 표시","efivar {{[-l|--list]}}"],["지정한 UEFI 변수 내용 출력","efivar {{[-n|--name]}} {{146b234d-4052-4e07-b326-11220f8e1fe8-lBoot0000}} {{[-p|--print]}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/efivar.md"}

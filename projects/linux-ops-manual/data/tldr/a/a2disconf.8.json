@@ -1,0 +1,1 @@
+{"id":"a2disconf.8","lang":"ko","desc":"Debian 기반 운영체제에서 Apache 구성 파일을 비활성화합니다.","items":[["구성 파일 비활성화","sudo a2disconf {{구성_파일}}"],["정보 메시지를 표시하지 않음","sudo a2disconf {{[-q|--quiet]}} {{구성_파일}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/a2disconf.md"}

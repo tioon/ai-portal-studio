@@ -1,0 +1,1 @@
+{"id":"groupadd.8","lang":"ko","desc":"시스템에 사용자 그룹 추가. 관련 항목: `groups`, `groupdel`, `groupmod`.","items":[["새 그룹 생성","sudo groupadd {{그룹_이름}}"],["새 시스템 그룹 생성","sudo groupadd {{[-r|--system]}} {{그룹_이름}}"],["특정 그룹 ID로 새 그룹 생성","sudo groupadd {{[-g|--gid]}} {{id}} {{그룹_이름}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/groupadd.md"}

@@ -1,0 +1,1 @@
+{"id":"chvt.1","lang":"ko","desc":"활성 가상 터미널을 변경. 관련 항목: `fgconsole`.","items":[["지정한 TTY로 전환","sudo chvt {{3}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/chvt.md"}

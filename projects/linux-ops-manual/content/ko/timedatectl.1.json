@@ -1,0 +1,15 @@
+{
+ "timedatectl.1": {
+  "--no-ask-password": "특권 작업에 대해 사용자에게 인증을 묻지 않음",
+  "--adjust-system-clock": "set-local-rtc 호출 시 새 설정을 반영해 RTC 로부터 시스템 clock 을 다시 동기화",
+  "--monitor": "timesync-status 호출 시 systemd-timesyncd.service 의 상태를 감시하며 출력 갱신",
+  "-a": "systemd-timesyncd.service 의 property 표시 시 설정 여부와 관계없이 모든 property 표시",
+  "-p": "systemd-timesyncd.service 의 property 표시 시 인자로 지정한 property 만 표시",
+  "--value": "show-timesync 로 property 출력 시 property 이름과 \"=\" 를 빼고 값만 출력",
+  "-H": "원격으로 작업 실행 (hostname 또는 \"@\" 로 구분한 username 과 hostname 지정)",
+  "-M": "로컬 컨테이너에서 작업 실행 (연결할 컨테이너 이름 지정)",
+  "-h": "짧은 도움말을 출력하고 종료",
+  "--version": "짧은 버전 문자열을 출력하고 종료",
+  "--no-pager": "출력을 pager 로 보내지 않음"
+ }
+}

@@ -1,0 +1,1 @@
+{"id":"mktexfmt.1","lang":"en","desc":"Create a TeX format or Metafont base.","items":[["Create a format","mktexfmt {{format}}"],["Display help","mktexfmt --help"],["Display version","mktexfmt --version"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages/common/mktexfmt.md"}

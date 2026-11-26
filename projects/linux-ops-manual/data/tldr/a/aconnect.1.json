@@ -1,0 +1,1 @@
+{"id":"aconnect.1","lang":"ko","desc":"ALSA 시퀀서 연결을 관리.","items":[["모든 포트 목록 표시","aconnect {{[-a|--all]}}"],["읽기 가능한 입력 포트 목록 표시","aconnect {{[-i|--input]}}"],["쓰기 가능한 출력 포트 목록 표시","aconnect {{[-o|--output]}}"],["도움말 표시","aconnect"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/aconnect.md"}

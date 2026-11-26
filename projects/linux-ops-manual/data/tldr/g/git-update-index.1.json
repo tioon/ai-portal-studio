@@ -1,0 +1,1 @@
+{"id":"git-update-index.1","lang":"ko","desc":"Git 색인을 조작하기 위한 명령어.","items":[["수정된 파일이 변경되지 않은 것처럼 가장하기 (`git status`에서 변경 사항으로 표시되지 않음)","git update-index --skip-worktree {{경로/대상/수정된_파일}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/git-update-index.md"}

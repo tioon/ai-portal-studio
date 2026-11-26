@@ -1,0 +1,1 @@
+{"id":"toolbox-help.1","lang":"ko","desc":"`toolbox`에 대한 도움말 정보를 표시합니다.","items":[["`toolbox` 매뉴얼 표시","toolbox help"],["특정 하위 명령에 대한 Toolbx 매뉴얼 표시","toolbox help {{하위_명령}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/toolbox-help.md"}

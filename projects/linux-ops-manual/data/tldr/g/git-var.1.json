@@ -1,0 +1,1 @@
+{"id":"git-var.1","lang":"ko","desc":"Git 논리 변수의 값을 출력. `git var`보다 `git config`를 사용하는 것이 좋습니다.","items":[["Git 논리 변수의 값을 출력","git var {{GIT_AUTHOR_IDENT|GIT_COMMITTER_IDENT|GIT_EDITOR|GIT_PAGER}}"],["모든 Git 논리 변수를 [l]리스트","git var -l"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/git-var.md"}

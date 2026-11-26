@@ -1,0 +1,1 @@
+{"id":"logger.1","lang":"ko","desc":"syslog에 메시지 기록.","items":[["syslog에 메시지 기록","logger {{메시지}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/logger.md"}

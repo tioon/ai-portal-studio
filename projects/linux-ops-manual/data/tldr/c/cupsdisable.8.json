@@ -1,0 +1,1 @@
+{"id":"cupsdisable.8","lang":"ko","desc":"프린터 및 프린터 클래스를 중단. 참고: 목적지는 프린터 또는 프린터 클래스를 나타냄. 관련 항목: `cupsenable`, `cupsaccept`, `cupsreject`, `lpstat`.","items":[["하나 이상의 목적지들을 중지","cupsdisable {{목적지1 목적지2 ...}}"],["지정된 목적지들의 모든 작업 취소","cupsdisable -c {{목적지1 목적지2 ...}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/cupsdisable.md"}

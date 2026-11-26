@@ -1,0 +1,1 @@
+{"id":"mlabel.1","lang":"ko","desc":"FAT 및 VFAT 파일 시스템에 대한 MS-DOS 볼륨 레이블 설정.","items":[["파일 시스템 레이블 설정","mlabel -i {{/dev/sda}} ::\"{{새_레이블}}\""]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/mlabel.md"}

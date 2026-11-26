@@ -1,0 +1,1 @@
+{"id":"ppmmix.1","lang":"ko","desc":"두 개의 PPM 이미지를 혼합.","items":[["`fadefactor`를 사용하여 각 이미지의 가중치를 조절하여 지정된 PPM 이미지를 혼합","ppmmix {{fadefactor}} {{경로/대상/입력_파일1.ppm 경로/대상/입력_파일2.ppm ...}} >{{경로/대상/출력_파일.ppm}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/ppmmix.md"}

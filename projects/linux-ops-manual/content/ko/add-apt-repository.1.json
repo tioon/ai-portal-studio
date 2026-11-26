@@ -1,0 +1,19 @@
+{
+ "add-apt-repository.1": {
+  "-h": "도움말 표시 후 종료",
+  "-d": "디버그 정보를 명령행에 출력",
+  "-r": "지정한 저장소 제거 (해당 줄을 주석 처리하고, 비게 된 sources.list.d/ 파일은 삭제)",
+  "-y": "모든 질문에 yes 로 가정",
+  "-n": "저장소 추가 후 패키지 캐시를 갱신하지 않음",
+  "-l": "Launchpad 로그인 (비공개 PPA 에만 필요)",
+  "-s": "저장소의 소스 패키지 다운로드 허용 ('deb-src' 줄 추가 및 활성화)",
+  "-c": "지정한 저장소에 사용할 component 지정 (미지정 시 main, 여러 번 사용 가능)",
+  "-p": "사용할 pocket 지정 (기본은 none 으로 release pocket 과 동일)",
+  "--dry-run": "변경 없이 수행될 작업만 표시",
+  "-L": "현재 설정된 저장소 나열 (활성화된 것만, 기본은 binary(deb) 저장소만)",
+  "-P": "Ubuntu Launchpad PPA 추가 (ppa:USER/PPA, USER/PPA 또는 USER 형식, GPG 공개 키도 추가)",
+  "-C": "Ubuntu Cloud Archive 추가 (cloud-archive:CANAME, uca:CANAME 또는 CANAME 형식)",
+  "-U": "단일 URI 로 지정한 아카이브 추가 (PPA 로 감지되면 --ppa 처럼 동작)",
+  "-S": "한 줄 sources.list 형식의 전체 source 항목으로 지정한 아카이브 추가"
+ }
+}

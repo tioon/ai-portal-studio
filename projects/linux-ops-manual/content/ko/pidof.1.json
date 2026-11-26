@@ -1,0 +1,11 @@
+{
+ "pidof.1": {
+  "-s": "Single shot — pid 를 하나만 반환",
+  "-c": "같은 루트 디렉터리로 실행 중인 프로세스 ID 만 반환",
+  "-q": "Quiet 모드 — 출력을 억제하고 종료 상태만 설정",
+  "-w": "보이는 command line 이 없는 프로세스(예: kernel worker thread)도 표시",
+  "-x": "Scripts too — 지정한 스크립트를 실행 중인 셸의 프로세스 ID 도 반환",
+  "-o": "해당 프로세스 ID 의 프로세스를 제외 (omitpid)",
+  "-S": "pid 사이에 넣을 구분자로 separator 사용"
+ }
+}

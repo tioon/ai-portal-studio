@@ -1,0 +1,1 @@
+{"id":"qrttoppm.1","lang":"ko","desc":"QRT 레이 트레이서 파일을 PPM 이미지로 변환.","items":[["QRT 파일을 PPM 이미지로 변환","qrttoppm {{경로/대상/파일.qrt}} >{{경로/대상/이미지.ppm}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/qrttoppm.md"}

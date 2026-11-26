@@ -1,0 +1,1 @@
+{"id":"eval.1","lang":"ko","desc":"현재 쉘에서 인수를 단일 명령으로 실행하고 그 결과를 반환.","items":[["\"foo\" 인수를 사용하여 `echo`를 호출","eval \"{{echo foo}}\""],["현재 쉘에서 변수를 설정","eval \"{{foo=bar}}\""]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/eval.md"}

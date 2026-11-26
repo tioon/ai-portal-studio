@@ -1,0 +1,1 @@
+{"id":"aa-teardown.8","lang":"ko","desc":"AppArmor 프로파일을 해제하고 AppArmor 적용을 비활성화하는 도구.","items":[["모든 AppArmor 프로파일 비활성화 및 적용 중지","sudo aa-teardown"],["도움말 표시","aa-teardown {{[-h|--help]}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/aa-teardown.md"}

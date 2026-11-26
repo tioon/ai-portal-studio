@@ -1,0 +1,19 @@
+{
+ "dmidecode.8": {
+  "-d": "장치 FILE 에서 메모리 읽기 (기본값: /dev/mem)",
+  "-q": "덜 자세히 출력 (unknown, inactive, OEM 전용 항목과 메타데이터·handle 참조 숨김)",
+  "--no-quirks": "흔한 오류 보정이나 무관한 필드 숨김 없이 테이블 그대로 디코드",
+  "-s": "KEYWORD 로 식별되는 DMI 문자열의 값만 표시",
+  "--list-strings": "--string 옵션에 넘길 수 있는 문자열 키워드 나열",
+  "-t": "TYPE 유형의 항목만 표시 (DMI type 번호, 쉼표 구분 번호 목록 또는 키워드)",
+  "--list-types": "--type 옵션에 넘길 수 있는 type 키워드 나열",
+  "-H": "handle 이 HANDLE 과 일치하는 항목만 표시 (16비트 정수)",
+  "-u": "항목을 디코드하지 않고 내용을 16진수로 덤프",
+  "--dump-bin": "항목을 디코드하지 않고 DMI 데이터를 FILE 에 바이너리로 덤프 (FILE 은 없어야 함)",
+  "--from-dump": "--dump-bin 으로 만든 바이너리 파일에서 DMI 데이터 읽기",
+  "--no-sysfs": "sysfs 파일에서 DMI 데이터를 읽으려 시도하지 않음",
+  "--oem-string": "N 번 OEM 문자열의 값만 표시 (count 면 OEM 문자열 개수 반환)",
+  "-h": "사용법 정보 표시 후 종료",
+  "-V": "버전 표시 후 종료"
+ }
+}

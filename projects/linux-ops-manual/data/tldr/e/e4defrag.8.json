@@ -1,0 +1,1 @@
+{"id":"e4defrag.8","lang":"ko","desc":"ext4 파일 시스템을 조각 모음합니다.","items":[["파일 시스템 조각 모음","e4defrag {{/dev/sdXN}}"],["파일 시스템이 얼마나 조각화되었는지 확인","e4defrag -c {{/dev/sdXN}}"],["오류와 각 파일의 조각화 개수를 조각 모음 전후에 출력","e4defrag -v {{/dev/sdXN}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/e4defrag.md"}

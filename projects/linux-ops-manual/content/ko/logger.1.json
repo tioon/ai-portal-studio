@@ -1,0 +1,29 @@
+{
+ "logger.1": {
+  "-d": "datagram (UDP) 만 사용",
+  "-e": "파일 처리 시 빈 줄 무시 (공백만 있는 줄은 빈 줄이 아님)",
+  "-f": "지정한 file 의 내용을 로그로 기록 (명령행 메시지와 함께 사용 불가)",
+  "-i": "각 줄에 logger 프로세스의 PID 기록",
+  "--id": "각 줄에 logger 프로세스의 PID 기록 (id 지정 시 그 값을 대신 사용)",
+  "--journald": "systemd journal 항목 기록 (지정한 file 또는 표준 입력에서 읽음)",
+  "--msgid": "RFC 5424 MSGID 필드 설정 (--rfc5424 와 함께일 때만 사용됨)",
+  "-n": "시스템 로그 소켓 대신 지정한 원격 syslog server 에 기록",
+  "--no-act": "시스템 로그에 메시지를 쓰는 것만 빼고 모두 수행 (테스트용)",
+  "--octet-count": "메시지 전송에 RFC 6587 octet counting 프레이밍 방식 사용",
+  "-P": "지정한 port 사용 (미지정 시 udp 는 syslog, tcp 는 syslog-conn)",
+  "-p": "지정한 priority 로 메시지 기록 (숫자 또는 facility.level 쌍, 기본 user.notice)",
+  "--prio-prefix": "표준 입력에서 읽은 각 줄에서 syslog 접두사(<숫자>)를 찾아 facility 와 level 로 사용",
+  "--rfc3164": "RFC 3164 BSD syslog 프로토콜로 원격 서버에 메시지 전송",
+  "--rfc5424": "RFC 5424 syslog 프로토콜로 원격 서버에 메시지 전송 (without: notq, notime, nohost)",
+  "-s": "메시지를 시스템 로그와 함께 표준 오류에도 출력",
+  "--sd-id": "RFC 5424 메시지 헤더의 structured data element ID 지정 (--sd-param 앞에 사용)",
+  "--sd-param": "structured data element 의 파라미터를 name=value 쌍으로 지정 (--sd-id 뒤에 사용)",
+  "-S": "허용되는 최대 메시지 크기를 size 로 설정 (기본 1KiB)",
+  "--socket-errors": "Unix 소켓 연결 오류 출력 (mode 는 off, on, auto, 기본 auto)",
+  "-T": "stream (TCP) 만 사용",
+  "-t": "기록하는 모든 줄에 지정한 tag 표시 (기본은 터미널에 로그인한 사용자 이름)",
+  "-u": "시스템 로그 소켓 대신 지정한 socket 에 기록",
+  "-V": "버전 정보 표시 후 종료",
+  "-h": "도움말 표시 후 종료"
+ }
+}

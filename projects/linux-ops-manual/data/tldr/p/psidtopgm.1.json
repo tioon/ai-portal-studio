@@ -1,0 +1,1 @@
+{"id":"psidtopgm.1","lang":"ko","desc":"PostScript 이미지 데이터를 PGM 이미지로 변환.","items":[["PS 파일의 이미지 데이터를 지정된 크기와 품질의 PGM 이미지로 변환","psidtopgm {{너비}} {{높이}} {{샘플당_비트}} {{경로/대상/파일.ps}} >{{경로/대상/이미지.pgm}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/psidtopgm.md"}

@@ -1,0 +1,1 @@
+{"id":"reset.1","lang":"ko","desc":"현재 터미널을 초기화합니다. 터미널 화면 전체를 지웁니다.","items":[["현재 터미널 초기화","reset"],["대신 터미널 유형 표시","reset -q"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/reset.md"}

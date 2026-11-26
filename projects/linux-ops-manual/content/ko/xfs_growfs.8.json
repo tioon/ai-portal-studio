@@ -1,0 +1,13 @@
+{
+ "xfs_growfs.8": {
+  "-d": "파일 시스템의 data section 크기 변경 (-D size 지정 시 그 크기로, 아니면 가능한 최대로 확장)",
+  "-e": "real-time extent 크기 지정",
+  "-i": "새 log 를 internal log (data section 내부)로 지정 [미구현]",
+  "-l": "파일 시스템의 log section 을 확장, 축소 또는 이동 (-L size 지정 시 그 크기로)",
+  "-m": "파일 시스템에서 inode 로 할당할 수 있는 공간의 최대 백분율의 새 값 지정",
+  "-n": "파일 시스템을 변경하지 않음 (geometry 출력과 인자 검사만 수행)",
+  "-r": "파일 시스템의 real-time section 확장 (-R size 지정 시 그 크기로, 아니면 가능한 최대로)",
+  "-t": "대체 mount table 파일 지정 (기본은 /proc/mounts, 없으면 /etc/mtab)",
+  "-V": "버전 번호를 출력하고 종료"
+ }
+}

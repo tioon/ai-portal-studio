@@ -1,0 +1,1 @@
+{"id":"localedef.1","lang":"en","desc":"Manage locale definition files.","items":[["List compiled locales","localedef --list-archive"],["Display help","localedef {{[-?|--help]}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages/linux/localedef.md"}

@@ -1,0 +1,1 @@
+{"id":"neotoppm.1","lang":"ko","desc":"Atari Neochrome NEO 파일을 PPM 이미지로 변환.","items":[["Atari Neochrome NEO 파일을 입력으로 받아 PPM 이미지를 출력으로 생성","neotoppm {{경로/대상/파일.neo}}"],["버전 표시","neotoppm {{[-v|-version]}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/neotoppm.md"}

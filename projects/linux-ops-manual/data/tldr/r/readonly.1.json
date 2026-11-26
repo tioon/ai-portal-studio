@@ -1,0 +1,1 @@
+{"id":"readonly.1","lang":"ko","desc":"읽기 전용 셸 변수를 설정합니다.","items":[["읽기 전용 변수 설정","readonly {{변수_이름}}={{값}}"],["변수 읽기 전용으로 표시","readonly {{기존_변수}}"],["모든 읽기 전용 변수의 이름과 값을 `stdout`에 [p]rint","readonly -p"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/readonly.md"}

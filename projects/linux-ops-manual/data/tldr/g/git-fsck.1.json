@@ -1,0 +1,1 @@
+{"id":"git-fsck.1","lang":"ko","desc":"Git 저장소 색인의 노드 유효성과 연결성을 확인. 수정 작업은 수행하지 않음. 관련 항목: `git gc`.","items":[["현재 저장소 확인","git fsck"],["발견된 모든 태그 나열","git fsck --tags"],["발견된 모든 루트 노드 나열","git fsck --root"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/git-fsck.md"}

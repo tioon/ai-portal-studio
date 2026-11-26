@@ -1,0 +1,1 @@
+{"id":"whois.1","lang":"ko","desc":"WHOIS (RFC 3912) 프로토콜을 위한 명령줄 클라이언트.","items":[["도메인 이름에 대한 정보 조회","whois {{example.com}}"],["IP 주소에 대한 정보 조회","whois {{8.8.8.8}}"],["IP 주소에 대한 abuse 연락처 조회","whois -b {{8.8.8.8}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/whois.md"}

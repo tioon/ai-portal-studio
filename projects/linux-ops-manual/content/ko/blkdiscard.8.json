@@ -1,0 +1,13 @@
+{
+ "blkdiscard.8": {
+  "-f": "모든 검사 비활성화 (배타적 접근 모드 O_EXCL 해제)",
+  "-o": "discard 를 시작할 장치 내 바이트 offset (섹터 크기에 정렬 필요, 기본값 0)",
+  "-l": "discard 할 바이트 수 (섹터 크기에 정렬 필요, 기본값은 장치 끝까지)",
+  "-p": "한 번의 반복에서 discard 할 바이트 수 (기본은 ioctl 한 번으로 전체 discard)",
+  "-s": "secure discard 수행 (garbage collection 으로 생긴 블록 사본까지 삭제, 장치 지원 필요)",
+  "-z": "discard 대신 0 으로 채움",
+  "-v": "정렬된 offset 과 length 값 표시 (--step 지정 시 매초 진행 상황 출력)",
+  "-V": "버전 정보 표시 후 종료",
+  "-h": "도움말 표시 후 종료"
+ }
+}

@@ -1,0 +1,18 @@
+{
+ "lscpu.1": {
+  "-a": "online 과 offline CPU 의 줄을 모두 출력에 포함 (-e 또는 -p 와 함께만 사용)",
+  "-B": "크기를 사람이 읽기 쉬운 형식 대신 바이트로 출력",
+  "-b": "출력을 online CPU 로 제한 (-e 또는 -p 와 함께만 사용)",
+  "-C": "CPU cache 에 대한 상세 정보 표시",
+  "-c": "출력을 offline CPU 로 제한 (-e 또는 -p 와 함께만 사용)",
+  "-e": "CPU 정보를 사람이 읽기 쉬운 형식으로 표시",
+  "-h": "도움말을 표시하고 종료",
+  "-J": "기본 요약 또는 extended 출력에 JSON 출력 형식 사용",
+  "-p": "파싱하기 쉽게 명령 출력을 최적화",
+  "-s": "다른 Linux 인스턴스의 CPU 데이터 수집 (directory 는 검사할 인스턴스의 system root)",
+  "-x": "CPU 집합에 16진수 mask 사용 (예: \"ff\")",
+  "-y": "topology 요소(core, socket 등)가 있는 모든 열에 physical ID 표시",
+  "-V": "버전 정보를 표시하고 종료",
+  "--output-all": "사용 가능한 모든 열 출력 (--extended, --parse, --caches 중 하나와 함께 사용)"
+ }
+}

@@ -1,0 +1,26 @@
+{
+ "nft.8": {
+  "-h": "도움말 메시지와 모든 옵션 표시",
+  "-v": "버전 표시",
+  "-V": "컴파일 시 설정을 포함한 상세 버전 정보 표시",
+  "-f": "filename 에서 입력 읽기 (- 이면 stdin)",
+  "-D": "변수 name=value 정의 (-f 와만 함께 사용 가능)",
+  "-i": "대화형 readline CLI 에서 입력 읽기 (quit 또는 EOF 로 종료)",
+  "-I": "include 파일을 찾을 디렉터리 목록에 directory 추가 (여러 번 지정 가능)",
+  "-c": "변경을 실제로 적용하지 않고 명령의 유효성만 검사",
+  "-o": "ruleset 최적화 (-c 와 함께 쓰면 제안된 최적화 확인)",
+  "-a": "출력에 객체 handle 표시",
+  "-s": "규칙과 stateful 객체의 상태 정보 생략",
+  "-t": "출력에서 set 의 내용 생략",
+  "-S": "포트를 /etc/services 에 정의된 서비스 이름으로 변환",
+  "-N": "reverse DNS 조회로 IP 주소를 이름으로 변환 (목록 출력이 느려질 수 있음)",
+  "-u": "숫자 UID/GID 를 /etc/passwd 와 /etc/group 에 정의된 이름으로 변환",
+  "-n": "완전히 숫자로만 출력",
+  "-y": "base chain priority 를 숫자로 표시",
+  "-p": "layer 4 프로토콜을 숫자로 표시",
+  "-T": "시간, 요일, 시 값을 숫자 형식으로 표시",
+  "-e": "add, insert, replace 명령으로 ruleset 에 항목을 넣을 때 nft monitor 처럼 알림 출력",
+  "-j": "출력을 JSON 형식으로 표시",
+  "-d": "디버깅 출력 활성화 (level: scanner, parser, eval, netlink, mnl, proto-ctx, segtree, all, 쉼표로 결합)"
+ }
+}

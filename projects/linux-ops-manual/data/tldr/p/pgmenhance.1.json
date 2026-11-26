@@ -1,0 +1,1 @@
+{"id":"pgmenhance.1","lang":"ko","desc":"PGM 이미지의 가장자리를 강조. 관련 항목: `pamedge`.","items":[["PGM 이미지의 가장자리 강조","pgmenhance {{경로/대상/이미지.pgm}} >{{경로/대상/출력.pgm}}"],["강조 수준 지정","pgmenhance -{{1..9}} {{경로/대상/이미지.pgm}} >{{경로/대상/출력.pgm}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/pgmenhance.md"}

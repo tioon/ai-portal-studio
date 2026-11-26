@@ -1,0 +1,1 @@
+{"id":"ascii-xfr.1","lang":"ko","desc":"ASCII 프로토콜을 사용하여 파일을 전송하는 도구. `minicom` 패키지의 일부.","items":[["파일 전송","ascii-xfr -s {{경로/대상/파일}}"],["파일 수신","ascii-xfr -r {{경로/대상/파일}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/ascii-xfr.md"}

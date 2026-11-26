@@ -1,0 +1,1 @@
+{"id":"wbmptopbm.1","lang":"ko","desc":"무선 비트맵 파일을 PBM 이미지로 변환.","items":[["WBMP 파일을 PBM 이미지로 변환","wbmptopbm {{경로/대상/입력_파일.wbpm}} >{{경로/대상/출력_파일.pbm}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/wbmptopbm.md"}

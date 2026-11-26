@@ -65,7 +65,7 @@
   {
     "id": "linux-ops-manual",
     "name": "Linux Ops Manual",
-    "description": "Rocky Linux와 Ubuntu 기준으로 자주 쓰는 리눅스 명령어를 상황별로 정리한 운영 치트시트입니다.",
+    "description": "Rocky Linux 9.6 · Ubuntu 22.04 공식 man 페이지 전체를 담은 운영 명령어 레퍼런스입니다. 모든 옵션, 배포판 차이, 명령줄 해설.",
     "url": "./projects/linux-ops-manual/",
     "status": "live",
     "tags": [
@@ -73,7 +73,8 @@
       "rocky",
       "ubuntu",
       "ops",
-      "cheatsheet"
+      "man",
+      "reference"
     ]
   }
 ]

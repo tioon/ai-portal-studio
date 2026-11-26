@@ -1,0 +1,11 @@
+{
+ "hostnamectl.1": {
+  "--no-ask-password": "특권 작업에 대해 사용자에게 인증을 묻지 않음",
+  "--static": "status 호출 시 선택한 hostname (--static, --transient, --pretty) 만 출력",
+  "-H": "원격으로 작업 실행 (hostname 또는 \"@\" 로 구분한 username 과 hostname 지정)",
+  "-M": "로컬 컨테이너에서 작업 실행 (연결할 컨테이너 이름 지정)",
+  "-h": "짧은 도움말을 출력하고 종료",
+  "--version": "짧은 버전 문자열을 출력하고 종료",
+  "--json": "출력을 JSON 형식으로 표시 (MODE 는 \"short\", \"pretty\" 등)"
+ }
+}

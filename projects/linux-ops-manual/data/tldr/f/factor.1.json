@@ -1,0 +1,1 @@
+{"id":"factor.1","lang":"ko","desc":"숫자의 소인수분해를 출력.","items":[["숫자의 소인수분해를 표시","factor {{숫자}}"],["인수가 지정되지 않은 경우, `stdin`에서 입력을 가져옴","echo {{숫자}} | factor"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/factor.md"}

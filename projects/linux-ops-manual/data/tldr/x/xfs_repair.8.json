@@ -1,0 +1,1 @@
+{"id":"xfs_repair.8","lang":"ko","desc":"XFS 파일 시스템 복구.","items":[["파티션 복구","sudo xfs_repair {{경로/대상/파티션}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/xfs_repair.md"}

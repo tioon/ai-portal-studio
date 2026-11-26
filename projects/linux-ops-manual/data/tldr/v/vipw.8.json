@@ -1,0 +1,1 @@
+{"id":"vipw.8","lang":"ko","desc":"비밀번호 파일을 편집합니다.","items":[["비밀번호 파일 편집","sudo vipw"],["버전 표시","vipw {{[-V|--version]}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/vipw.md"}

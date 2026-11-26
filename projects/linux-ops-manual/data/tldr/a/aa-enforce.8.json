@@ -1,0 +1,1 @@
+{"id":"aa-enforce.8","lang":"ko","desc":"AppArmor 프로파일을 강제 모드로 설정합니다. 관련 항목: `aa-complain`, `aa-disable`, `aa-status`.","items":[["프로파일 활성화","sudo aa-enforce {{[-d|--dir]}} {{경로/대상/프로파일}}"],["여러 프로파일 활성화","sudo aa-enforce {{경로/대상/프로파일1 경로/대상/프로파일2 ...}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/aa-enforce.md"}

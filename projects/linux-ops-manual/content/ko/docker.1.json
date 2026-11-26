@@ -1,0 +1,15 @@
+{
+ "docker.1": {
+  "--help": "사용법 출력",
+  "--config": "Docker 클라이언트 설정 파일의 위치 지정 (기본 '~/.docker')",
+  "-D": "debug 모드 활성화 (기본 false)",
+  "-H": "daemon 모드에서 bind 할 소켓 지정 (tcp://host:port/path, unix:///path/to/socket, fd://* 또는 fd://socketfd)",
+  "-l": "로깅 레벨 설정 (기본 info)",
+  "--tls": "TLS 사용, --tlsverify 지정 시 암시됨 (기본 false)",
+  "--tlscacert": "이 CA 가 서명한 인증서만 신뢰",
+  "--tlscert": "TLS 인증서 파일 경로",
+  "--tlskey": "TLS 키 파일 경로",
+  "--tlsverify": "TLS 를 사용하고 원격을 검증 (daemon: 클라이언트 검증, client: daemon 검증, 기본 false)",
+  "-v": "버전 정보를 출력하고 종료 (기본 false)"
+ }
+}

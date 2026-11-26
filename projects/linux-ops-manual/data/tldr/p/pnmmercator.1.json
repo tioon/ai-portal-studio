@@ -1,0 +1,1 @@
+{"id":"pnmmercator.1","lang":"ko","desc":"Netpbm 이미지에 Mercator 투영 변환을 수행.","items":[["직사각형 투영 세계지도를 Mercator 투영으로 변환","pnmmercator {{경로/대상/이미지.pnm}} >{{경로/대상/출력파일.pnm}}"],["Mercator 투영 세계지도를 직사각형 투영으로 변환","pnmmercator {{[-i|-inverse]}} {{경로/대상/이미지.pnm}} >{{경로/대상/출력파일.pnm}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/pnmmercator.md"}

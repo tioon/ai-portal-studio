@@ -1,0 +1,1 @@
+{"id":"a2dismod.8","lang":"ko","desc":"Debian 기반 OS에서 Apache 모듈을 비활성화합니다.","items":[["모듈 비활성화","sudo a2dismod {{모듈}}"],["정보 메시지를 표시하지 않음","sudo a2dismod {{[-q|--quiet]}} {{모듈}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/a2dismod.md"}

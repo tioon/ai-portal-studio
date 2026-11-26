@@ -1,0 +1,1 @@
+{"id":"pw-cli.1","lang":"ko","desc":"PipeWire 인스턴스의 모듈, 객체, 노드, 장치, 링크 등을 관리. 관련 항목: `wpctl`.","items":[["모든 노드(싱크 및 소스)와 그 ID를 출력","pw-cli list-objects Node"],["특정 ID를 가진 객체에 대한 정보 출력","pw-cli info {{4}}"],["모든 객체의 정보 출력","pw-cli info all"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/pw-cli.md"}

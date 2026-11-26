@@ -1,0 +1,1 @@
+{"id":"ppmtoneo.1","lang":"ko","desc":"PPM 이미지를 Atari Neochrome 파일로 변환.","items":[["PPM 이미지를 NEO 파일로 변환","ppmtoneo {{경로/대상/파일.ppm}} >{{경로/대상/파일.neo}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/ppmtoneo.md"}

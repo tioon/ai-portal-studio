@@ -1,0 +1,14 @@
+{
+ "kill.1": {
+  "-1": "PID 가 1 보다 큰 모든 프로세스에 signal 전송",
+  "-s": "보낼 signal (이름 또는 번호로 지정)",
+  "-l": "signal 이름 목록 출력 또는 주어진 signal 번호를 이름으로 변환",
+  "-L": "-l 과 비슷하나 signal 이름과 해당 번호를 함께 출력",
+  "-a": "명령 이름을 PID 로 변환할 때 현재 프로세스와 UID 가 같은 프로세스로 제한하지 않음",
+  "-p": "signal 을 보내지 않고 지정한 프로세스의 PID 만 출력",
+  "--verbose": "kill 로 signal 을 받을 PID 를 signal 과 함께 출력",
+  "-q": "kill(2) 대신 sigqueue(3) 로 signal 전송 (value 는 signal 과 함께 보내는 정수)",
+  "--timeout": "프로세스에 signal 을 보낸 뒤 지정한 milliseconds 지연 후 추가 signal 전송",
+  "--signal": "보낼 signal 지정 (이름 또는 번호)"
+ }
+}

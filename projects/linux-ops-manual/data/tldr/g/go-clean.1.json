@@ -1,0 +1,1 @@
+{"id":"go-clean.1","lang":"ko","desc":"오브젝트 파일과 캐시 파일 제거.","items":[["실제로 제거하지 않고 제거 명령 출력","go clean -n"],["빌드 캐시 삭제","go clean -cache"],["모든 캐시된 테스트 결과 삭제","go clean -testcache"],["모듈 캐시 삭제","go clean -modcache"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/go-clean.md"}

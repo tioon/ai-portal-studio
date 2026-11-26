@@ -1,0 +1,1 @@
+{"id":"acpi_listen.8","lang":"ko","desc":"ACPI 이벤트를 수신하는 도구.","items":[["데몬 실행 중 발생하는 모든 ACPI 이벤트를 수신","acpi_listen"],["도움말 표시","acpi_listen {{[-h|--help]}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/acpi_listen.md"}

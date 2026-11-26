@@ -1,0 +1,1 @@
+{"id":"sbigtopgm.1","lang":"ko","desc":"SBIG CCDOPS 파일을 PGM으로 변환.","items":[["SBIG CCDOPS 이미지 파일을 PGM으로 변환","sbigtopgm {{경로/대상/입력_파일.sbig}} >{{경로/대상/출력.pgm}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/sbigtopgm.md"}

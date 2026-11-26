@@ -1,0 +1,1 @@
+{"id":"dtc.1","lang":"ko","desc":"장치 트리 컴파일러는 형식 간에 장치 트리를 다시 컴파일하는 도구.","items":[["`.dtb` 파일을 읽을 수 있는 `.dts` 파일로 디컴파일","dtc -I dtb -O dts -o {{경로/대상/출력_파일.dts}} {{경로/대상/입력_파일.dtb}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/dtc.md"}

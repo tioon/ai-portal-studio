@@ -1,0 +1,1 @@
+{"id":"fprintd-list.1","lang":"ko","desc":"등록된 지문 목록을 나열합니다.","items":[["특정 사용자에 대한 등록된 지문을 나열","fprintd-list {{사용자명}}"],["하나 이상의 사용자에 대한 등록된 지문을 나열","fprintd-list {{사용자명1 사용자명2 ...}}"],["도움말 표시","fprintd-list"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/fprintd-list.md"}

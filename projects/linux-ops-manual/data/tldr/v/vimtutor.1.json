@@ -1,0 +1,1 @@
+{"id":"vimtutor.1","lang":"ko","desc":"Vim 튜터로, 기본 Vim 명령어를 가르칩니다. 관련 항목: `vim`, `vimdiff`, `nvim`.","items":[["주어진 언어로 Vim 튜터 시작 (예: en, fr, de 등)","vimtutor {{언어}}"],["튜터 종료","<Esc><:>q<Enter>"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/vimtutor.md"}

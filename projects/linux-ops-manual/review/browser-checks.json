@@ -1,94 +1,156 @@
 [
   {
-    "name": "141 cards",
+    "name": "home: 141 operation cards",
+    "pass": true,
+    "detail": 141
+  },
+  {
+    "name": "search: exact name ranks first",
     "pass": true
   },
   {
-    "name": "30 categories including all",
+    "name": "search: Korean term finds commands via cards",
+    "pass": true,
+    "detail": 25
+  },
+  {
+    "name": "search: empty state",
     "pass": true
   },
   {
-    "name": "rocky disk curated results",
+    "name": "tar: full option table (>=150)",
+    "pass": true,
+    "detail": 156
+  },
+  {
+    "name": "tar: Korean option notes shown",
+    "pass": true,
+    "detail": 156
+  },
+  {
+    "name": "tar: provenance links to official package",
     "pass": true
   },
   {
-    "name": "rocky service curated results",
+    "name": "tar: community examples",
     "pass": true
   },
   {
-    "name": "rocky network curated results",
+    "name": "tar: option filter narrows rows",
     "pass": true
   },
   {
-    "name": "rocky logs curated results",
+    "name": "tar: builder assembles command",
     "pass": true
   },
   {
-    "name": "ubuntu disk curated results",
+    "name": "clipboard: builder copy",
     "pass": true
   },
   {
-    "name": "ubuntu service curated results",
+    "name": "examples: edited placeholder is copied",
     "pass": true
   },
   {
-    "name": "ubuntu network curated results",
+    "name": "curl: distro option differences listed",
+    "pass": true,
+    "detail": 4
+  },
+  {
+    "name": "alias: awk -> gawk on Rocky",
     "pass": true
   },
   {
-    "name": "ubuntu logs curated results",
+    "name": "alias: awk -> mawk on Ubuntu",
+    "pass": true,
+    "detail": "mawk(1)"
+  },
+  {
+    "name": "ubuntu: apt-get manual present",
     "pass": true
   },
   {
-    "name": "search",
+    "name": "ubuntu: dnf shows package source",
     "pass": true
   },
   {
-    "name": "empty state",
+    "name": "systemctl: subcommands extracted",
+    "pass": true,
+    "detail": 70
+  },
+  {
+    "name": "literal <placeholders> are text, not HTML",
     "pass": true
   },
   {
-    "name": "category",
+    "name": "explain: every flag matched",
+    "pass": true,
+    "detail": 0
+  },
+  {
+    "name": "explain: combined short flags split",
+    "pass": true,
+    "detail": 4
+  },
+  {
+    "name": "explain: unknown flag reported",
     "pass": true
   },
   {
-    "name": "literal placeholder",
+    "name": "explain: sub-command manual used",
     "pass": true
   },
   {
-    "name": "clipboard",
+    "name": "index: letter listing",
+    "pass": true,
+    "detail": 1176
+  },
+  {
+    "name": "package page lists manuals",
+    "pass": true,
+    "detail": 104
+  },
+  {
+    "name": "about: sources page",
     "pass": true
   },
   {
-    "name": "clipboard failure",
+    "name": "unknown command handled",
     "pass": true
   },
   {
-    "name": "no overflow 1440",
-    "pass": true
+    "name": "no horizontal overflow at 320px",
+    "pass": true,
+    "detail": []
   },
   {
-    "name": "no overflow 1024",
-    "pass": true
+    "name": "no horizontal overflow at 390px",
+    "pass": true,
+    "detail": []
   },
   {
-    "name": "no overflow 768",
-    "pass": true
+    "name": "no horizontal overflow at 768px",
+    "pass": true,
+    "detail": []
   },
   {
-    "name": "no overflow 390",
-    "pass": true
+    "name": "no horizontal overflow at 1024px",
+    "pass": true,
+    "detail": []
   },
   {
-    "name": "mobile category",
-    "pass": true
-  },
-  {
-    "name": "no overflow 320",
-    "pass": true
+    "name": "no horizontal overflow at 1440px",
+    "pass": true,
+    "detail": []
   },
   {
     "name": "no JS errors",
-    "pass": true
+    "pass": true,
+    "detail": []
+  },
+  {
+    "name": "no failed requests",
+    "pass": true,
+    "detail": []
   }
 ]

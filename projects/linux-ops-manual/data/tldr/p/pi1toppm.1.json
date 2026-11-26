@@ -1,0 +1,1 @@
+{"id":"pi1toppm.1","lang":"ko","desc":"Atari Degas PI1 이미지를 PPM 이미지로 변환. 관련 항목: `ppmtopi1`.","items":[["Atari Degas PI1 이미지를 PPM 이미지로 변환","pi1toppm {{경로/대상/아타리_이미지.pi1}} >{{경로/대상/이미지.ppm}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/pi1toppm.md"}

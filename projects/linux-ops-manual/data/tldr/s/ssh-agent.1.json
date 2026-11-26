@@ -1,0 +1,1 @@
+{"id":"ssh-agent.1","lang":"ko","desc":"SSH 에이전트 프로세스 생성. SSH 에이전트는 SSH 키를 메모리에 복호화된 상태로 유지하며, 제거되거나 프로세스가 종료될 때까지 유지됩니다. 관련 항목: `ssh-add`.","items":[["현재 셸에 대한 SSH 에이전트 시작","eval $(ssh-agent)"],["현재 실행 중인 에이전트 종료","ssh-agent -k"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/ssh-agent.md"}

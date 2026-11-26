@@ -1,0 +1,14 @@
+{
+ "crontab.1": {
+  "-u": "crontab 을 수정할 사용자의 이름 지정",
+  "-T": "crontab 파일을 설치하지 않고 문법만 테스트",
+  "-l": "현재 crontab 을 표준 출력에 표시",
+  "-r": "현재 crontab 삭제",
+  "-e": "VISUAL 또는 EDITOR 환경 변수로 지정한 편집기로 현재 crontab 편집",
+  "-i": "-r 옵션이 crontab 을 실제로 삭제하기 전에 'y/Y' 응답을 묻도록 함",
+  "-s": "편집/교체 전에 현재 SELinux security context 문자열을 MLS_LEVEL 설정으로 crontab 파일에 덧붙임",
+  "-n": "cluster 에서 /var/spool 의 crontab 파일에 지정된 job 을 실행할 호스트 설정 (cron(8) 이 -c 로 시작된 경우만)",
+  "-c": "cluster 에서 현재 job 을 실행하도록 설정된 호스트 조회 (cron(8) 이 -c 로 시작된 경우만)",
+  "-V": "버전을 출력하고 종료"
+ }
+}

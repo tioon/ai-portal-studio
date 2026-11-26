@@ -1,0 +1,5 @@
+{
+ "dnf-versionlock.8": {
+  "--raw": "<package-name-spec> 를 NEVRA 로 해석하지 않고 그대로 사용 (아직 없는 버전에도 잠금 가능)"
+ }
+}

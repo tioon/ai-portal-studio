@@ -1,0 +1,1 @@
+{"id":"cargo-version.1","lang":"ko","desc":"`cargo` 버전 정보를 표시.","items":[["버전 표시","cargo version"],["추가 빌드 정보 표시","cargo version {{[-v|--verbose]}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/cargo-version.md"}

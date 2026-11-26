@@ -1,0 +1,1 @@
+{"id":"exit.1","lang":"ko","desc":"쉘 종료.","items":[["가장 최근에 실행된 명령의 종료 상태로 종료","exit"],["특정 종료 상태로 종료","exit {{0..255}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/exit.md"}

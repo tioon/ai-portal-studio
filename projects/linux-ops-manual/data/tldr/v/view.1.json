@@ -1,0 +1,1 @@
+{"id":"view.1","lang":"ko","desc":"읽기 전용 버전의 `vim`. 이는 `vim -R`과 동일합니다.","items":[["파일 열기","view {{경로/대상/파일}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/view.md"}

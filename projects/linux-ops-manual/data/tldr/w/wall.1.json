@@ -1,0 +1,1 @@
+{"id":"wall.1","lang":"ko","desc":"현재 로그인된 사용자들의 터미널에 메시지를 작성합니다.","items":[["메시지 보내기","wall {{메시지}}"],["특정 그룹에 속한 사용자들에게 메시지 보내기","wall {{[-g|--group]}} {{그룹_이름}} {{메시지}}"],["파일에서 메시지 보내기","wall {{파일}}"],["타임아웃과 함께 메시지 보내기 (기본값 300초)","wall {{[-t|--timeout]}} {{초}} {{파일}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/wall.md"}

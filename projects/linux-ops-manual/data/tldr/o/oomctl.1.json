@@ -1,0 +1,1 @@
+{"id":"oomctl.1","lang":"ko","desc":"`systemd-oomd`에 저장된 상태를 분석합니다.","items":[["`systemd-oomd`에 의해 저장된 cgroups 및 시스템 컨텍스트의 현재 상태를 표시","oomctl"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/oomctl.md"}

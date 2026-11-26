@@ -1,0 +1,1 @@
+{"id":"nstat.8","lang":"en","desc":"View network statistics.","items":[["View network statistics since last time `nstat` was run","nstat"],["View all-time network statistics","nstat {{[-a|--ignore]}}"],["Display help","nstat {{[-h|--help]}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages/linux/nstat.md"}

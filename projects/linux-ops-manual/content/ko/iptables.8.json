@@ -1,0 +1,33 @@
+{
+ "iptables.8": {
+  "-t": "명령이 동작할 패킷 매칭 table 지정",
+  "-A": "선택한 chain 의 끝에 규칙을 하나 이상 추가",
+  "-C": "specification 과 일치하는 규칙이 선택한 chain 에 있는지 확인",
+  "-D": "선택한 chain 에서 규칙을 하나 이상 삭제 (chain 내 번호 rulenum 또는 일치시킬 규칙으로 지정)",
+  "-I": "선택한 chain 의 지정한 rulenum 위치에 규칙을 하나 이상 삽입 (번호 생략 시 맨 앞)",
+  "-R": "선택한 chain 의 규칙 교체 (규칙 번호는 1 부터)",
+  "-L": "선택한 chain 의 모든 규칙 나열 (chain 생략 시 모든 chain)",
+  "-S": "선택한 chain 의 모든 규칙 출력 (chain 생략 시 iptables-save 처럼 모든 chain)",
+  "-F": "선택한 chain flush (생략 시 table 의 모든 chain) — 모든 규칙을 하나씩 삭제하는 것과 동일",
+  "-Z": "모든 chain, 지정한 chain 또는 chain 내 지정한 규칙의 패킷·바이트 counter 를 0 으로",
+  "-N": "주어진 이름으로 새 user-defined chain 생성",
+  "-X": "지정한 chain 삭제 (chain 에 대한 참조가 없어야 함)",
+  "-P": "built-in chain 의 policy 를 주어진 target 으로 설정 (ACCEPT 또는 DROP)",
+  "-E": "사용자가 지정한 chain 의 이름을 새 이름으로 변경",
+  "-h": "도움말 — 명령 문법에 대한 설명 제공",
+  "-4": "iptables 와 iptables-restore 에서는 효과 없음",
+  "-6": "-6 을 쓴 규칙을 iptables-restore 로 넣으면 조용히 무시됨 (그 외 사용은 오류)",
+  "-m": "사용할 match (특정 속성을 검사하는 extension module) 지정",
+  "-j": "규칙의 target 지정 (패킷이 일치할 때 할 일)",
+  "-g": "사용자가 지정한 chain 에서 처리를 계속하도록 지정",
+  "-c": "규칙의 패킷·바이트 counter 초기화 (INSERT, APPEND, REPLACE 시)",
+  "-v": "Verbose 출력 — list 명령이 인터페이스 이름, 규칙 옵션, TOS mask 를 표시",
+  "-V": "프로그램 버전과 사용된 커널 API 표시",
+  "-w": "xtables lock 을 기다림",
+  "-n": "숫자 출력 — IP 주소와 포트 번호를 숫자 형식으로 출력",
+  "-x": "숫자 확장 — 패킷·바이트 counter 의 정확한 값 표시",
+  "--line-numbers": "규칙 나열 시 각 규칙 앞에 chain 내 위치에 해당하는 줄 번호 추가",
+  "--modprobe": "chain 에 규칙을 추가·삽입할 때 필요한 모듈을 command 로 로드",
+  "-W": "반복마다 기다릴 간격 (마이크로초)"
+ }
+}

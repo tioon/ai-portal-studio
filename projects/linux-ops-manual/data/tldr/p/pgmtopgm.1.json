@@ -1,0 +1,1 @@
+{"id":"pgmtopgm.1","lang":"ko","desc":"PGM 이미지 파일 복사.","items":[["`stdin`에서 `stderr`로 PGM 파일 복사","pgmtopgm"],["버전 표시","pgmtopgm -version"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/pgmtopgm.md"}

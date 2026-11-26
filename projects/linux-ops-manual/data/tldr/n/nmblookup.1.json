@@ -1,0 +1,1 @@
+{"id":"nmblookup.1","lang":"ko","desc":"SMB 공유를 검색.","items":[["로컬 네트워크에서 SMB 공유가 있는 호스트 찾기","nmblookup {{[-S|--status]}} '*'"],["SAMBA에 의해 실행되는 SMB 공유가 있는 로컬 네트워크의 호스트 찾기","nmblookup {{[-S|--status]}} __SAMBA__"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/nmblookup.md"}

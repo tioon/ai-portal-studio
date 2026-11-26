@@ -1,0 +1,1 @@
+{"id":"dhclient.8","lang":"ko","desc":"DHCP 클라이언트.","items":[["'eht0' 인터페이스의 IP 주소 얻기","sudo dhclient {{eth0}}"],["'eth0' 인터페이스의 IP 주소 해제하기","sudo dhclient -r {{eth0}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/dhclient.md"}

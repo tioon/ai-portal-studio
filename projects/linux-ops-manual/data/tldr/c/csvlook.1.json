@@ -1,0 +1,1 @@
+{"id":"csvlook.1","lang":"ko","desc":"콘솔에서 csvkit에 포함된 CSV 파일을 고정 너비 테이블로 렌더링.","items":[["CSV 파일 보기","csvlook {{데이터.csv}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/csvlook.md"}

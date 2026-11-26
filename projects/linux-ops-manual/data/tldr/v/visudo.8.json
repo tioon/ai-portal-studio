@@ -1,0 +1,1 @@
+{"id":"visudo.8","lang":"ko","desc":"sudoers 파일을 안전하게 편집.","items":[["sudoers 파일 편집","sudo visudo"],["sudoers 파일 오류 검사","sudo visudo {{[-c|--check]}}"],["특정 편집기를 사용하여 sudoers 파일 편집","sudo EDITOR={{편집기}} visudo"],["버전 표시","visudo {{[-V|--version]}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/visudo.md"}

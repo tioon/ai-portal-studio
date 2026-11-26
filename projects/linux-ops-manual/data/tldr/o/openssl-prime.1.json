@@ -1,0 +1,1 @@
+{"id":"openssl-prime.1","lang":"ko","desc":"소수를 계산하기 위한 OpenSSL 명령어.","items":[["2048비트 소수를 생성하고 16진수로 표시","openssl prime -generate -bits 2048 -hex"],["주어진 숫자가 소수인지 확인","openssl prime {{숫자}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/openssl-prime.md"}

@@ -1,0 +1,1 @@
+{"id":"xbmtopbm.1","lang":"ko","desc":"X11 또는 X10 비트맵을 PBM 이미지로 변환.","items":[["XBM 이미지를 PPM 이미지로 변환","xbmtopbm {{경로/대상/입력_파일.xbm}} >{{경로/대상/출력_파일.pbm}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/xbmtopbm.md"}

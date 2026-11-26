@@ -1,0 +1,1 @@
+{"id":"colrm.1","lang":"ko","desc":"`stdin`에서 열을 제거합니다.","items":[["`stdin`의 첫 번째 열 제거","colrm {{1 1}}"],["각 줄의 3번째 열부터 끝까지 제거","colrm {{3}}"],["각 줄의 3번째 열부터 5번째 열까지 제거","colrm {{3 5}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/colrm.md"}

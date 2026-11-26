@@ -1,0 +1,1 @@
+{"id":"readlink.1","lang":"ko","desc":"심볼릭 링크를 따라가고 심볼릭 링크 정보를 가져옵니다.","items":[["심볼릭 링크가 가리키는 실제 파일을 가져오기","readlink {{경로/대상/파일}}"],["파일의 절대 경로 가져오기","readlink {{[-f|--canonicalize]}} {{경로/대상/파일}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/readlink.md"}

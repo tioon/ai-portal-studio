@@ -1,0 +1,12 @@
+{
+ "visudo.8": {
+  "-c": "check-only 모드 — 기존 sudoers 파일의 문법 오류 검사",
+  "-f": "대체 sudoers 파일 위치 지정",
+  "-h": "짧은 도움말을 표준 출력에 표시하고 종료",
+  "-q": "quiet 모드 — 문법 오류의 상세 내용을 출력하지 않음 (-c 와 함께 쓸 때만 유용)",
+  "-s": "sudoers 파일의 strict 검사 활성화",
+  "-V": "visudo 와 sudoers grammar 버전을 출력하고 종료",
+  "-O": "sudoers 파일의 기본 소유권(user 와 group)을 강제",
+  "-P": "sudoers 파일의 기본 권한(mode)을 강제"
+ }
+}

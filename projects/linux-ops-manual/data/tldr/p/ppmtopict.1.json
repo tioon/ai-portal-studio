@@ -1,0 +1,1 @@
+{"id":"ppmtopict.1","lang":"ko","desc":"PPM 이미지를 Macintosh PICT 파일로 변환.","items":[["PPM 이미지를 PICT 파일로 변환","ppmtopict {{경로/대상/파일.ppm}} >{{경로/대상/파일.pict}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/ppmtopict.md"}

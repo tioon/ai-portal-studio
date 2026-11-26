@@ -1,0 +1,1 @@
+{"id":"a2enconf.8","lang":"ko","desc":"Debian 기반 OS에서 Apache 설정 파일을 활성화합니다.","items":[["설정 파일 활성화","sudo a2enconf {{설정_파일}}"],["정보 메시지를 표시하지 않음","sudo a2enconf {{[-q|--quiet]}} {{설정_파일}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/a2enconf.md"}

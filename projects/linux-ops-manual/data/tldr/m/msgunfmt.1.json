@@ -1,0 +1,1 @@
+{"id":"msgunfmt.1","lang":"ko","desc":"바이너리 형식에서 메시지 카탈로그를 디컴파일.","items":[["출력 변환","msgunfmt {{경로/대상/파일.mo}}"],["`.mo` 파일을 `.po` 파일로 변환","msgunfmt {{경로/대상/파일.mo}} >{{경로/대상/파일.po}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/msgunfmt.md"}

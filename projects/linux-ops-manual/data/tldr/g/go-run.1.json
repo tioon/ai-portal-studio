@@ -1,0 +1,1 @@
+{"id":"go-run.1","lang":"ko","desc":"Go 코드를 컴파일하고 바이너리를 저장하지 않고 실행.","items":[["Go 파일 실행","go run {{경로/대상/파일.go}}"],["메인 Go 패키지 실행","go run {{경로/대상/패키지}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/go-run.md"}

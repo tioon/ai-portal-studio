@@ -1,0 +1,1 @@
+{"id":"pkexec.1","lang":"en","desc":"Execute commands as another user. Asks for password in a GUI if available.","items":[["Run command as root","pkexec {{command}}"],["Switch user to root","pkexec"],["Run command as a specific user","pkexec --user {{username}} {{command}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages/linux/pkexec.md"}

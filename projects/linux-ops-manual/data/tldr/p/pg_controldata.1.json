@@ -1,0 +1,1 @@
+{"id":"pg_controldata.1","lang":"ko","desc":"PostgreSQL 데이터베이스 클러스터의 제어 정보를 표시.","items":[["지정한 데이터 디렉터리의 제어 정보 표시","pg_controldata {{[-D|--pgdata]}} {{경로/대상/데이터}}"],["도움말 표시","pg_controldata {{[-?|--help]}}"],["버전 표시","pg_controldata {{[-V|--version]}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/pg_controldata.md"}

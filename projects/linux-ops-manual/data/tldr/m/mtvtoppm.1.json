@@ -1,0 +1,1 @@
+{"id":"mtvtoppm.1","lang":"ko","desc":"MTV 또는 PRT 레이 트레이서 파일을 PPM 이미지로 변환.","items":[["MTV 또는 PRT 레이 트레이서 파일을 PPM 이미지로 변환","mtvtoppm {{경로/대상/파일.mtv}} >{{경로/대상/출력.ppm}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/mtvtoppm.md"}

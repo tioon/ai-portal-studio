@@ -1,0 +1,1 @@
+{"id":"pppd.8","lang":"ko","desc":"다른 컴퓨터와 포인트 투 포인트 연결을 설정. 수동으로 호출해서는 안 됩니다.","items":[["데몬 시작","pppd"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/pppd.md"}

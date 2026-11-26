@@ -1,0 +1,1 @@
+{"id":"ybmtopbm.1","lang":"ko","desc":"Bennet Yee \"face\" 파일을 PBM으로 변환.","items":[["YBM 이미지 파일을 PBM으로 변환","ybmtopbm {{경로/대상/입력_파일.ybm}} >{{경로/대상/출력_파일.pbm}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/ybmtopbm.md"}

@@ -1,0 +1,1 @@
+{"id":"docker-container-top.1","lang":"ko","desc":"컨테이너의 실행 중인 프로세스를 표시.","items":[["컨테이너의 실행 중인 프로세스 표시","docker {{[top|container top]}} {{컨테이너}}"],["도움말 표시","docker {{[top|container top]}} --help"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/docker-container-top.md"}

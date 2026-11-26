@@ -1,0 +1,1 @@
+{"id":"gnome-terminal.1","lang":"ko","desc":"GNOME 터미널 에뮬레이터.","items":[["새 GNOME 터미널 창 열기","gnome-terminal"],["새 터미널 창에서 특정 명령 실행","gnome-terminal -- {{명령어}}"],["마지막으로 열린 창에 새 탭 열기","gnome-terminal --tab"],["새 탭의 제목 설정","gnome-terminal --tab {{[-t|--title]}} \"{{제목}}\""]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/gnome-terminal.md"}

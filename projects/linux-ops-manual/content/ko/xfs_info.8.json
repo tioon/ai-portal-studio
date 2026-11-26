@@ -1,0 +1,6 @@
+{
+ "xfs_info.8": {
+  "-t": "대체 마운트 테이블 파일 지정 (기본 /proc/mounts, 없으면 /etc/mtab)",
+  "-V": "버전 번호 출력 후 종료 (mount-point 인자 불필요)"
+ }
+}

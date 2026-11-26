@@ -1,0 +1,1 @@
+{"id":"arpaname.1","lang":"ko","desc":"IP 주소에 해당하는 ARPA 이름을 가져옵니다.","items":[["IP 주소(IPv4 및 IPv6)를 해당 ARPA 이름으로 변환","arpaname {{ip_주소}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/arpaname.md"}

@@ -1,0 +1,1 @@
+{"id":"exfatlabel.8","lang":"ko","desc":"exFAT 파일 시스템 레이블 가져오기 또는 설정.","items":[["현재 파일 시스템 레이블을 표시","exfatlabel {{/dev/sda}}"],["파일 시스템 레이블을 설정","exfatlabel {{/dev/sda}} {{새로운_라벨}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/exfatlabel.md"}

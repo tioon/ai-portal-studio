@@ -1,0 +1,1 @@
+{"id":"remote-viewer.1","lang":"en","desc":"View desktops remotely.","items":[["View a remote using a `virt-viewer` file","remote-viewer {{path/to/virt_viewer_file}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages/linux/remote-viewer.md"}

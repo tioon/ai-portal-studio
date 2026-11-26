@@ -1,0 +1,1 @@
+{"id":"mgrtopbm.1","lang":"ko","desc":"MGR 비트맵을 PBM 파일로 변환. 관련 항목: `pbmtomgr`.","items":[["MGR 비트맵을 PBM 파일로 변환","mgrtopbm {{경로/대상/이미지.mgr}} >{{경로/대상/출력.pbm}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/mgrtopbm.md"}

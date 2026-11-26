@@ -1,0 +1,31 @@
+{
+ "systemd-analyze.1": {
+  "--system": "system systemd 인스턴스 대상으로 동작 (암시적 기본값)",
+  "--user": "user systemd 인스턴스 대상으로 동작",
+  "--global": "user systemd 인스턴스의 system-wide 설정 대상으로 동작",
+  "--order": "dot 명령과 함께 사용 — 의존성 그래프에 표시할 의존성 선택 (--order 는 After=, Before= 만)",
+  "--from-pattern": "dot 명령과 함께 사용 — 의존성 그래프에 표시할 관계를 glob(7) 패턴으로 선택",
+  "--fuzz": "critical-chain 명령과 함께 사용 — 같은 레벨의 가장 늦은 유닛보다 timespan 일찍 끝난 유닛도 표시",
+  "--man": "Documentation= 에 나열된 man page 의 존재 확인을 위해 man(1) 을 호출하지 않음",
+  "--generators": "unit generator 호출",
+  "--recursive-errors": "유닛과 그 의존성의 검증 및 systemd-analyze verify 의 종료 상태를 MODE 로 제어",
+  "--root": "cat-files, verify 와 함께 — 지정한 루트 경로 PATH 아래의 파일 대상으로 동작",
+  "--image": "cat-files, verify 와 함께 — 지정한 이미지 경로 PATH 안의 파일 대상으로 동작",
+  "--offline": "security 와 함께 — 지정한 유닛 파일의 offline 보안 검토 수행",
+  "--profile": "security --offline= 과 함께 — 유닛 설정 평가 시 지정한 portable profile 을 고려",
+  "--threshold": "security 와 함께 — 전체 exposure level 과 비교할 사용자 지정 값 NUMBER 설정",
+  "--security-policy": "security 와 함께 — 유닛 파일과 비교할 사용자 지정 요구 사항 집합을 JSON 파일로 정의",
+  "--json": "security 명령과 함께 — 보안 분석 표를 JSON 형식으로 출력",
+  "--iterations": "calendar 명령과 함께 — calendar 표현식이 다음에 도래하는 횟수를 NUMBER 개 표시 (기본 1)",
+  "--base-time": "calendar 명령과 함께 — 지정한 시점 기준으로 다음 iteration 표시 (기본은 현재 시각)",
+  "--unit": "condition 명령과 함께 — 지정한 유닛 파일의 모든 Condition*=..., Assert*=... 평가",
+  "--table": "plot 명령과 함께 — raw 시간 데이터를 표로 출력",
+  "--no-legend": "plot 명령에 --table 또는 --json= 과 함께 — 범례나 힌트를 출력에 포함하지 않음",
+  "-H": "원격으로 작업 실행 (hostname 또는 \"@\" 로 구분한 username 과 hostname 지정)",
+  "-M": "로컬 컨테이너에서 작업 실행 (연결할 컨테이너 이름 지정)",
+  "--quiet": "힌트와 기타 필수가 아닌 출력 억제",
+  "-h": "짧은 도움말을 출력하고 종료",
+  "--version": "짧은 버전 문자열을 출력하고 종료",
+  "--no-pager": "출력을 pager 로 보내지 않음"
+ }
+}

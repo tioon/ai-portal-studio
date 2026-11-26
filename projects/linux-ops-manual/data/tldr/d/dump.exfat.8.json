@@ -1,0 +1,1 @@
+{"id":"dump.exfat.8","lang":"ko","desc":"exFAT 파일시스템의 디스크 상(On-disk) 정보를 표시.","items":[["지정한 파일 시스템의 디스크 상(On-disk) 정보 출력","dump.exfat {{/dev/sdXY}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/dump.exfat.md"}

@@ -1,0 +1,1 @@
+{"id":"git-check-mailmap.1","lang":"ko","desc":"연락처의 표준 이름과 이메일 주소를 표시.","items":[["이메일 주소와 연관된 표준 이름 조회","git check-mailmap {{email@example.com}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/git-check-mailmap.md"}

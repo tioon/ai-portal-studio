@@ -1,0 +1,1 @@
+{"id":"locale-gen.8","lang":"en","desc":"Generate locales defined in `/etc/locale.gen`.","items":[["Generate locales","sudo locale-gen"],["Do not delete undefined locales","sudo locale-gen --keep-existing"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages/linux/locale-gen.md"}

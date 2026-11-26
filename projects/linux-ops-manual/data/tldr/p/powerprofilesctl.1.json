@@ -1,0 +1,1 @@
+{"id":"powerprofilesctl.1","lang":"ko","desc":"D-Bus를 통해 전원 프로필 관리를 사용할 수 있게 합니다.","items":[["사용 가능한 전원 프로필 나열","powerprofilesctl"],["특정 전원 프로필 설정","powerprofilesctl set {{프로필_이름}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/powerprofilesctl.md"}

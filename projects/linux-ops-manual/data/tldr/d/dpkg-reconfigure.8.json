@@ -1,0 +1,1 @@
+{"id":"dpkg-reconfigure.8","lang":"ko","desc":"이미 설치된 패키지를 재구성합니다.","items":[["하나 이상의 패키지를 재구성","dpkg-reconfigure {{패키지1 패키지2 ...}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/dpkg-reconfigure.md"}

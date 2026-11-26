@@ -1,0 +1,1 @@
+{"id":"sputoppm.1","lang":"ko","desc":"Atari 비압축 스펙트럼 이미지를 PPM 이미지로 변환.","items":[["SPU 파일을 PPM 이미지로 변환","sputoppm {{경로/대상/입력.spu}} >{{경로/대상/출력.ppm}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/sputoppm.md"}

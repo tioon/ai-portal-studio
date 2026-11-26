@@ -1,0 +1,1 @@
+{"id":"updatedb.8","lang":"ko","desc":"`locate`에서 사용하는 데이터베이스를 생성하거나 업데이트. 일반적으로 cron에 의해 일일 실행.","items":[["데이터베이스 내용 새로고침","sudo updatedb"],["파일 이름을 찾는 즉시 표시","sudo updatedb {{[-v|--verbose]}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/updatedb.md"}

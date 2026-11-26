@@ -1,0 +1,1 @@
+{"id":"lldpctl.8","lang":"en","desc":"Print link layer discovery protocol information.","items":[["Start the lldp daemon","systemctl start lldpd"],["Display collected neighbor data","sudo lldpctl"],["Display help","lldpctl {{[-h|--help]}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages/linux/lldpctl.md"}

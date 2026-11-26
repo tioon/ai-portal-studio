@@ -1,0 +1,1 @@
+{"id":"lvremove.8","lang":"en","desc":"Remove logical volumes.","items":[["Remove a logical volume in a volume group","sudo lvremove {{volume_group}}/{{logical_volume}}"],["Remove all logical volumes in a volume group","sudo lvremove {{volume_group}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages/linux/lvremove.md"}

@@ -1,0 +1,1 @@
+{"id":"wpa_supplicant.8","lang":"ko","desc":"보호된 무선 네트워크 관리.","items":[["보호된 무선 네트워크에 연결","wpa_supplicant -i {{인터페이스}} -c {{경로/대상/wpa_supplicant_conf.conf}}"],["보호된 무선 네트워크에 연결하고 데몬으로 실행","wpa_supplicant -B -i {{인터페이스}} -c {{경로/대상/wpa_supplicant_conf.conf}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/wpa_supplicant.md"}

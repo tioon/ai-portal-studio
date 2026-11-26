@@ -1,0 +1,1 @@
+{"id":"trace-cmd-report.1","lang":"en","desc":"Display recorded trace events.","items":[["Display the recorded trace","sudo trace-cmd report"],["Display the recorded trace for a specific CPU","sudo trace-cmd report --cpu {{cpu_number}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages/linux/trace-cmd-report.md"}

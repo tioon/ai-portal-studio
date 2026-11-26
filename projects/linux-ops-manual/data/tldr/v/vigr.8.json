@@ -1,0 +1,1 @@
+{"id":"vigr.8","lang":"ko","desc":"그룹 파일을 편집합니다.","items":[["그룹 파일 편집","sudo vigr"],["버전 표시","vigr {{[-V|--version]}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/vigr.md"}

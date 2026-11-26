@@ -1,0 +1,1 @@
+{"id":"go-fix.1","lang":"ko","desc":"패키지를 새로운 API를 사용하도록 업데이트.","items":[["패키지를 새로운 API를 사용하도록 업데이트","go fix {{packages}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/go-fix.md"}

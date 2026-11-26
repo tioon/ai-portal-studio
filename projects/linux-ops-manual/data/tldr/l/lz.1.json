@@ -1,0 +1,1 @@
+{"id":"lz.1","lang":"en","desc":"List all files inside a `.tar.gz` compressed archive.","items":[["List all files inside a compressed archive","lz {{path/to/file.tar.gz}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages/linux/lz.md"}

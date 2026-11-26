@@ -1,0 +1,10 @@
+{
+ "chkconfig.8": {
+  "--level": "작업을 적용할 run level 지정 (0~6 숫자의 문자열, 예: --level 35)",
+  "--no-redirect": "systemd 로의 redirection 을 끄고 /etc/rc[0-6].d 의 심볼릭 링크만 대상으로 동작",
+  "--add": "chkconfig 가 관리할 새 서비스 name 추가",
+  "--del": "서비스를 chkconfig 관리에서 제거하고 /etc/rc[0-6].d 의 관련 심볼릭 링크 삭제",
+  "--override": "/etc/chkconfig.d/name 의 override 파일에 맞춰 서비스 name 의 설정 변경",
+  "--list": "chkconfig 가 아는 모든 서비스와 runlevel 별 중지/시작 여부 나열 (name 지정 시 해당 서비스만)"
+ }
+}

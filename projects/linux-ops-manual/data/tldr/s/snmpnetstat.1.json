@@ -1,0 +1,1 @@
+{"id":"snmpnetstat.1","lang":"ko","desc":"SNMP를 사용하여 네트워크 상태 정보를 조회.","items":[["네트워크 상태 정보 조회","snmpnetstat -v {{버전}} -c {{커뮤니티}} {{ip_주소}}"],["도움말 표시","snmpnetstat {{[-h|--help]}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/snmpnetstat.md"}

@@ -1,0 +1,1 @@
+{"id":"rtmon.8","lang":"en","desc":"Save network state changes to a file.","items":[["Save all network state changes to a file","sudo rtmon {{[f|file]}} {{path/to/file}}"],["Specify the type of change to log","sudo rtmon {{[f|file]}} {{link|address|route}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages/linux/rtmon.md"}

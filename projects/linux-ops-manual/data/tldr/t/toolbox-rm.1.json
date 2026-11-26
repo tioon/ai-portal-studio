@@ -1,0 +1,1 @@
+{"id":"toolbox-rm.1","lang":"ko","desc":"하나 이상의 Toolbx 컨테이너를 제거합니다. 관련 항목: `toolbox rmi`.","items":[["toolbox 컨테이너 제거","toolbox rm {{컨테이너_이름}}"],["모든 Toolbx 컨테이너 제거","toolbox rm {{[-a|--all]}}"],["현재 활성 상태의 Toolbx 컨테이너 강제 제거","toolbox rm {{[-f|--force]}} {{컨테이너_이름}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/toolbox-rm.md"}

@@ -1,0 +1,23 @@
+{
+ "ssh-add.1": {
+  "-c": "추가한 identity 를 인증에 쓰기 전에 확인을 거치도록 지정 (확인은 ssh-askpass(1) 가 수행)",
+  "-D": "agent 에서 모든 identity 삭제",
+  "-d": "identity 를 추가하는 대신 agent 에서 제거",
+  "-E": "키 fingerprint 표시에 쓸 해시 알고리즘 지정 (\"md5\", \"sha256\", 기본값 \"sha256\")",
+  "-e": "PKCS#11 공유 라이브러리 pkcs11 이 제공하는 키 제거",
+  "-K": "FIDO authenticator 에서 resident 키 로드",
+  "-k": "agent 에 키를 로드·삭제할 때 일반 개인 키만 처리하고 인증서는 건너뜀",
+  "-L": "agent 가 현재 보유한 모든 identity 의 공개 키 파라미터 나열",
+  "-l": "agent 가 현재 보유한 모든 identity 의 fingerprint 나열",
+  "-q": "작업 성공 후 메시지를 출력하지 않음",
+  "-S": "FIDO authenticator 키 추가 시 사용할 라이브러리 경로 지정 (기본 내장 USB HID 지원 대체)",
+  "-s": "PKCS#11 공유 라이브러리 pkcs11 이 제공하는 키 추가",
+  "-T": "지정한 pubkey 파일에 대응하는 개인 키가 사용 가능한지 서명·검증으로 테스트",
+  "-t": "identity 를 agent 에 추가할 때 최대 수명 설정 (초 또는 sshd_config(5) 시간 형식)",
+  "-v": "자세한 모드: 진행 상황 디버깅 메시지 출력 (-v 를 여러 번 지정하면 더 상세, 최대 3)",
+  "-X": "agent 잠금 해제",
+  "-x": "agent 를 비밀번호로 잠금",
+  "-H": "-h 로 destination 제약 키 사용 시 hostkey 를 조회할 known hosts 파일 지정 (여러 번 지정 가능)",
+  "-h": "키 추가 시 특정 호스트를 통해서만 또는 특정 destination 으로만 사용 가능하도록 제약"
+ }
+}

@@ -1,0 +1,1 @@
+{"id":"sestatus.8","lang":"ko","desc":"현재 SELinux 상태를 표시합니다.","items":[["현재 상태 표시","sestatus"],["모든 정책 불리언의 현재 상태 표시","sestatus -b"],["현재 파일 및 프로세스 컨텍스트 표시","sestatus -v"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/sestatus.md"}

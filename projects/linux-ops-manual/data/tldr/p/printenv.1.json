@@ -1,0 +1,1 @@
+{"id":"printenv.1","lang":"ko","desc":"모든 환경 변수 또는 지정된 환경 변수의 값을 출력.","items":[["모든 환경 변수의 키-값 쌍 출력","printenv"],["특정 변수의 값 출력","printenv {{HOME}}"],["변수를 출력하고 줄바꿈 대신 NUL로 끝내기","printenv {{[-0|--null]}} {{HOME}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/printenv.md"}

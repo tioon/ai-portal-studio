@@ -1,0 +1,25 @@
+{
+ "apt-cache.8": {
+  "-p": "package cache 를 저장할 파일 선택",
+  "-s": "source cache 를 저장할 파일 선택",
+  "-q": "Quiet — 진행 표시기를 생략한 로그용 출력 생성",
+  "-i": "중요한 의존성만 출력 (unmet, depends 와 함께 사용, Depends 와 Pre-Depends 관계만)",
+  "--no-pre-depends": "depends 와 rdepends 출력에서 지정한 의존성 유형 생략",
+  "--implicit": "depends 와 rdepends 가 데이터에 따라 암시적으로 추가된 의존성도 표시",
+  "-f": "검색 시 전체 패키지 레코드 출력",
+  "-a": "사용 가능한 모든 버전의 전체 레코드 출력 (기본값)",
+  "-g": "cache 를 그대로 쓰지 않고 package cache 를 자동으로 재생성 (기본값)",
+  "--names-only": "긴 설명이 아닌 패키지 이름과 provided 패키지 이름만 검색",
+  "--all-names": "pkgnames 가 virtual 패키지와 누락된 의존성을 포함한 모든 이름을 출력",
+  "--recurse": "depends 와 rdepends 를 재귀적으로 수행해 언급된 모든 패키지를 한 번씩 출력",
+  "--installed": "depends 와 rdepends 의 출력을 현재 설치된 패키지로 제한",
+  "--with-source": "주어진 파일 filename 을 메타데이터의 source 로 추가",
+  "-h": "짧은 사용법 요약 표시",
+  "-v": "프로그램 버전 표시",
+  "--audit": "audit (및 notice) 메시지 표시",
+  "-c": "사용할 설정 파일 지정 (기본 설정 파일을 읽은 뒤 이 파일을 읽음)",
+  "-o": "임의의 설정 옵션 설정 (문법: -o Foo::Bar=bar)",
+  "--cli-version": "특정 CLI 버전 요청 (MAJOR.MINOR 버전 패턴)",
+  "--no-color": "색 사용을 켜거나 끔"
+ }
+}

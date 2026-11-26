@@ -1,0 +1,1 @@
+{"id":"stdbuf.1","lang":"ko","desc":"표준 스트림에 대한 버퍼링 작업을 수정하여 명령을 실행.","items":[["`stdin` 버퍼 크기를 512 KiB로 변경","stdbuf {{[-i|--input]}} 512K {{명령}}"],["`stdout` 버퍼를 라인 버퍼로 변경","stdbuf {{[-o|--output]}} L {{명령}}"],["`stderr` 버퍼를 버퍼링하지 않도록 변경","stdbuf {{[-e|--error]}} 0 {{명령}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/stdbuf.md"}

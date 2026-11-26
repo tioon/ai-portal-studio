@@ -1,0 +1,1 @@
+{"id":"unalias.1","lang":"ko","desc":"별칭 제거. 관련 항목: `alias`.","items":[["별칭 제거","unalias {{별칭_이름}}"],["모든 별칭 제거","unalias -a"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/unalias.md"}

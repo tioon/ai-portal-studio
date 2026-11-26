@@ -1,0 +1,12 @@
+{
+ "apt-mark.8": {
+  "-f": "기본 위치(Dir::State 의 extended_states) 대신 filename 에서 패키지 상태 읽기/쓰기",
+  "-h": "짧은 사용법 요약 표시",
+  "-v": "프로그램 버전 표시",
+  "--audit": "audit (및 notice) 메시지 표시 (notice 메시지에 한해 quiet 옵션보다 우선)",
+  "-c": "사용할 설정 파일 지정 (기본 설정 파일을 읽은 뒤 이 파일을 읽음)",
+  "-o": "임의의 설정 옵션 지정 (-o Foo::Bar=bar 형식, 여러 번 사용 가능)",
+  "--cli-version": "특정 CLI 버전 요청 (MAJOR.MINOR 패턴, MINOR 생략 시 지원되는 최신 minor 사용)",
+  "--no-color": "색상 켜기/끄기 (지원 터미널에서 apt 는 기본으로 켜짐)"
+ }
+}

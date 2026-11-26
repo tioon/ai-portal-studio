@@ -1,0 +1,1 @@
+{"id":"go-list.1","lang":"ko","desc":"패키지 또는 모듈 나열.","items":[["패키지 나열","go list ./..."],["표준 패키지 나열","go list std"],["JSON 형식으로 패키지 나열","go list -json time net/http"],["모듈 종속성과 이용 가능한 업데이트 나열","go list -m -u all"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/go-list.md"}

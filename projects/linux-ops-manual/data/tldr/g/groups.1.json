@@ -1,0 +1,1 @@
+{"id":"groups.1","lang":"ko","desc":"사용자의 그룹 멤버십을 출력. 관련 항목: `groupadd`, `groupdel`, `groupmod`.","items":[["현재 사용자의 그룹 멤버십을 출력","groups"],["사용자 목록의 그룹 구성원을 출력","groups {{사용자명1 사용자명2 ...}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/groups.md"}

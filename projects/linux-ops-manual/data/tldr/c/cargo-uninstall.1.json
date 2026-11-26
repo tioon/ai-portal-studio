@@ -1,0 +1,1 @@
+{"id":"cargo-uninstall.1","lang":"ko","desc":"`cargo install`을 사용하여 설치된 Rust 바이너리를 제거.","items":[["설치된 바이너리를 제거","cargo uninstall {{패키지_스펙}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/cargo-uninstall.md"}

@@ -1,0 +1,1 @@
+{"id":"gtk-launch.1","lang":"ko","desc":"표준 위치에 있는 `.desktop` 파일을 사용하여 애플리케이션을 실행.","items":[["애플리케이션 실행","gtk-launch {{애플리케이션_이름}}"],["도움말 표시","gtk-launch {{[-h|--help]}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/gtk-launch.md"}

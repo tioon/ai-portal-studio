@@ -1,0 +1,1 @@
+{"id":"vlock.1","lang":"en","desc":"Lock virtual console.","items":[["Lock current virtual console session","vlock"],["Lock all virtual console sessions","vlock {{[-a|--all]}}"],["Display help","vlock {{[-h|--help]}}"],["Display version","vlock {{[-v|--version]}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages/linux/vlock.md"}

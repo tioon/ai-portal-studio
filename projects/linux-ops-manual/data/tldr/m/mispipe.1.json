@@ -1,0 +1,1 @@
+{"id":"mispipe.1","lang":"ko","desc":"두 개의 명령을 파이프하고 첫 번째 명령의 종료 상태를 반환.","items":[["두 개의 명령을 파이프하고 첫 번째 명령의 종료 상태 반환","mispipe {{명령1}} {{명령2}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/mispipe.md"}

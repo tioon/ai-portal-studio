@@ -1,0 +1,24 @@
+{
+ "blkid.8": {
+  "-c": "기본 캐시 파일 대신 cachefile 에서 읽기 (깨끗한 캐시로 시작하려면 /dev/null 지정)",
+  "-d": "출력 불가 문자를 인코딩하지 않음 (기본은 ^ 및 M- 표기로 인코딩)",
+  "-D": "low-level probing 모드에서 파티션 테이블 정보(PART_ENTRY_* 태그)를 출력하지 않음",
+  "-g": "blkid 캐시를 가비지 컬렉션해 더 이상 없는 장치 제거",
+  "-h": "사용법 메시지 표시 후 종료",
+  "-H": "probing 힌트 설정 (현재 \"session_offset=number\" 지원)",
+  "-i": "I/O Limits (I/O topology) 정보 표시 ('export' 출력 형식 자동 활성화)",
+  "-k": "알려진 모든 파일 시스템과 RAID 를 나열하고 종료",
+  "-l": "--match-token 검색 조건에 일치하는 장치 하나만 조회 (여러 개면 우선순위가 가장 높은 장치)",
+  "-L": "지정한 파일 시스템 label 을 쓰는 장치 조회",
+  "-n": "probing 함수를 지정한 superblock type 목록(쉼표 구분)으로 제한 (\"no\" 접두사로 제외, --probe 전용)",
+  "-o": "지정한 출력 format 사용 (기본 full 은 모든 태그 출력)",
+  "-O": "지정한 offset 에서 probe (--probe 와 함께일 때만 유용)",
+  "-p": "low-level superblock probing 모드로 전환 (캐시 우회)",
+  "-s": "각 장치에 대해 tag 와 일치하는 태그만 표시 (여러 번 지정 가능)",
+  "-S": "장치/파일의 크기를 size 로 덮어씀 (--probe 와 함께일 때만 유용)",
+  "-t": "NAME 토큰의 값이 value 인 블록 장치를 검색해 표시 (NAME 은 주로 TYPE, LABEL, UUID)",
+  "-u": "probing 함수를 지정한 \"usage\" type 목록으로 제한 (filesystem, raid, crypto, other, --probe 전용)",
+  "-U": "지정한 파일 시스템 uuid 를 쓰는 장치 조회",
+  "-V": "버전 번호 표시 후 종료"
+ }
+}

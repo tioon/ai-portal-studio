@@ -1,0 +1,1 @@
+{"id":"lsmod.8","lang":"en","desc":"Show the status of Linux kernel modules.","items":[["List all currently loaded kernel modules","lsmod"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages/linux/lsmod.md"}

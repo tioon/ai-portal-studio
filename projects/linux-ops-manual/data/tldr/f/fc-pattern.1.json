@@ -1,0 +1,1 @@
+{"id":"fc-pattern.1","lang":"ko","desc":"패턴과 일치하는 글꼴에 대한 정보를 표시.","items":[["글꼴에 대한 기본 정보를 표시","fc-pattern {{[-d|--default]}} '{{DejaVu Serif}}'"],["글꼴에 대한 구성 정보 표시","fc-pattern {{[-c|--config]}} '{{DejaVu Serif}}'"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/fc-pattern.md"}

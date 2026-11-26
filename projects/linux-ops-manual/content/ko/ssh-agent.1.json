@@ -1,0 +1,13 @@
+{
+ "ssh-agent.1": {
+  "-a": "agent 를 UNIX-domain 소켓 bind_address 에 bind",
+  "-c": "stdout 에 C-shell 명령 생성",
+  "-D": "Foreground 모드 — ssh-agent 가 fork 하지 않음",
+  "-d": "Debug 모드 — fork 하지 않고 디버그 정보를 표준 에러에 기록",
+  "-E": "키 fingerprint 표시에 쓸 hash 알고리즘 지정 (“md5”, “sha256”, 기본 “sha256”)",
+  "-k": "현재 agent (SSH_AGENT_PID 환경 변수로 지정됨) 종료",
+  "-P": "PKCS#11 provider 와 FIDO authenticator middleware 공유 라이브러리로 허용할 경로의 pattern-list 지정",
+  "-s": "stdout 에 Bourne shell 명령 생성",
+  "-t": "agent 에 추가되는 identity 의 최대 lifetime 기본값 설정"
+ }
+}

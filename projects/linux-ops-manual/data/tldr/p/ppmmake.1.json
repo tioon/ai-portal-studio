@@ -1,0 +1,1 @@
+{"id":"ppmmake.1","lang":"ko","desc":"지정한 색상과 크기의 PPM 이미지를 생성.","items":[["지정한 색상과 크기의 PPM 이미지 생성","ppmmake {{색상}} {{너비}} {{높이}} >{{경로/대상/출력_파일.ppm}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/ppmmake.md"}

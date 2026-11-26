@@ -1,0 +1,14 @@
+{
+ "resize2fs.8": {
+  "-b": "64bit feature 를 켜고 필요에 따라 group descriptor 크기를 조정",
+  "-d": "resize2fs 의 각종 디버깅 기능 켜기 (debug-flags 는 원하는 기능 번호의 합)",
+  "-f": "일부 안전 검사를 무시하고 파일 시스템 resize 작업을 강제 진행",
+  "-F": "시작 전에 파일 시스템 장치의 buffer cache 를 flush",
+  "-M": "저장된 파일을 고려해 파일 시스템을 가능한 한 최소 크기로 축소",
+  "-p": "offline resize 작업 중 resize2fs 단계별 완료율 막대 출력",
+  "-P": "-M 옵션으로 축소했을 때의 파일 시스템 블록 수 추정치를 출력하고 종료",
+  "-s": "64bit feature 를 끄고 더 이상 쓰이지 않는 블록을 해제",
+  "-S": "resize2fs 가 사용할 RAID stride 설정을 명시적으로 지정",
+  "-z": "파일 시스템 블록을 덮어쓰기 전에 블록의 이전 내용을 undo_file 에 기록"
+ }
+}

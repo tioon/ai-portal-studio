@@ -1,0 +1,1 @@
+{"id":"w.1","lang":"ko","desc":"현재 로그인된 사용자와 그들의 작업을 보여줍니다. 사용자 로그인, TTY, 원격 호스트, 로그인 시간, 유휴 시간, 현재 프로세스를 출력합니다. 관련 항목: `who`, `users`.","items":[["로그인된 사용자 정보 표시","w"],["헤더 없이 로그인된 사용자 정보 표시","w -h"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/w.md"}

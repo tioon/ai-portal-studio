@@ -1,0 +1,1 @@
+{"id":"efibootdump.8","lang":"ko","desc":"EFI 변수 또는 파일에서 부팅 항목을 출력.","items":[["파일에서 부팅 항목 출력","efibootdump {{[-f|--file]}} {{/sys/firmware/efi/efivars/Boot0000-8be4df61-93ca-11d2-aa0d-00e098032b8c}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/efibootdump.md"}

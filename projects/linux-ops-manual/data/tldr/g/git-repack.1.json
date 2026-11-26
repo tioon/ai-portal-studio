@@ -1,0 +1,1 @@
+{"id":"git-repack.1","lang":"ko","desc":"Git 저장소에서 압축되지 않은 객체를 패킹.","items":[["현재 디렉토리에서 압축되지 않은 객체를 패킹","git repack"],["패킹 후 중복 객체도 제거","git repack -d"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/git-repack.md"}

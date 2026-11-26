@@ -1,0 +1,31 @@
+{
+ "ltrace.1": {
+  "-a": "반환 값을 지정한 column 에 정렬 (기본은 화면 폭의 5/8)",
+  "-A": "생략 부호(\"...\")로 줄이기 전에 출력할 배열 요소의 최대 개수",
+  "-b": "추적 대상 프로세스가 받은 signal 의 출력 비활성화",
+  "-c": "각 library call 의 시간과 호출 횟수를 세어 프로그램 종료 시 요약 보고",
+  "-C": "저수준 심볼 이름을 사용자 수준 이름으로 decode (demangle)",
+  "-D": "ltrace 자체의 디버깅 출력 표시 (mask 는 표시할 디버그 메시지를 나타내는 숫자)",
+  "-e": "추적할 library call 을 바꾸는 한정 표현식 filter",
+  "-f": "추적 중인 프로세스가 fork(2) 나 clone(2) 로 만드는 자식 프로세스도 추적",
+  "-F": "콜론으로 구분한 경로 목록 (prototype library 검색에 사용)",
+  "-h": "ltrace 옵션 요약을 표시하고 종료",
+  "-i": "library call 시점의 instruction pointer 출력",
+  "-l": "library_pattern 에 맞는 라이브러리가 구현한 함수 호출만 표시",
+  "-L": "-e 옵션이 없을 때 기본 동작 @MAIN 을 가정하지 않음 (library call 을 추적하지 않음)",
+  "-n": "호출 중첩 레벨마다 추적 출력을 nr 칸 들여쓰기",
+  "-o": "추적 출력을 stderr 대신 filename 파일에 기록",
+  "-p": "프로세스 ID 가 pid 인 프로세스에 attach 해 추적 시작",
+  "-r": "추적의 각 줄에 상대 타임스탬프 출력",
+  "-s": "출력할 최대 문자열 크기 지정 (기본 32)",
+  "-S": "library call 과 함께 system call 도 표시",
+  "-t": "추적의 각 줄 앞에 time of day 를 붙임",
+  "-tt": "출력 시각에 마이크로초 포함",
+  "-ttt": "출력 시각에 마이크로초를 포함하고 앞부분은 epoch 이후의 초로 출력",
+  "-T": "각 호출 안에서 소비한 시간 표시",
+  "-u": "username 의 userid, groupid, supplementary group 으로 명령 실행",
+  "-w": "추적하는 함수마다 nr 개 stack frame 의 backtrace 표시",
+  "-x": "추적할 symbol table entry point 를 바꾸는 한정 표현식 filter",
+  "-V": "ltrace 의 버전 번호를 표시하고 종료"
+ }
+}

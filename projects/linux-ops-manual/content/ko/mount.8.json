@@ -1,0 +1,33 @@
+{
+ "mount.8": {
+  "-a": "fstab 에 있는 (지정한 유형의) 모든 파일 시스템 마운트 (noauto 키워드가 있는 줄 제외)",
+  "-B": "subtree 를 다른 곳에 다시 마운트 (bind mount, 양쪽에서 내용 접근 가능)",
+  "-c": "경로를 canonicalize 하지 않음",
+  "-F": "(-a 와 함께 사용) 장치마다 mount 를 새로 fork 해 병렬로 마운트",
+  "-f": "실제 시스템 콜만 빼고 모든 것을 수행 (마운트를 \"fake\")",
+  "-i": "/sbin/mount.filesystem helper 가 있어도 호출하지 않음",
+  "-L": "지정한 label 을 가진 파티션 마운트",
+  "-l": "mount 출력에 label 추가",
+  "-M": "subtree 를 다른 곳으로 이동",
+  "-n": "/etc/mtab 에 기록하지 않고 마운트",
+  "-N": "ns 로 지정한 mount namespace 에서 마운트 수행 (ns 는 PID 또는 namespace 특수 파일)",
+  "-O": "-a 옵션이 적용되는 파일 시스템 집합을 opts 로 제한",
+  "-o": "지정한 마운트 옵션 사용 (opts 는 쉼표로 구분한 목록)",
+  "--options-mode": "fstab/mtab 의 옵션과 명령행 옵션의 결합 방식 제어 (ignore, append, prepend, replace)",
+  "--options-source": "기본 옵션의 출처 지정 (fstab, mtab, disable 의 쉼표 구분 목록, 기본 fstab,mtab)",
+  "--options-source-force": "device 와 dir 를 모두 지정해도 fstab/mtab 의 옵션 사용",
+  "-R": "subtree 와 모든 submount 를 다른 곳에 다시 마운트 (rbind)",
+  "-r": "파일 시스템을 read-only 로 마운트 (-o ro 와 동의어)",
+  "-s": "sloppy 마운트 옵션을 실패 처리하지 않고 허용 (파일 시스템 유형이 지원하지 않는 옵션 무시)",
+  "--source": "인자가 하나일 때 그 인자가 마운트 source (device)임을 명시",
+  "--target": "인자가 하나일 때 그 인자가 마운트 target (mountpoint)임을 명시",
+  "--target-prefix": "모든 마운트 target 앞에 지정한 directory 를 붙임",
+  "-T": "대체 fstab 파일 지정",
+  "-t": "파일 시스템 유형 fstype 지정",
+  "-U": "지정한 uuid 를 가진 파티션 마운트",
+  "-v": "Verbose 모드",
+  "-w": "파일 시스템을 read/write 로 마운트",
+  "-V": "버전 정보를 표시하고 종료",
+  "-h": "도움말을 표시하고 종료"
+ }
+}

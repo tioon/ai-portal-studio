@@ -1,0 +1,1 @@
+{"id":"amixer.1","lang":"ko","desc":"ALSA 사운드 카드 드라이버의 믹서.","items":[["마스터 볼륨을 10% 높이기","amixer -D pulse sset Master {{10%+}}"],["마스터 볼륨을 10% 낮추기","amixer -D pulse sset Master {{10%-}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/amixer.md"}

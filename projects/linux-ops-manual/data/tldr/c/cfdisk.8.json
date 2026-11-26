@@ -1,0 +1,1 @@
+{"id":"cfdisk.8","lang":"ko","desc":"curses UI를 사용하여 하드 디스크의 파티션 테이블 및 파티션을 관리. 관련 항목: `parted`.","items":[["특정 장치로 파티션 조작기 시작","sudo cfdisk {{/dev/sdX}}"],["특정 장치에 대한 새 파티션 테이블 생성 및 관리","sudo cfdisk {{[-z|--zero]}} {{/dev/sdX}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/cfdisk.md"}

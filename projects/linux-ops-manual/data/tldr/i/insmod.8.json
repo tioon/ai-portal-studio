@@ -1,0 +1,1 @@
+{"id":"insmod.8","lang":"ko","desc":"Linux 커널에 모듈을 동적으로 로드합니다. 관련 항목: `kmod`.","items":[["커널 모듈을 Linux 커널에 삽입","sudo insmod {{경로/대상/모듈.ko}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/insmod.md"}

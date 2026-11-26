@@ -1,0 +1,1 @@
+{"id":"route.8","lang":"ko","desc":"route 명령어를 사용하여 라우팅 테이블 설정.","items":[["라우팅 테이블의 정보를 표시","route -n"],["라우팅 규칙 추가","sudo route add -net {{아이피_주소}} netmask {{넷마스크_주소}} gw {{게이트웨이_주소}}"],["라우팅 규칙 삭제","sudo route del -net {{아이피_주소}} netmask {{넷마스크_주소}} dev {{게이트웨이_주소}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/route.md"}

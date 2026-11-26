@@ -1,0 +1,1 @@
+{"id":"users.1","lang":"ko","desc":"로그인한 사용자 목록을 표시. 관련 항목: `who`, `w`, `useradd`, `userdel`, `usermod`.","items":[["로그인한 사용자 명 출력","users"],["주어진 파일에 따라 로그인한 사용자 명 출력","users {{/var/log/wmtp}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/users.md"}

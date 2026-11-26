@@ -1,0 +1,1 @@
+{"id":"break.1","lang":"ko","desc":"`for`, `while`, `until`, `select` 루프에서 빠져나오기.","items":[["하나의 루프에서 빠져나오기","while :; do break; done"],["중첩된 루프에서 빠져나오기","while :; do while :; do break 2; done; done"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/break.md"}

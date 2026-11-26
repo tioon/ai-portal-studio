@@ -1,0 +1,1 @@
+{"id":"groupdel.8","lang":"ko","desc":"기존 사용자 그룹을 시스템에서 삭제합니다. 관련 항목: `groups`, `groupadd`, `groupmod`.","items":[["기존 그룹 삭제","sudo groupdel {{그룹_이름}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/groupdel.md"}

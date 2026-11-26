@@ -1,0 +1,1 @@
+{"id":"m4.1","lang":"ko","desc":"매크로 프로세서.","items":[["파일의 매크로 처리","m4 {{경로/대상/파일}}"],["파일을 처리하기 전에 매크로 정의","m4 {{[-D|--define]}} {{매크로_이름}}={{매크로_값}} {{경로/대상/파일}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/m4.md"}

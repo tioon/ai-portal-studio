@@ -1,0 +1,1 @@
+{"id":"docker-container-rename.1","lang":"ko","desc":"컨테이너 이름 변경.","items":[["컨테이너 이름 변경","docker {{[rename|container rename]}} {{컨테이너}} {{새_이름}}"],["도움말 표시","docker {{[rename|container rename]}} --help"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/docker-container-rename.md"}

@@ -1,0 +1,1 @@
+{"id":"lua.1","lang":"ko","desc":"강력하고 가벼운 임베디드 프로그래밍 언어.","items":[["대화형 Lua 셸 시작","lua"],["Lua 스크립트 실행","lua {{경로/대상/스크립트.lua}} {{--선택적-인자}}"],["Lua 표현식 실행","lua -e '{{print(\"Hello World\")}}'"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/lua.md"}

@@ -1,0 +1,12 @@
+{
+ "route.8": {
+  "-A": "지정한 address family 사용 (예: `inet')",
+  "-F": "커널의 FIB (Forwarding Information Base) 라우팅 테이블 대상으로 동작 (기본값)",
+  "-C": "커널의 라우팅 cache 대상으로 동작",
+  "-v": "verbose 동작 선택",
+  "-n": "심볼 호스트 이름을 찾지 않고 숫자 주소 표시",
+  "-e": "라우팅 테이블 표시에 netstat(8) 형식 사용",
+  "-net": "target 이 network 임",
+  "-host": "target 이 host 임"
+ }
+}

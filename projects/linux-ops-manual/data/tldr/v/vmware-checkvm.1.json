@@ -1,0 +1,1 @@
+{"id":"vmware-checkvm.1","lang":"ko","desc":"현재 호스트가 VMware VM인지 확인.","items":[["현재 VMware 소프트웨어 버전 반환 (시스템이 VM인지 여부는 종료 상태에 따라 결정)","vmware-checkvm"],["VMware 하드웨어 버전 반환","vmware-checkvm -h"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/vmware-checkvm.md"}

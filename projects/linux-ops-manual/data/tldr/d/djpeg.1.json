@@ -1,0 +1,1 @@
+{"id":"djpeg.1","lang":"ko","desc":"JPEG 파일 압축 해제.","items":[["기본 설정으로 JPEG 파일 압축 해제","djpeg -outfile {{경로/대상/출력_이미지}} {{경로/대상/입력}}.jpg"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/djpeg.md"}

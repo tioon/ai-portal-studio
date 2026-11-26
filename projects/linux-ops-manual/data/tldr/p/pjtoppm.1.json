@@ -1,0 +1,1 @@
+{"id":"pjtoppm.1","lang":"ko","desc":"HP PaintJet 파일을 PPM으로 변환.","items":[["HP PaintJet 파일을 PPM으로 변환","pjtoppm {{경로/대상/입력.pj}} >{{경로/대상/출력.ppm}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/pjtoppm.md"}

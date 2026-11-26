@@ -1,0 +1,20 @@
+{
+ "loginctl.1": {
+  "--no-ask-password": "특권 작업에 대해 사용자에게 인증을 묻지 않음",
+  "-p": "session/user/seat property 표시 시 인자로 지정한 property 만 표시",
+  "--value": "session/user/seat property 표시 시 property 이름과 \"=\" 를 빼고 값만 출력",
+  "-a": "session/user/seat property 표시 시 설정 여부와 관계없이 모든 property 표시",
+  "-l": "프로세스 트리 항목을 말줄임 처리하지 않음",
+  "--kill-whom": "kill-session 과 함께 사용 — kill 할 프로세스 선택 (leader 또는 all)",
+  "-s": "kill-session, kill-user 와 함께 사용 — 선택한 프로세스에 보낼 signal 선택 (SIGTERM, SIGINT, SIGSTOP 등)",
+  "-n": "user-status, session-status 와 함께 사용 — 표시할 최근 journal 줄 수 제어 (기본 10)",
+  "-o": "user-status, session-status 와 함께 사용 — 표시되는 journal 항목의 형식 제어 (기본 \"short\")",
+  "-H": "원격으로 작업 실행 (hostname 또는 \"@\" 로 구분한 username 과 hostname 지정)",
+  "-M": "로컬 컨테이너에서 작업 실행 (연결할 컨테이너 이름 지정)",
+  "--no-pager": "출력을 pager 로 보내지 않음",
+  "--no-legend": "legend (열 헤더와 힌트가 있는 footer)를 출력하지 않음",
+  "-h": "짧은 도움말을 출력하고 종료",
+  "--version": "짧은 버전 문자열을 출력하고 종료",
+  "--kill-who": "kill-session 과 함께 사용 — kill 할 프로세스 선택 (leader 또는 all)"
+ }
+}

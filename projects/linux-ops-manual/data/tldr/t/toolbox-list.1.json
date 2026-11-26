@@ -1,0 +1,1 @@
+{"id":"toolbox-list.1","lang":"ko","desc":"기존 Toolbx 컨테이너와 이미지 나열.","items":[["모든 Toolbx 컨테이너와 이미지 나열","toolbox list"],["`toolbox` 컨테이너만 나열","toolbox list {{[-c|--containers]}}"],["`toolbox` 이미지만 나열","toolbox list {{[-i|--images]}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/toolbox-list.md"}

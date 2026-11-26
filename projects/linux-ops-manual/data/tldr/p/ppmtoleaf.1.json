@@ -1,0 +1,1 @@
+{"id":"ppmtoleaf.1","lang":"ko","desc":"PPM 이미지를 Interleaf 이미지 형식으로 변환.","items":[["PPM 이미지를 LEAF 파일로 변환","ppmtoleaf {{경로/대상/파일.ppm}} >{{경로/대상/파일.leaf}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/ppmtoleaf.md"}

@@ -1,0 +1,1 @@
+{"id":"pg_isready.1","lang":"ko","desc":"PostgreSQL 서버의 연결 상태 확인.","items":[["연결 상태 확인","pg_isready"],["특정 호스트명과 포트를 사용하여 연결 상태 확인","pg_isready {{[-h|--host]}} {{호스트명}} {{[-p|--port]}} {{포트}}"],["연결 실패 시에만 메시지 표시하며 연결 상태 확인","pg_isready {{[-q|--quiet]}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/pg_isready.md"}

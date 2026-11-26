@@ -1,0 +1,1 @@
+{"id":"on_ac_power.1","lang":"ko","desc":"컴퓨터가 AC 전원으로 동작 중인지 확인하는 간단한 유틸리티. AC 전원을 사용중이면 `0`, 그렇지 않으면 `1`을 반환.","items":[["컴퓨터가 AC 전원으로 동작 중인지 확인","on_ac_power"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/on_ac_power.md"}

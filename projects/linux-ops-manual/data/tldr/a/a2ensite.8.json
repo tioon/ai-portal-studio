@@ -1,0 +1,1 @@
+{"id":"a2ensite.8","lang":"ko","desc":"Debian 기반 운영 체제에서 Apache 가상 호스트를 활성화합니다.","items":[["가상 호스트 활성화","sudo a2ensite {{가상_호스트}}"],["정보 메시지 표시 안 함","sudo a2ensite {{[-q|--quiet]}} {{가상_호스트}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/a2ensite.md"}

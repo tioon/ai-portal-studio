@@ -1,0 +1,1 @@
+{"id":"fail2ban-client.1","lang":"ko","desc":"fail2ban 서버를 구성하고 제어.","items":[["감옥 서비스의 현재 상태 검색","fail2ban-client status {{감옥}}"],["지정된 IP를 감옥 서비스의 차단 목록에서 제거","fail2ban-client set {{감옥}} unbanip {{ip_address}}"],["fail2ban 서버가 실행 중인지 확인","fail2ban-client ping"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/fail2ban-client.md"}

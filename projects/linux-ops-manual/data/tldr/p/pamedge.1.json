@@ -1,0 +1,1 @@
+{"id":"pamedge.1","lang":"ko","desc":"Netpbm 이미지에서 에지 감지를 수행합니다.","items":[["Netpbm 이미지에서 에지 감지 수행","pamedge {{경로/대상/input.pam}} >{{경로/대상/output.pam}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/pamedge.md"}

@@ -1,0 +1,17 @@
+{
+ "perf.1": {
+  "-h": "perf help 명령 실행",
+  "-v": "perf 버전 표시",
+  "-vv": "컴파일 시 포함된 라이브러리 상태 출력",
+  "--exec-path": "exec path 표시 또는 설정",
+  "--html-path": "html 문서 경로 표시",
+  "-p": "pager 설정",
+  "--no-pager": "pager 를 설정하지 않음",
+  "--buildid-dir": "buildid 캐시 디렉터리 설정 (설정 파일의 buildid.dir 옵션보다 우선)",
+  "--list-cmds": "가장 자주 쓰는 perf 명령 나열",
+  "--list-opts": "사용 가능한 perf 옵션 나열",
+  "--debugfs-dir": "debugfs 디렉터리 설정 (또는 환경 변수 PERF_DEBUGFS_DIR 설정)",
+  "--debug": "디버그 변수를 (0, 10) 범위 값으로 설정 (예: --debug verbose=2)",
+  "--debug-file": "디버그 출력을 지정한 파일에 기록"
+ }
+}

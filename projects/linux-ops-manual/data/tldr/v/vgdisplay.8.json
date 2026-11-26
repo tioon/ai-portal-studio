@@ -1,0 +1,1 @@
+{"id":"vgdisplay.8","lang":"ko","desc":"Logical Volume Manager (LVM) 볼륨 그룹 정보를 표시합니다. 관련 항목: `lvm`.","items":[["모든 볼륨 그룹 정보 표시","sudo vgdisplay"],["볼륨 그룹 vg1의 정보 표시","sudo vgdisplay {{vg1}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/vgdisplay.md"}

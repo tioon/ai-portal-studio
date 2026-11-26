@@ -1,0 +1,1 @@
+{"id":"irb.1","lang":"ko","desc":"Ruby 대화형 쉘 . `stdin`에서 입력된 Ruby 코드를 실행.","items":[["대화형 쉘 시작","irb"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/irb.md"}

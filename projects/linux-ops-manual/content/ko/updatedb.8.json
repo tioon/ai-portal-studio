@@ -1,0 +1,18 @@
+{
+ "updatedb.8": {
+  "-f": "공백으로 구분한 목록 FS 의 항목을 PRUNEFS 에 추가",
+  "-n": "공백으로 구분한 목록 NAMES 의 항목을 PRUNENAMES 에 추가",
+  "-e": "공백으로 구분한 목록 PATHS 의 항목을 PRUNEPATHS 에 추가",
+  "-U": "PATH 를 루트로 하는 파일 시스템 subtree 의 스캔 결과만 데이터베이스에 저장",
+  "--debug-pruning": "pruning 결정에 대한 디버깅 정보를 표준 에러에 기록",
+  "-h": "사용 가능한 옵션 요약을 표준 출력에 쓰고 성공적으로 종료",
+  "-o": "기본 데이터베이스 대신 FILE 에 데이터베이스 기록",
+  "--prune-bind-mounts": "설정 파일을 무시하고 PRUNE_BIND_MOUNTS 를 FLAG 로 설정",
+  "--prunefs": "설정 파일을 무시하고 PRUNEFS 를 FS 로 설정",
+  "--prunenames": "설정 파일을 무시하고 PRUNENAMES 를 NAMES 로 설정",
+  "--prunepaths": "설정 파일을 무시하고 PRUNEPATHS 를 PATHS 로 설정",
+  "-l": "생성되는 데이터베이스의 “require file visibility before reporting it” 플래그를 FLAG 로 설정",
+  "-v": "파일을 찾는 대로 경로 이름을 표준 출력에 출력",
+  "-V": "locate 의 버전과 라이선스 정보를 표준 출력에 쓰고 성공적으로 종료"
+ }
+}

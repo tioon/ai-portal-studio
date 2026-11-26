@@ -1,0 +1,1 @@
+{"id":"fancontrol.8","lang":"ko","desc":"팬 속도를 자동으로 관리. 설정 파일을 사용하여 다양한 변수를 제어.","items":[["기본 `/etc/fancontrol` 설정 파일을 사용하여 `fancontrol` 시작","fancontrol"],["사용자 지정 설정 파일을 사용하여 `fancontrol` 시작","fancontrol {{경로/대상/설정_파일}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/fancontrol.md"}

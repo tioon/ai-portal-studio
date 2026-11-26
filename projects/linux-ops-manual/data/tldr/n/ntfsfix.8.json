@@ -1,0 +1,1 @@
+{"id":"ntfsfix.8","lang":"ko","desc":"NTFS 파티션의 일반적인 문제 해결 도구.","items":[["지정된 NTFS 파티션 문제 해결","sudo ntfsfix {{/dev/sdXN}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/ntfsfix.md"}

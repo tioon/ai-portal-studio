@@ -1,0 +1,27 @@
+{
+ "usermod.8": {
+  "-a": "사용자를 supplementary group 에 추가 (-G 옵션과 함께만 사용)",
+  "-b": "표준에 맞지 않는 이름 허용",
+  "-c": "사용자의 password 파일 comment 필드의 새 값",
+  "-d": "사용자의 새 login 디렉터리 (-m 을 주면 현재 홈 디렉터리의 내용을 새 홈 디렉터리로 이동)",
+  "-e": "사용자 계정이 비활성화될 날짜 (YYYY-MM-DD 형식)",
+  "-f": "비밀번호 만료 후 계정이 영구 비활성화되기까지의 일수",
+  "-g": "사용자의 새 initial login group 의 그룹 이름 또는 번호",
+  "-G": "사용자가 함께 속할 supplementary group 목록 (쉼표로 구분, 공백 없이)",
+  "-l": "사용자 이름을 LOGIN 에서 NEW_LOGIN 으로 변경",
+  "-L": "사용자의 비밀번호 잠금 (암호화된 비밀번호 앞에 '!' 추가)",
+  "-m": "사용자 홈 디렉터리의 내용을 새 위치로 이동",
+  "-o": "-u 옵션과 함께 쓰면 user ID 를 고유하지 않은 값으로 변경 허용",
+  "-p": "crypt(3) 가 반환한 형태의 암호화된 비밀번호 (권장하지 않음)",
+  "-R": "CHROOT_DIR 디렉터리에 변경을 적용하고 CHROOT_DIR 의 설정 파일 사용",
+  "-P": "PREFIX_DIR 디렉터리에 변경을 적용하고 PREFIX_DIR 의 설정 파일 사용 (chroot 하지 않음)",
+  "-s": "사용자의 새 login shell 경로",
+  "-u": "사용자 ID 의 새 숫자 값 (-o 옵션 없이는 고유해야 함)",
+  "-U": "사용자의 비밀번호 잠금 해제 (암호화된 비밀번호 앞의 '!' 제거)",
+  "-v": "사용자 계정에 subordinate uid 범위 FIRST-LAST 추가",
+  "-V": "사용자 계정에서 subordinate uid 범위 FIRST-LAST 제거",
+  "-w": "사용자 계정에 subordinate gid 범위 FIRST-LAST 추가",
+  "-W": "사용자 계정에서 subordinate gid 범위 FIRST-LAST 제거",
+  "-Z": "사용자 login 의 새 SELinux user (비우면 SELinux user 매핑 제거)"
+ }
+}

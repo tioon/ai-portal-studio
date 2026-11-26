@@ -1,0 +1,1 @@
+{"id":"newgrp.1","lang":"ko","desc":"기본 그룹 소속을 변경합니다.","items":[["사용자의 기본 그룹 소속을 변경","newgrp {{그룹_이름}}"],["`/etc/passwd`에 설정된 사용자의 기본 그룹으로 리셋","newgrp"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/newgrp.md"}

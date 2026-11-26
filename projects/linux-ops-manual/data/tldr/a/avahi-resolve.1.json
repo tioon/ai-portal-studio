@@ -1,0 +1,1 @@
+{"id":"avahi-resolve.1","lang":"ko","desc":"호스트 이름과 IP 주소 간 변환.","items":[["로컬 서비스를 IPv4로 변환","avahi-resolve -4 {{[-n|--name]}} {{service.local}}"],["IP를 호스트 이름으로 변환, 자세히","avahi-resolve {{[-v|--verbose]}} {{[-a|--address]}} {{ip_address}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/avahi-resolve.md"}

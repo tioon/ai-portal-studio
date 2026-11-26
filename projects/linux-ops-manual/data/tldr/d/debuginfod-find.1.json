@@ -1,0 +1,1 @@
+{"id":"debuginfod-find.1","lang":"ko","desc":"디버그 정보 관련 데이터를 요청합니다.","items":[["`build_id`를 기반으로 데이터 요청","debuginfod-find -vv debuginfo {{빌드_id}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/debuginfod-find.md"}

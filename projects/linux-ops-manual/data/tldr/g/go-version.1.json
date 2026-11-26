@@ -1,0 +1,1 @@
+{"id":"go-version.1","lang":"ko","desc":"Go 버전을 표시.","items":[["버전 표시","go version"],["특정 실행 파일을 빌드하는 데 사용된 Go 버전 표시","go version {{경로/대상/실행파일}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/go-version.md"}

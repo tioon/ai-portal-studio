@@ -1,0 +1,1 @@
+{"id":"pbmtogo.1","lang":"ko","desc":"PBM 이미지를 압축된 GraphOn 그래픽으로 변환.","items":[["PBM 이미지를 압축된 GraphOn 그래픽으로 변환","pbmtogo {{경로/대상/이미지.pbm}} >{{경로/대상/출력.go}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/pbmtogo.md"}

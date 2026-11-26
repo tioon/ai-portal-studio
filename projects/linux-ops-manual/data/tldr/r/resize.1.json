@@ -1,0 +1,1 @@
+{"id":"resize.1","lang":"en","desc":"Resize terminal size to the window size.","items":[["Resize the terminal","resize"],["Print terminal size","resize -s"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages/linux/resize.md"}

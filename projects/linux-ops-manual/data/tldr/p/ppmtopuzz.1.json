@@ -1,0 +1,1 @@
+{"id":"ppmtopuzz.1","lang":"ko","desc":"PPM 이미지를 X11 퍼즐 파일로 변환.","items":[["PPM 이미지를 X11 퍼즐 파일로 변환","ppmtopuzz {{경로/대상/파일.ppm}} >{{경로/대상/파일.puzz}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/ppmtopuzz.md"}

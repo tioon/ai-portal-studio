@@ -1,0 +1,20 @@
+{
+ "chcon.1": {
+  "--dereference": "심볼릭 링크 자체가 아닌 링크가 가리키는 대상에 적용 (기본값)",
+  "-h": "참조된 파일 대신 심볼릭 링크에 적용",
+  "-u": "대상 security context 의 user 를 USER 로 설정",
+  "-r": "대상 security context 의 role 을 ROLE 로 설정",
+  "-t": "대상 security context 의 type 을 TYPE 으로 설정",
+  "-l": "대상 security context 의 range 를 RANGE 로 설정",
+  "--no-preserve-root": "'/' 를 특별 취급하지 않음 (기본값)",
+  "--preserve-root": "'/' 에 대한 재귀 동작을 실패 처리",
+  "--reference": "CONTEXT 값을 지정하는 대신 RFILE 의 security context 사용",
+  "-R": "파일과 디렉터리에 재귀적으로 동작",
+  "-v": "처리한 파일마다 진단 메시지 출력",
+  "-H": "명령행 인자가 디렉터리를 가리키는 심볼릭 링크이면 따라감",
+  "-L": "만나는 디렉터리 심볼릭 링크를 모두 따라감",
+  "-P": "심볼릭 링크를 따라가지 않음 (기본값)",
+  "--help": "도움말을 표시하고 종료",
+  "--version": "버전 정보를 출력하고 종료"
+ }
+}

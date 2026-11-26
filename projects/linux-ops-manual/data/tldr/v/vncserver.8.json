@@ -1,0 +1,1 @@
+{"id":"vncserver.8","lang":"ko","desc":"VNC (Virtual Network Computing) 데스크톱 시작.","items":[["다음 사용 가능한 디스플레이에 VNC 서버 시작","vncserver"],["특정 화면 크기로 VNC 서버 시작","vncserver --geometry {{너비}}x{{높이}}"],["특정 디스플레이에서 실행 중인 VNC 서버 인스턴스 종료","vncserver --kill :{{디스플레이_번호}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/vncserver.md"}

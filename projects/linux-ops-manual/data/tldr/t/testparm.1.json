@@ -1,0 +1,1 @@
+{"id":"testparm.1","lang":"ko","desc":"Samba 설정 파일의 내부 구성이 올바른지 검사.","items":[["`/etc/samba/smb.conf` 설정이 올바른지 검사","testparm"],["지정한 설정 파일이 올바른지 검사","testparm {{경로/대상/파일}}"],["도움말 표시","testparm {{[-?|--help]}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/testparm.md"}

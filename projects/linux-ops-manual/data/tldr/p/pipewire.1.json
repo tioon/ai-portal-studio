@@ -1,0 +1,1 @@
+{"id":"pipewire.1","lang":"ko","desc":"PipeWire 데몬 시작.","items":[["PipeWire 데몬 시작","pipewire"],["다른 설정 파일 사용","pipewire --config {{경로/대상/파일.conf}}"],["상세 수준 설정 (error, warn, info, debug 또는 trace)","pipewire -{{v|vv|...|vvvvv}}"],["도움말 표시","pipewire --help"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/pipewire.md"}

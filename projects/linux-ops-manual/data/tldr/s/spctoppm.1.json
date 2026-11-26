@@ -1,0 +1,1 @@
+{"id":"spctoppm.1","lang":"ko","desc":"Atari 압축 스펙트럼 이미지를 PPM 이미지로 변환.","items":[["SPC 파일을 PPM 이미지로 변환","spctoppm {{경로/대상/입력.spc}} >{{경로/대상/출력.ppm}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/spctoppm.md"}

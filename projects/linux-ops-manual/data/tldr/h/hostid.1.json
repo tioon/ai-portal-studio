@@ -1,0 +1,1 @@
+{"id":"hostid.1","lang":"ko","desc":"현재 호스트의 숫자 식별자를 출력 (IP 주소일 필요는 없음).","items":[["현재 호스트의 숫자 식별자를 16진수로 표시","hostid"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/hostid.md"}

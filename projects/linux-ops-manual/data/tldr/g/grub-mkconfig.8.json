@@ -1,0 +1,1 @@
+{"id":"grub-mkconfig.8","lang":"ko","desc":"GRUB 구성 파일 생성.","items":[["시뮬레이션을 실행하고 구성을 `stdout`에 출력","sudo grub-mkconfig"],["구성 파일 생성","sudo grub-mkconfig {{[-o|--output]}} {{/boot/grub/grub.cfg}}"],["도움말 표시","grub-mkconfig {{[-h|--help]}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/grub-mkconfig.md"}

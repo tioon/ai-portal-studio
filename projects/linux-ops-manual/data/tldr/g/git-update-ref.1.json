@@ -1,0 +1,1 @@
+{"id":"git-update-ref.1","lang":"ko","desc":"Git 참조를 생성, 업데이트 및 삭제하는 Git 명령어.","items":[["참조 삭제 (첫 커밋을 소프트 리셋하는 데 유용)","git update-ref -d {{HEAD}}"],["메시지와 함께 참조 업데이트","git update-ref -m {{메시지}} {{HEAD}} {{4e95e05}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/git-update-ref.md"}

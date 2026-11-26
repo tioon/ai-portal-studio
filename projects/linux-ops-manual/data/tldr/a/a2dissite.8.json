@@ -1,0 +1,1 @@
+{"id":"a2dissite.8","lang":"ko","desc":"Debian 기반 운영 체제에서 Apache 가상 호스트 비활성화.","items":[["가상 호스트 비활성화","sudo a2dissite {{가상_호스트}}"],["정보성 메시지를 표시하지 않음","sudo a2dissite {{[-q|--quiet]}} {{가상_호스트}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/a2dissite.md"}

@@ -1,0 +1,1 @@
+{"id":"mariadb-install-db.1","lang":"ko","desc":"MariaDB 데이터베이스 초기화.","items":[["데이터베이스 초기화","sudo mariadb-install-db --user {{사용자}} --basedir {{/usr}} --datadir {{/var/lib/mysql}}"],["도움말 표시","mariadb-install-db --help"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/mariadb-install-db.md"}

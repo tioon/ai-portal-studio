@@ -1,0 +1,1 @@
+{"id":"rpm2cpio.8","lang":"ko","desc":"RPM 패키지를 `cpio` 아카이브로 변환.","items":[["RPM 패키지를 `cpio` 아카이브로 변환하고 현재 디렉토리에 `파일.cpio`로 저장","rpm2cpio {{경로/대상/파일.rpm}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/rpm2cpio.md"}

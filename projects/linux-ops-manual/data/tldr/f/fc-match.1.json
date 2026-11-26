@@ -1,0 +1,1 @@
+{"id":"fc-match.1","lang":"ko","desc":"사용 가능한 글꼴을 일치시킴.","items":[["가장 잘 일치하는 글꼴의 정렬된 목록을 반환","fc-match {{[-s|--sort]}} '{{DejaVu Serif}}'"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/fc-match.md"}

@@ -1,0 +1,11 @@
+{
+ "dnf-config-manager.8": {
+  "--help-cmd": "도움말 표시",
+  "--add-repo": "지정한 파일 또는 URL 의 repo 추가 (및 활성화)",
+  "--dump": "현재 설정 값의 덤프를 stdout 에 출력",
+  "--set-disabled": "지정한 repo 비활성화 (--save 포함)",
+  "--set-enabled": "지정한 repo 활성화 (--save 포함)",
+  "--save": "현재 옵션 저장 (--setopt 와 함께 유용)",
+  "--setopt": "설정 옵션 지정 (repo 옵션은 repoid.option 형식, repoid 에 glob 지원)"
+ }
+}

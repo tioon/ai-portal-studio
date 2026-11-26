@@ -1,0 +1,1 @@
+{"id":"initdb.1","lang":"ko","desc":"디스크에 PostgreSQL 데이터베이스를 생성.","items":[["`/usr/local/var/postgres`에 데이터베이스를 생성","initdb {{[-D|--pgdata]}} /usr/local/var/postgres"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/initdb.md"}

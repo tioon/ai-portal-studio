@@ -1,0 +1,1 @@
+{"id":"fwupdtool.1","lang":"ko","desc":"장치의 firmware를 수동으로 업데이트하거나 firmware 파일을 관리. 관련 항목: `fwupdmgr`.","items":[["`fwupd`가 감지한 모든 장치 표시","fwupdtool get-devices"],["파일에서 firmware 설치","fwupdtool install {{경로/대상/firmware}}"],["도움말 표시","fwupdtool {{[-h|--help]}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/fwupdtool.md"}

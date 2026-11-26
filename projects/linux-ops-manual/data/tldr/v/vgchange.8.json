@@ -1,0 +1,1 @@
+{"id":"vgchange.8","lang":"ko","desc":"논리 볼륨 관리자(LVM) 볼륨 그룹의 속성을 변경합니다. 관련 항목: `lvm`.","items":[["모든 볼륨 그룹의 논리 볼륨 활성화 상태 변경","sudo vgchange {{[-a|--activate]}} {{y|n}}"],["지정된 볼륨 그룹의 논리 볼륨 활성화 상태 변경 (`vgscan`으로 확인 가능)","sudo vgchange {{[-a|--activate]}} {{y|n}} {{볼륨_그룹}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/vgchange.md"}

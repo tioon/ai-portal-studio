@@ -1,0 +1,1 @@
+{"id":"a2enmod.8","lang":"ko","desc":"Debian 기반 운영체제에서 Apache 모듈을 활성화합니다.","items":[["모듈 활성화","sudo a2enmod {{모듈}}"],["정보 메시지를 표시하지 않음","sudo a2enmod {{[-q|--quiet]}} {{모듈}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/a2enmod.md"}

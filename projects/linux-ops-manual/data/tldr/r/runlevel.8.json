@@ -1,0 +1,1 @@
+{"id":"runlevel.8","lang":"en","desc":"SysV runlevel utility.","items":[["Return previous and current SysV runlevel","runlevel"],["Display help","runlevel --help"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages/linux/runlevel.md"}

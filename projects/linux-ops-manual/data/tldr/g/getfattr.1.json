@@ -1,0 +1,1 @@
+{"id":"getfattr.1","lang":"ko","desc":"파일 이름 및 확장 속성을 표시합니다. 관련 항목: `setfattr`.","items":[["파일의 모든 확장 속성을 가져와서 자세히 표시","getfattr {{[-d|--dump]}} {{경로/대상/파일}}"],["파일의 특정 속성 가져오기","getfattr {{[-n|--name]}} user.{{속성_이름}} {{경로/대상/파일}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/getfattr.md"}

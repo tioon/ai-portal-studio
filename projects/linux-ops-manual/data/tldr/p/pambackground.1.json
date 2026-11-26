@@ -1,0 +1,1 @@
+{"id":"pambackground.1","lang":"ko","desc":"PAM 이미지의 배경 마스크 생성. 관련 항목: `pbmmask`.","items":[["PAM 이미지에서 배경 마스크 생성","pambackground {{경로/대상/이미지.pam}} >{{경로/대상/출력.pam}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/pambackground.md"}

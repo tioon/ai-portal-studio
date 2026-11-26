@@ -1,0 +1,1 @@
+{"id":"togglesebool.8","lang":"ko","desc":"SELinux 부울의 현재 (비영구적) 값을 변경. 참고: 이 도구는 `setsebool`로 대체되어 더 이상 사용되지 않거나 제거되었습니다.","items":[["지정된 부울의 현재 (비영구적) 값을 변경","sudo togglesebool {{virt_use_samba virt_use_usb ...}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/togglesebool.md"}

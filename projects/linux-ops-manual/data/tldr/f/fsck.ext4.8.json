@@ -1,0 +1,1 @@
+{"id":"fsck.ext4.8","lang":"en","desc":"This command is an alias of `e2fsck`.","items":[["View documentation for the original command","tldr e2fsck"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages/linux/fsck.ext4.md"}

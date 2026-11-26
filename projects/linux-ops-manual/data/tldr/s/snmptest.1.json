@@ -1,0 +1,1 @@
+{"id":"snmptest.1","lang":"ko","desc":"대화형 SNMP 프롬프트를 시작.","items":[["SNMP 프롬프트 시작","snmptest -v {{버전}} -c {{커뮤니티}} {{ip_address}}"],["도움말 표시","snmptest {{[-h|--help]}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/snmptest.md"}

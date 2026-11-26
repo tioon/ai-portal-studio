@@ -1,0 +1,1 @@
+{"id":"ul.1","lang":"ko","desc":"텍스트에 밑줄을 그립니다. 문자열의 각 문자는 개별적으로 밑줄을 그어야 합니다.","items":[["파일의 내용을 밑줄이 적용된 상태로 표시","ul {{파일.txt}}"],["대시 `-`로 만든 밑줄을 사용하여 파일의 내용을 표시","ul {{[-i|--indicated]}} {{파일.txt}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/ul.md"}

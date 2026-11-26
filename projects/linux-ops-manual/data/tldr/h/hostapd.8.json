@@ -1,0 +1,1 @@
+{"id":"hostapd.8","lang":"ko","desc":"무선 인터페이스를 사용하여 액세스 포인트를 시작.","items":[["액세스 포인트 시작","sudo hostapd {{경로/대상/hostapd.conf}}"],["백그라운드로 분기하여, 액세스 포인트를 시작","sudo hostapd -B {{경로/대상/hostapd.conf}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/hostapd.md"}

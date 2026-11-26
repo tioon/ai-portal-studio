@@ -1,0 +1,1 @@
+{"id":"pbmto4425.1","lang":"ko","desc":"PBM 이미지를 AT&T 4425 터미널에 표시. 관련 항목: `ppmtoterm`, `pbmtoascii`.","items":[["터미널의 모자이크 그래픽 문자 집합을 사용하여 PBM 이미지를 AT&T 4425 터미널에 표시","pbmto4425 {{경로/대상/이미지.pbm}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/pbmto4425.md"}

@@ -1,0 +1,1 @@
+{"id":"ppmcolormask.1","lang":"ko","desc":"PPM 이미지에서 특정 색상의 영역 마스크 생성.","items":[["지정된 PPM 이미지에서 특정 색상의 영역 마스크 생성","ppmcolormask {{[-c|-color]}} {{red,blue}} {{경로/대상/입력.ppm}} >{{경로/대상/출력.pbm}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/common/ppmcolormask.md"}

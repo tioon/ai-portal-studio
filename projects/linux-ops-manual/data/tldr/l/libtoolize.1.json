@@ -1,0 +1,1 @@
+{"id":"libtoolize.1","lang":"ko","desc":"`autotools` 도구로, `libtool`을 사용하기 위해 패키지를 준비합니다. 여러 작업을 수행하며, 필요한 파일 및 디렉토리를 생성하여 `libtool`을 프로젝트에 원활하게 통합합니다.","items":[["`libtool`을 필요한 파일을 복사하여(심볼릭 링크는 피함) 프로젝트를 초기화하고 필요한 경우 기존 파일을 덮어씀","libtoolize {{[-cf|--copy --force]}}"]],"version":"v2.3","source":"https://github.com/tldr-pages/tldr/blob/main/pages.ko/linux/libtoolize.md"}
