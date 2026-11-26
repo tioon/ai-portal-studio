@@ -8,6 +8,7 @@ import html, re, subprocess
 from html.parser import HTMLParser
 
 VOID = {"br", "hr", "col", "img", "wbr"}
+BULLETS = ("\u2022", "\u00b7", "\u25cb", "\u25e6", "\u25aa", "*", "o")
 OPT_RE = re.compile(r"^\s*(?:\[!\]\s*)?[\[({<]?\s*(?:\+\|)?(?:-{1,2}[A-Za-z0-9?@#%:!]|\+[A-Za-z]|-\s*$|--\s*$)")
 FLAG_RE = re.compile(r"(?<![\w\-])(-{1,2}[A-Za-z0-9?@#%!][\w\-.+:]*|-)(?![\w])")
 
@@ -162,6 +163,9 @@ class Section:
                     self.out.append("<dl>"); self.term([k], nxt); self.out.append("</dl>")
                     i = j + 1
                     continue
+            if not isinstance(k, str) and k.tag == "dl" and self.bullet_option(ks, i):
+                i = self._skip
+                continue
             if not isinstance(k, str) and k.tag == "p" and i + 1 < len(ks):
                 j = i + 1
                 while j < len(ks) and isinstance(ks[j], str) and not ks[j].strip():
@@ -183,6 +187,33 @@ class Section:
                 continue
             self.emit(k)
             i += 1
+
+    def bullet_option(self, ks, i):
+        """ronn-style pages (jq, ...):  <dl><dt>&bull;</dt><dd><b>--seq</b>:</dd></dl> <dl><dt></dt><dd>text</dd></dl>"""
+        parts = [c for c in ks[i].kids if not isinstance(c, str)]
+        if not (len(parts) == 2 and parts[0].tag == "dt" and parts[1].tag == "dd"):
+            return False
+        if norm(text(parts[0])) not in BULLETS:
+            return False
+        label = norm(text(parts[1]))
+        if not (is_opt_text(label) and len(label) < 200):
+            return False
+        j = i + 1
+        while j < len(ks) and isinstance(ks[j], str) and not ks[j].strip():
+            j += 1
+        dt, dd = Node("dt"), Node("dd")
+        dt.kids = parts[1].kids
+        if j < len(ks) and not isinstance(ks[j], str) and ks[j].tag == "dl":
+            nparts = [c for c in ks[j].kids if not isinstance(c, str)]
+            if nparts and nparts[0].tag == "dt" and not norm(text(nparts[0])):
+                for c in nparts:
+                    if c.tag == "dd":
+                        dd.kids += c.kids
+                j += 1
+            # else: next list is another bullet -> this option has no body
+        self.out.append("<dl>"); self.term([dt], dd); self.out.append("</dl>")
+        self._skip = j
+        return True
 
     def split_para(self, p):
         """Old-style pages write `<b>-x</b><br>description` or, inside OPTIONS, `<b>-x</b> description`."""
@@ -224,6 +255,21 @@ class Section:
                 dts.append(k)
             elif k.tag == "dd":
                 pairs.append((dts, k)); dts = []
+        # bullets inside one list:  (o, "--seq:") (empty, description) (o, "--stream:") ...
+        if any(len(ds) == 1 and norm(text(ds[0])) in BULLETS and is_opt_text(norm(text(dd))) for ds, dd in pairs):
+            fixed = []
+            for ds, dd in pairs:
+                lab = norm(text(dd))
+                if len(ds) == 1 and norm(text(ds[0])) in BULLETS and is_opt_text(lab) and len(lab) < 200:
+                    dt, body = Node("dt"), Node("dd")
+                    dt.kids = dd.kids
+                    fixed.append(([dt], body))
+                elif fixed and (not ds or not norm(" ".join(text(x) for x in ds))) and fixed[-1][0][0].tag == "dt" and getattr(fixed[-1][1], "tag", "") == "dd" and fixed[-1][1] is not dd and not hasattr(fixed[-1][1], "_orig"):
+                    fixed[-1][1].kids += dd.kids
+                else:
+                    dd_mark = dd
+                    fixed.append((ds, dd_mark))
+            pairs = fixed
         # `.IP "-V"` / `.IP "--version"` / text: the short form gets an empty body and the
         # description sits on the next term -> they are one option with two spellings
         merged, carry = [], []

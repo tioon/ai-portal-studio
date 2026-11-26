@@ -57,13 +57,19 @@
     "detail": 4
   },
   {
-    "name": "alias: awk -> gawk on Rocky",
-    "pass": true
+    "name": "alias: awk shown under its own name, backed by gawk on Rocky",
+    "pass": true,
+    "detail": "awk(1)= gawk"
   },
   {
-    "name": "alias: awk -> mawk on Ubuntu",
+    "name": "alias: awk backed by mawk on Ubuntu",
     "pass": true,
-    "detail": "mawk(1)"
+    "detail": "awk(1)= mawk"
+  },
+  {
+    "name": "jq: bullet-style options extracted with Korean notes",
+    "pass": true,
+    "detail": 26
   },
   {
     "name": "ubuntu: apt-get manual present",

@@ -371,6 +371,12 @@ async function viewCommand(id, from) {
   const row = byId.get(id);
   if (!row) { view.append(h("div", { class: "notice warn" }, `“${id}” 매뉴얼은 데이터팩에 없습니다. `, h("a", { href: `#/all?q=${encodeURIComponent(id.replace(/\.\d$/, ""))}` }, "전체에서 검색"))); return; }
   let d = state.distro;
+  // reached through an alias (awk): follow it again when the distro changes (gawk on Rocky, mawk on Ubuntu)
+  const origin = from && from !== id ? byId.get(from) : null;
+  if (origin && origin[COL[d].alias] && origin[COL[d].alias] !== id && byId.has(origin[COL[d].alias])) {
+    const t = origin[COL[d].alias];
+    history.replaceState(null, "", `${cmdHref(t)}?from=${encodeURIComponent(from)}`); return viewCommand(t, from);
+  }
   if (row[COL.r.pkg] < 0 && row[COL.u.pkg] < 0) {   // pure alias row
     const t = row[COL[d].alias] || row[COL.r.alias] || row[COL.u.alias];
     history.replaceState(null, "", `${cmdHref(t)}?from=${encodeURIComponent(id)}`); return viewCommand(t, id);
@@ -392,13 +398,15 @@ async function viewCommand(id, from) {
   const src = doc.src[shown];
   const secs = sectionsFor(doc, shown);
   const parsed = parseOptions(secs);
-  const name = row[0];
+  const fromRow = from && from !== id ? byId.get(from) : null;
+  const name = fromRow ? fromRow[0] : row[0];
+  if (fromRow) notices.unshift(h("div", { class: "notice" }, h("strong", {}, `${fromRow[0]}`), ` 는 ${DISTRO[d]} 에서 `, h("strong", {}, `${row[0]}`), ` 로 제공됩니다. 아래는 ${row[0]}(${row[1]}) 매뉴얼의 옵션입니다.`));
 
   /* header */
   view.append(
     h("div", { class: "breadcrumb" }, h("a", { href: "#/all" }, "전체 명령어"), " / ", h("a", { href: `#/p/${shown}/${encodeURIComponent(src.pkg)}` }, src.pkg), ` / ${name}`),
     h("section", { class: "intro cmd-intro" },
-      h("h1", { class: "mono" }, name, h("small", {}, `(${row[1]})`)),
+      h("h1", { class: "mono" }, name, h("small", {}, `(${row[1]})`), fromRow ? h("span", { class: "alias-of" }, `= ${row[0]}`) : null),
       h("p", { class: "lede" }, doc.desc || ""),
       h("dl", { class: "prov" }, ["r", "u"].map((x) => {
         const s = doc.src[x];

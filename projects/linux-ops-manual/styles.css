@@ -1003,3 +1003,5 @@ a.button:hover,a.scenario-card:hover { background:var(--soft); text-decoration:n
 .tldr { display:block; min-width:0 }
 .tldr .example-item,.tldr .command-line,.tldr .command-line code { min-width:0 }
 .block { min-width:0; max-width:100% }
+
+.alias-of { font-size:15px; font-weight:500; color:#5d6978; margin-left:12px; font-family:ui-monospace,monospace }
