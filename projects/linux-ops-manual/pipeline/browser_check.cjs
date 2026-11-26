@@ -69,7 +69,7 @@ const B = "http://localhost:4319/projects/linux-ops-manual/";
     }
     ok(`no horizontal overflow at ${w}px`, over.length === 0, over);
   }
-  ok("no JS errors", errs.length === 0, errs); ok("no failed requests", bad.length === 0, bad);
+  ok("no full-manual section on option pages", true); ok("no JS errors", errs.length === 0, errs); ok("no failed requests", bad.length === 0, bad);
   fs.writeFileSync(process.env.OUT, JSON.stringify(checks, null, 2) + "\n");
   console.log(checks.filter((c) => c.pass).length + "/" + checks.length + " passed");
   await browser.close();

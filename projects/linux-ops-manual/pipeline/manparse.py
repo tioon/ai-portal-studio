@@ -8,7 +8,7 @@ import html, re, subprocess
 from html.parser import HTMLParser
 
 VOID = {"br", "hr", "col", "img", "wbr"}
-OPT_RE = re.compile(r"^\s*[\[({<]?\s*(?:-{1,2}[A-Za-z0-9?@#%:!]|\+[A-Za-z]|-\s*$|--\s*$)")
+OPT_RE = re.compile(r"^\s*(?:\[!\]\s*)?[\[({<]?\s*(?:\+\|)?(?:-{1,2}[A-Za-z0-9?@#%:!]|\+[A-Za-z]|-\s*$|--\s*$)")
 FLAG_RE = re.compile(r"(?<![\w\-])(-{1,2}[A-Za-z0-9?@#%!][\w\-.+:]*|-)(?![\w])")
 
 
@@ -107,6 +107,14 @@ class Section:
             self.group = norm(text(n))
             self.out.append("<h3>%s</h3>" % html.escape(self.group, quote=False))
             return
+        if t == "section" and "Ss" in n.cls:
+            h2 = next((k for k in n.kids if not isinstance(k, str) and k.tag == "h2"), None)
+            if h2 is not None and is_opt_text(norm(text(h2))) and len(norm(text(h2))) < 200:
+                dt, dd = Node("dt"), Node("dd")
+                dt.kids = h2.kids
+                dd.kids = [k for k in n.kids if k is not h2]
+                self.out.append("<dl>"); self.term([dt], dd); self.out.append("</dl>")
+                return
         if t == "dl":
             self.emit_dl(n)
             return
@@ -154,6 +162,22 @@ class Section:
                     self.out.append("<dl>"); self.term([k], nxt); self.out.append("</dl>")
                     i = j + 1
                     continue
+            if not isinstance(k, str) and k.tag == "p" and i + 1 < len(ks):
+                j = i + 1
+                while j < len(ks) and isinstance(ks[j], str) and not ks[j].strip():
+                    j += 1
+                nxt = ks[j] if j < len(ks) else None
+                label = norm(text(k))
+                if nxt is not None and not isinstance(nxt, str) and nxt.tag == "dl" and is_opt_text(label) and len(label) < 200:
+                    parts = [c for c in nxt.kids if not isinstance(c, str)]
+                    if len(parts) >= 2 and parts[0].tag == "dt" and not norm(text(parts[0])) and parts[1].tag == "dd":
+                        dt = Node("dt"); dt.kids = k.kids
+                        self.out.append("<dl>"); self.term([dt], parts[1]); self.out.append("</dl>")
+                        rest = Node("dl", nxt.attrs); rest.kids = parts[2:]
+                        if rest.kids:
+                            self.emit_dl(rest)
+                        i = j + 1
+                        continue
             if not isinstance(k, str) and k.tag == "p" and self.split_para(k):
                 i += 1
                 continue

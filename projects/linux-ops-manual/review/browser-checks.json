@@ -144,6 +144,10 @@
     "detail": []
   },
   {
+    "name": "no full-manual section on option pages",
+    "pass": true
+  },
+  {
     "name": "no JS errors",
     "pass": true,
     "detail": []

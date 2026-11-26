@@ -220,7 +220,7 @@ function viewHome(route) {
   if (!q && !cat && !scen) {
     view.append(h("section", { class: "intro" },
       h("h1", {}, "리눅스 운영 명령어"),
-      h("p", { class: "lede" }, "Rocky Linux 9.6과 Ubuntu 22.04 공식 패키지의 man 페이지를 그대로 담았습니다. 모든 옵션을 검색하고, 배포판 차이를 확인하세요."),
+      h("p", { class: "lede" }, "Rocky Linux 9.6과 Ubuntu 22.04 공식 패키지의 man 페이지에서 뽑은 옵션 표입니다. 옵션을 검색하고, 배포판 차이를 확인하세요."),
       h("p", { class: "scope-note" }, `명령어 ${DB.cmds.length.toLocaleString()}개 · 운영 카드 ${CUR.cards.length}개`,
         h("span", {}, `패키지 원본을 SHA-256으로 검증해 추출 · ${m.generated} 생성`))));
   }
@@ -271,7 +271,7 @@ function optionItems(card, d) {
 }
 function renderCard(card, d, open) {
   const v = card[d];
-  const links = card.cmds[d].primary.map((id) => h("a", { class: "man-link", href: cmdHref(id) }, `${id.replace(/\.(\d)$/, "($1)")} 전체 옵션 →`));
+  const links = card.cmds[d].primary.map((id) => h("a", { class: "man-link", href: cmdHref(id) }, h("span", { class: "mono" }, id.replace(/\.\d$/, "")), " 전체 옵션", h("span", { "aria-hidden": "true" }, " →")));
   const related = card.cmds[d].related.slice(0, 12).map((id) => h("a", { href: cmdHref(id) }, id.replace(/\.\d$/, "")));
   return h("article", { class: "command-card", id: `card-${card.id}` },
     h("div", { class: "card-head" }, h("div", {}, h("h3", {}, pick(card.title, d)), h("p", { class: "summary" }, card.summary))),
@@ -430,7 +430,7 @@ async function viewCommand(id, from) {
     cardIdx.length ? h("a", { href: "#notes", "data-jump": "notes" }, "운영 노트") : null,
     h("a", { href: "#options", "data-jump": "options" }, `전체 옵션 ${parsed.opts.length || ""}`),
     parsed.cmds.length ? h("a", { href: "#subcommands", "data-jump": "subcommands" }, `하위 명령 ${parsed.cmds.length}`) : null,
-    h("a", { href: "#manual", "data-jump": "manual" }, "매뉴얼 전문"));
+    null);
   jump.addEventListener("click", (e) => { const a = e.target.closest("a[data-jump]"); if (!a) return; e.preventDefault(); document.getElementById(a.dataset.jump)?.scrollIntoView({ behavior: "smooth", block: "start" }); });
   view.append(jump);
 
@@ -498,11 +498,15 @@ async function viewCommand(id, from) {
     };
     filter.addEventListener("input", apply);
     view.append(h("section", { class: "block", id: "options" },
-      h("div", { class: "section-head" }, h("h2", {}, "전체 옵션"), count), h("div", { class: "opt-tools" }, filter), builder, list));
+      h("div", { class: "section-head" }, h("h2", {}, "전체 옵션"), count),
+      doc.miss?.[shown] ? h("details", { class: "unlisted" }, h("summary", {}, `표에 따로 항목이 없는 표기 ${doc.miss[shown].length}개`),
+        h("p", {}, "매뉴얼 어딘가에 굵게 적혀 있지만 옵션 목록에는 독립 항목이 없는 표기입니다. 대개 사용 형식에만 나오는 긴 이름(별칭), 다른 옵션 설명 안에서 언급되는 하위 옵션, 예시 값입니다. 쓰기 전에 서버에서 --help 로 확인하세요."),
+        h("p", { class: "diff-flags" }, doc.miss[shown].map((f) => h("code", {}, f)))) : null,
+      h("div", { class: "opt-tools" }, filter), builder, list));
     apply();
   } else {
     view.append(h("section", { class: "block", id: "options" }, h("h2", {}, "전체 옵션"),
-      h("div", { class: "notice" }, "이 매뉴얼은 옵션을 목록 형식으로 적지 않아 표로 추출하지 못했습니다. 아래 매뉴얼 전문에서 확인하세요.")));
+      h("div", { class: "notice" }, "이 매뉴얼에는 목록 형식의 옵션이 없습니다(옵션이 없는 명령이거나 본문 문장으로만 설명). 아래 설명 원문을 확인하세요.")));
   }
 
   /* subcommands */
@@ -511,17 +515,13 @@ async function viewCommand(id, from) {
       h("div", { class: "opt-table" }, parsed.cmds.map((c) => h("div", { class: "opt-row" }, h("div", { class: "opt-term" }, h("div", { class: "opt-label", html: c.labelHtml })), h("div", { class: "opt-desc" }, h("div", { class: "man", html: c.desc })))))));
   }
 
-  /* full manual */
-  const full = h("section", { class: "block", id: "manual" }, h("div", { class: "section-head" }, h("h2", {}, "매뉴얼 전문"),
-    h("span", { class: "result-count" }, `${DISTRO[shown]} · ${src.pkg} ${src.ver}${src.date ? ` · ${src.date}` : ""}`)));
-  const toggle = h("button", { class: "button", type: "button" }, "모두 펼치기");
-  toggle.addEventListener("click", () => { const open = toggle.textContent === "모두 펼치기"; $$("details.man-sec", full).forEach((x) => { x.open = open; }); toggle.textContent = open ? "모두 접기" : "모두 펼치기"; });
-  full.append(toggle);
-  secs.forEach(([t, html]) => {
-    full.append(h("details", { class: "man-sec", open: /^(DESCRIPTION|EXAMPLES?|EXIT STATUS|NOTES)$/i.test(t) && html.length < 12000 },
-      h("summary", {}, t || "(머리말)"), h("div", { class: "man", html })));
-  });
-  view.append(full);
+  /* manuals without an option list: show their descriptive sections instead of an empty page */
+  if (!parsed.opts.length) {
+    const body = secs.filter(([t]) => !/^(NAME|SYNOPSIS|SYNTAX|USAGE|EXAMPLES?|AUTHORS?|COPYRIGHT|LICEN[CS]E|SEE ALSO|REPORTING BUGS|BUGS|HISTORY|AVAILABILITY|COLOPHON)$/i.test(t));
+    if (body.length) view.append(h("section", { class: "block", id: "manual" }, h("div", { class: "section-head" }, h("h2", {}, "설명"),
+      h("span", { class: "result-count" }, `${DISTRO[shown]} 매뉴얼 원문`)),
+      body.map(([t, html]) => h("details", { class: "man-sec", open: body.length <= 3 || /^(DESCRIPTION|OPTIONS?)$/i.test(t) }, h("summary", {}, t || "(머리말)"), h("div", { class: "man", html })))));
+  }
   document.title = `${name}(${row[1]}) — Linux Ops Manual`;
 }
 
@@ -662,14 +662,15 @@ async function viewAbout() {
         li(`명령어(매뉴얼 이름) ${DB.cmds.length.toLocaleString()}개 — 본문 ${c.files.toLocaleString()}개, 다른 매뉴얼로 연결되는 별칭 ${(c.alias_rows || 0).toLocaleString()}개`),
         li(`두 배포판 모두에 있는 매뉴얼 ${((c.identical || 0) + (c.differs || 0)).toLocaleString()}개 — 본문 동일 ${(c.identical || 0).toLocaleString()}개, 다름 ${(c.differs || 0).toLocaleString()}개(그중 옵션 목록이 다른 것 ${(c.option_set_differs || 0).toLocaleString()}개)`),
         li(`Rocky에만 ${(c.only_rocky || 0).toLocaleString()}개 · Ubuntu에만 ${(c.only_ubuntu || 0).toLocaleString()}개`),
-        cov ? li(`옵션을 표로 추출하지 못한 매뉴얼 ${cov.no_option_list.length.toLocaleString()}개 (옵션이 없거나 본문 문장으로만 설명됨 — 매뉴얼 전문은 그대로 볼 수 있습니다) · 변환 실패 ${cov.parse_failures.length}개`) : null,
+        cov ? li(`옵션 목록이 없는 매뉴얼 ${cov.no_option_list.length.toLocaleString()}개 (옵션이 없거나 본문 문장으로만 설명됨 — 이 경우 설명 원문을 대신 보여줍니다) · 변환 실패 ${cov.parse_failures.length}개`) : null,
+        m.audit ? li(`옵션 표 자체 점검: 매뉴얼에 굵게 적힌 모든 옵션 표기가 표에 들어 있는 매뉴얼 ${(m.audit.table_covers_all_bold_flags || 0).toLocaleString()}개, 표에 없는 표기가 하나 이상 있는 매뉴얼 ${(m.audit.with_unlisted || 0).toLocaleString()}개 (해당 페이지에 그 표기를 그대로 나열합니다)`) : null,
         cov?.curated ? li(`한국어 운영 카드 ${cov.curated.cards}개가 언급한 옵션 중 ${cov.curated.flags_confirmed}개를 공식 매뉴얼 옵션 목록에서 확인, ${cov.curated.flags_unconfirmed.length}개는 목록에서 확인하지 못함 (세부는 `, h("a", { href: "./data/coverage.json" }, "coverage.json"), ")") : null)),
     h("section", { class: "block prose" }, h("h2", {}, "한계"),
       h("ul", {},
         li("“리눅스의 모든 명령어”라는 고정된 목록은 없습니다. 여기 있는 것은 위 저장소 범위에서 man 페이지가 있는 명령입니다. man 페이지가 없는 명령(예: 일부 셸 내장 명령, nvidia-smi·kubectl 같은 외부 배포 도구)은 운영 카드에만 있거나 없습니다."),
         li("Ubuntu universe와 EPEL은 운영 도구 위주로 선별했습니다. EPEL은 9.6에 고정된 저장소가 아니라 수집일 기준 최신본입니다."),
         li(cov ? `패키지 파일이 60MB를 넘는 ${cov.skipped_packages.length}개(브라우저·JDK 등)는 건너뛰었습니다.` : "아주 큰 패키지는 건너뛰었습니다."),
-        li("옵션 표는 매뉴얼의 목록 구조를 기계적으로 읽은 결과입니다. 표에 없다고 해서 옵션이 없는 것은 아니며, 최종 근거는 매뉴얼 전문입니다."),
+        li("옵션 표는 매뉴얼의 목록 구조를 기계적으로 읽은 결과입니다. 표에 없다고 해서 옵션이 없는 것은 아닙니다. 표에서 빠진 것으로 보이는 표기는 각 페이지의 “표에 따로 항목이 없는 표기”에 나열하며, 최종 확인은 서버의 man / --help 입니다."),
         li("한국어 “운영 노트”와 옵션 옆 한국어 한 줄 설명은 직접 작성한 요약입니다. 공식 문서가 아니며, 실제 서버에서 모든 예시를 실행해 검증한 것은 아닙니다."),
         li("서버에 실제 설치된 버전은 `rpm -q 패키지` / `dpkg -s 패키지`로 확인하세요. 보안 업데이트로 패키지 버전이 달라질 수 있습니다."))),
     m.tldr ? h("section", { class: "block prose" }, h("h2", {}, "예시의 출처"),
@@ -677,7 +678,7 @@ async function viewAbout() {
         li("“공식 매뉴얼의 EXAMPLES 절”은 위 man 페이지 원문 그대로입니다."),
         li(`“커뮤니티 예시”는 `, h("a", { href: "https://github.com/tldr-pages/tldr", target: "_blank", rel: "noopener" }, "tldr-pages"), ` ${m.tldr.version} (CC BY 4.0)에서 가져왔습니다 — 명령어 ${m.tldr.commands.toLocaleString()}개, 예시 ${m.tldr.examples.toLocaleString()}개(한국어판 ${m.tldr.korean.toLocaleString()}개 명령). 배포판 공식 문서가 아니며, 사용된 옵션이 9.6 / 22.04 버전에 있는지는 옵션 표에서 확인하세요.`))) : null,
     h("section", { class: "block prose" }, h("h2", {}, "라이선스"),
-      h("p", {}, "man 페이지의 저작권은 각 프로젝트에 있으며 해당 패키지의 라이선스(GPL, BSD, MIT 등)를 따릅니다. 각 매뉴얼 전문 끝의 저작권·라이선스 문구를 원문 그대로 유지했습니다.")));
+      h("p", {}, "man 페이지의 저작권은 각 프로젝트에 있으며 해당 패키지의 라이선스(GPL, BSD, MIT 등)를 따릅니다. 원문의 저작권·라이선스 문구는 데이터팩(data/cmd)에 그대로 들어 있고, 각 페이지의 “원본 패키지” 링크에서 출처를 확인할 수 있습니다.")));
 }
 
 /* ---------- boot ---------- */

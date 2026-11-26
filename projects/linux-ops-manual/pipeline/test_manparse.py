@@ -86,6 +86,30 @@ assert 'data-c=""' in body["COMMANDS"]
 assert flags(parse(DOCBOOK)) == ["--now", "-q", "--quiet"]
 assert flags(parse(MDOC)) == ["-4", "-p"]
 assert flags(parse(OLD)) == ["--no-reload"]
+HEADS = r'''.TH DEMO 8
+.SH NAME
+demo \- options as headings
+.SH OPTIONS
+.SS "\-\-verbose, \-v"
+Be verbose.
+.SS "\-\-wide, \-W"
+Do not truncate.
+'''
+H2M = r'''.TH DEMO 1
+.SH NAME
+demo \- help2man style
+.SH DESCRIPTION
+.HP
+\fB\-\-debug\fR
+.IP
+annotate program execution
+.HP
+\fB\-e\fR script, \fB\-\-expression\fR=\fIscript\fR
+.IP
+add the script
+'''
+assert flags(parse(HEADS)) == ["--verbose", "-v", "--wide", "-W"], flags(parse(HEADS))
+assert flags(parse(H2M)) == ["--debug", "-e", "--expression"], flags(parse(H2M))
 assert manparse.so_target(b".so man1/tar.1\n") == ("tar", "1")
 assert manparse.flags_of("-A, --catenate=FILE, -") == ["-A", "--catenate"]
 print("ok")

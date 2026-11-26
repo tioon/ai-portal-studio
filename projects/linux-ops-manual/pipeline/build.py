@@ -68,6 +68,18 @@ def collect(d):
     return pages, links, pkgs
 
 
+BOLD_FLAG = re.compile(r"<b>(-{1,2}[A-Za-z0-9][\w-]*)</b>")
+
+
+def unlisted(doc):
+    """Flags printed in bold somewhere in the manual that have no entry in the extracted option table
+    (aliases shown only in SYNOPSIS, options described in running text, example values...)."""
+    have = {f for o in doc["opts"] for f in o[1]}
+    bold = {m.group(1) for _, h in doc["secs"] for m in BOLD_FLAG.finditer(h)}
+    return sorted(x for x in bold - have
+                  if not (re.fullmatch(r"-[A-Za-z0-9]{2,}", x) and all("-" + c in have for c in x[1:])))
+
+
 def parse_job(args):
     d, key, full = args
     try:
@@ -144,6 +156,7 @@ def main():
     keys = sorted({k for (_, k) in docs} | {k for d in DISTROS for k in links[d]}, key=lambda k: (k[0].lower(), k[0], k[1]))
     rows, noopt, total_bytes, nfiles = [], [], 0, 0
     stats = collections.Counter()
+    audit = collections.Counter()
     for key in keys:
         name, sec = key
         have = {d: (d, key) in docs for d in DISTROS}
@@ -164,6 +177,12 @@ def main():
                 if (d, key) in alts:
                     out["src"][d]["also"] = alts[(d, key)]
                 out["nopt"][d] = len(doc["opts"])
+                ms = unlisted(doc)
+                if ms:
+                    out.setdefault("miss", {})[d] = ms[:60]
+                    audit["with_unlisted"] += 1
+                elif doc["opts"]:
+                    audit["table_covers_all_bold_flags"] += 1
                 per[d] = doc
             ds = list(per)
             out["desc"] = per[ds[0]]["desc"] or (per[ds[-1]]["desc"] if len(ds) > 1 else "")
@@ -210,7 +229,7 @@ def main():
                                  pages=sum(1 for r in rows if r[3 if d == "r" else 4] >= 0)) for d, v in DISTROS.items()},
                 sources=dict(r="https://dl.rockylinux.org/vault/rocky/9.6/ (BaseOS, AppStream) + EPEL 9 (선별)",
                              u="http://archive.ubuntu.com/ubuntu/ jammy, jammy-updates, jammy-security (main + universe 선별)"),
-                counts=dict(commands=len(rows), files=nfiles, **stats))
+                counts=dict(commands=len(rows), files=nfiles, **stats), audit=dict(audit))
     json.dump(dict(meta=meta, pkgs=pkg_rows, cmds=rows), open(os.path.join(OUT, "index.json"), "w", encoding="utf-8"),
               ensure_ascii=False, separators=(",", ":"))
     man = []
