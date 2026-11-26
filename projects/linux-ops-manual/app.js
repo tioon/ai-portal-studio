@@ -205,7 +205,7 @@ function commandRow(row) {
   return h("a", { class: "cmd-row" + (available(row, d) ? "" : " is-missing"), href },
     h("span", { class: "cmd-name" }, row[0], h("small", {}, `(${row[1]})`)),
     h("span", { class: "cmd-desc" }, row[2] || "—"),
-    h("span", { class: "cmd-meta" }, row[9] ? h("span", { class: "badge b-ex", title: "예시 있음" }, "예시") : null, CUR.byCmd[id] ? h("span", { class: "badge b-ko", title: "한국어 운영 노트 있음" }, "노트") : null, ...badges,
+    h("span", { class: "cmd-meta" }, row[9] ? h("span", { class: "badge b-ex", title: "예시 있음" }, "예시") : null, CUR.ko[id] ? h("span", { class: "badge b-ko", title: "옵션 한국어 설명 있음" }, "한글") : null, ...badges,
       h("span", { class: "nopt", title: "매뉴얼에서 추출한 옵션 수" }, n ? `옵션 ${n}` : "")));
 }
 
@@ -392,7 +392,6 @@ async function viewCommand(id, from) {
   const src = doc.src[shown];
   const secs = sectionsFor(doc, shown);
   const parsed = parseOptions(secs);
-  const cardIdx = CUR.byCmd[id]?.[d] || CUR.byCmd[id]?.[shown] || [];
   const name = row[0];
 
   /* header */
@@ -426,8 +425,8 @@ async function viewCommand(id, from) {
 
   /* in-page nav */
   const jump = h("nav", { class: "jump", "aria-label": "이 페이지에서" },
+    h("a", { href: "#synopsis", "data-jump": "synopsis" }, "사용 형식"),
     h("a", { href: "#examples", "data-jump": "examples" }, "예시"),
-    cardIdx.length ? h("a", { href: "#notes", "data-jump": "notes" }, "운영 노트") : null,
     h("a", { href: "#options", "data-jump": "options" }, `전체 옵션 ${parsed.opts.length || ""}`),
     parsed.cmds.length ? h("a", { href: "#subcommands", "data-jump": "subcommands" }, `하위 명령 ${parsed.cmds.length}`) : null,
     null);
@@ -436,7 +435,7 @@ async function viewCommand(id, from) {
 
   /* synopsis */
   const syn = secs.find(([t]) => /^SYNOPSIS|^SYNTAX|^USAGE/i.test(t));
-  if (syn) view.append(h("section", { class: "block" }, h("h2", {}, "사용 형식"), h("div", { class: "man synopsis", html: syn[1] })));
+  if (syn) view.append(h("section", { class: "block", id: "synopsis" }, h("h2", {}, "사용 형식"), h("div", { class: "man synopsis", html: syn[1] })));
 
   /* examples: the manual's own EXAMPLES section, then community examples */
   const exSec = secs.find(([t]) => /^EXAMPLES?$/i.test(t));
@@ -445,16 +444,10 @@ async function viewCommand(id, from) {
   if (tldr) {
     exBlock.append(h("div", { class: "tldr" },
       h("p", { class: "tldr-head" }, h("strong", {}, "커뮤니티 예시"), " · ", h("a", { href: tldr.source, target: "_blank", rel: "noopener" }, `tldr-pages ${tldr.version}`), " (CC BY 4.0) — 공식 문서가 아니며 배포판 버전에 맞춰 검증된 것은 아닙니다. 밑줄 친 값은 눌러서 고친 뒤 복사할 수 있습니다."),
-      tldr.items.map(([label, tpl]) => h("div", { class: "example-item" }, h("strong", {}, label), exampleLine(tpl)))));
+      tldr.items.map(([label, tpl], i) => h("div", { class: "example-item" }, h("strong", {}, h("span", { class: "ex-num" }, String(i + 1)), label), exampleLine(tpl)))));
   }
-  if (!exSec && !tldr) exBlock.append(h("p", { class: "muted small-note" }, cardIdx.length ? "이 매뉴얼에는 EXAMPLES 절이 없습니다. 아래 운영 노트의 예시를 참고하세요." : "이 매뉴얼에는 EXAMPLES 절이 없고, 연결된 커뮤니티 예시도 없습니다."));
+  if (!exSec && !tldr) exBlock.append(h("p", { class: "muted small-note" }, "이 매뉴얼에는 EXAMPLES 절이 없고, 연결된 커뮤니티 예시도 없습니다."));
   view.append(exBlock);
-
-  /* Korean notes */
-  if (cardIdx.length) {
-    view.append(h("section", { class: "block", id: "notes" }, h("div", { class: "section-head" }, h("h2", {}, "운영 노트"), h("span", { class: "result-count" }, "직접 작성한 한국어 요약 · 공식 문서 아님")),
-      cardIdx.map((i) => renderCard(CUR.cards[i], d, cardIdx.length === 1))));
-  }
 
   /* distro diff */
   if (doc.src.r && doc.src.u) {
@@ -479,10 +472,10 @@ async function viewCommand(id, from) {
       if (o.group !== group) { group = o.group; const gh = h("h3", { class: "opt-group" }, group); list.append(gh); rowsEl.push({ head: gh, items: [] }); }
       const hint = koHint(id, o);
       const flagBtns = o.flags.length ? o.flags.map((f) => h("button", { class: "opt-flag", type: "button", "data-flag": f, title: "조합에 추가", onclick: () => toggleFlag(f) }, f)) : [];
-      const el = h("div", { class: "opt-row" },
+      const el = h("div", { class: "opt-row" + (hint ? " has-ko" : "") },
         h("div", { class: "opt-term" }, h("div", { class: "opt-label", html: o.labelHtml }), h("div", { class: "opt-flags" }, flagBtns),
           o.flags.some((f) => only.has(f)) ? h("span", { class: `badge b-${shown}` }, `${SHORT[shown]}에만`) : null),
-        h("div", { class: "opt-desc" }, hint ? h("p", { class: "ko-hint" }, hint) : null, h("div", { class: "man", html: o.desc })));
+        h("div", { class: "opt-desc" }, hint ? h("p", { class: "ko-hint" }, hint) : null, h("div", { class: "man orig", html: o.desc })));
       list.append(el);
       rowsEl[rowsEl.length - 1].items.push({ el, hay: `${o.label} ${o.text} ${hint || ""}`.toLowerCase() });
     });
